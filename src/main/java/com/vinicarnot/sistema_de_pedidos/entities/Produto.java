@@ -1,54 +1,44 @@
 package com.vinicarnot.sistema_de_pedidos.entities;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
+@Table(name = "tb_produto")
 @NoArgsConstructor
 @Getter
-@Table(name = "tb_produto")
+@EqualsAndHashCode(of = {"id", "nome"})
 public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter
     private Long id;
 
     @Column(unique = true)
+    @Setter
     private String nome;
 
     @Column(precision = 12, scale = 2)
+    @Setter
     private BigDecimal preco;
 
     @ManyToMany(mappedBy = "produtos")
-    private Set<Categoria> categorias;
+    private Set<Categoria> categorias = new HashSet<>();
 
-    public void setId(Long id) {
-        this.id = id;
+    @OneToMany(mappedBy = "id.produto")
+    private Set<ItemPedido> itemsPedidos = new HashSet<>();
+
+    public List<Pedido> getPedidos() {
+        return itemsPedidos.stream().map(itemPedido -> itemPedido.getPedido()).toList();
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setPreco(BigDecimal preco) {
-        this.preco = preco;
-    }
-
-    @Override
-    public final boolean equals(Object o) {
-        if (!(o instanceof Produto produto)) return false;
-
-        return id.equals(produto.id) && nome.equals(produto.nome);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + nome.hashCode();
-        return result;
-    }
 }

@@ -4,15 +4,26 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_boleto")
-@PrimaryKeyJoinColumn(name = "pagamento_id")
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class Boleto extends Pagamento {
 
+    public Boleto(Long id, EstadoPagamento estadoAtual,
+                  Pedido pedido, LocalDate dataVencimento,
+                  LocalDate dataPagamento)
+    {
+        super(id, estadoAtual, pedido);
+        this.dataVencimento = dataVencimento;
+        this.dataPagamento = dataPagamento;
+    }
 
     @Column(columnDefinition = "DATE")
     private LocalDate dataVencimento;

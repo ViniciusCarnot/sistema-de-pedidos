@@ -10,11 +10,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "tb_categoria")
+@Table(name = "tb_estado")
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of = {"id", "nome"})
-public class Categoria {
+public class Estado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,15 +25,10 @@ public class Categoria {
     @Setter
     private String nome;
 
-    @ManyToMany
-    @JoinTable(
-            name = "tb_categoria_produto",
-            joinColumns = @JoinColumn(name = "categoria_id"),
-            inverseJoinColumns = @JoinColumn(name = "produto_id")
-    )
-    private Set<Produto> produtos = new HashSet<>();
+    @OneToMany(mappedBy = "estado")
+    private Set<Cidade> cidades = new HashSet<>();
 
-    public Categoria(Long id, String nome) {
+    public Estado(Long id, String nome) {
         this.id = id;
         this.nome = nome;
     }
