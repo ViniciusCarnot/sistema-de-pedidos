@@ -1,5 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.entities;
 
+import com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,6 +37,11 @@ public class Produto {
 
     @OneToMany(mappedBy = "id.produto")
     private Set<ItemPedido> itemsPedidos = new HashSet<>();
+
+    public Produto(ProdutoDTO dto) {
+        nome = dto.getNome();
+        preco = dto.getPreco();
+    }
 
     public List<Pedido> getPedidos() {
         return itemsPedidos.stream().map(itemPedido -> itemPedido.getPedido()).toList();

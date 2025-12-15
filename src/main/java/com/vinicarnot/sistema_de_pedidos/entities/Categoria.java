@@ -1,5 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.entities;
 
+import com.vinicarnot.sistema_de_pedidos.dto.CategoriaDTO;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,6 +37,10 @@ public class Categoria {
     public Categoria(Long id, String nome) {
         this.id = id;
         this.nome = nome;
+    }
+
+    public Categoria(CategoriaDTO dto) {
+        nome = dto.getNome();
     }
 
 }
