@@ -19,7 +19,7 @@ public class ProdutoDTO {
     @NotBlank(message = "Nome é um campo obrigatório.")
     private String nome;
 
-    @NotNull(message = "Preço é obrigatório")
+    @NotNull(message = "Preço é um campo obrigatório")
     private BigDecimal preco;
 
     public ProdutoDTO() {

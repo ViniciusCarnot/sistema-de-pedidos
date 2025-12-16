@@ -10,8 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
-    Optional<Produto> findByNome(String nome);
-
     @Query("SELECT obj FROM Produto obj " +
             "WHERE UPPER(obj.nome) LIKE UPPER(:nome)")
     Optional<Produto> procurarPorNome(String nome);

@@ -3,7 +3,8 @@ package com.vinicarnot.sistema_de_pedidos.services;
 import com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO;
 import com.vinicarnot.sistema_de_pedidos.entities.Produto;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.ProdutoRepetidoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,14 +20,27 @@ public class ProdutoService {
     @Transactional
     public ProdutoDTO adicionarProduto(ProdutoDTO dto) {
         Produto entity = new Produto(dto);
-        validacaoProdutoRepetido(entity);
+        if(validacaoExitenciaProduto(entity.getNome())) {
+            throw new RecursoJaExistenteException("Já existe um produto cadastrado com esse nome.");
+        }
         entity = produtoRepository.save(entity);
         return new ProdutoDTO(entity);
     }
 
-    public void validacaoProdutoRepetido(Produto entity) {
-        if(produtoRepository.procurarPorNome(entity.getNome()).isPresent()) {
-            throw new ProdutoRepetidoException("Já existe um produto cadastrado com esse nome.");
+    @Transactional
+    public void removerProduto(String nomeProduto) {
+        if(validacaoExitenciaProduto(nomeProduto) == false) {
+            throw new RecursoNaoEncontradoException("Não existe um produto cadastrado com esse nome.");
         }
+        Produto entity = produtoRepository.procurarPorNome(nomeProduto).get();
+        produtoRepository.delete(entity);
     }
+
+    public boolean validacaoExitenciaProduto(String nomeProduto) {
+        if(produtoRepository.procurarPorNome(nomeProduto).isPresent()) {
+            return true;
+        }
+        return false;
+    }
+
 }
