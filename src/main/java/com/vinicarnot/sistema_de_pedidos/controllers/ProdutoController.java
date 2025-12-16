@@ -47,4 +47,9 @@ public class ProdutoController {
         return ResponseEntity.ok().body(produtoService.lerProdutos(pageable));
     }
 
+    @PutMapping("/{nome}")
+    public ResponseEntity<ProdutoDTO> atualizarProduto(@PathVariable String nome, @Valid @RequestBody ProdutoDTO dto) {
+        return ResponseEntity.ok().body(produtoService.atualizarProduto(nome, dto));
+    }
+
 }

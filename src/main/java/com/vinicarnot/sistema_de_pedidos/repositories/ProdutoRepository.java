@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Repository
@@ -21,5 +22,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     @Query("SELECT new com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO (obj.nome, obj.preco) FROM Produto obj " +
             "ORDER BY obj.nome")
     Page<ProdutoDTO> lerProdutos(Pageable pageable);
+
 
 }

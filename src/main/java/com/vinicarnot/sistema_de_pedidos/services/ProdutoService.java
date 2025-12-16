@@ -52,6 +52,17 @@ public class ProdutoService {
         return produtoRepository.lerProdutos(pageable);
     }
 
+    @Transactional
+    public ProdutoDTO atualizarProduto(String nomeProdutoAntes, ProdutoDTO dto) {
+        if(validacaoExitenciaProduto(nomeProdutoAntes) == false) {
+            throw new RecursoNaoEncontradoException("Não existe um produto cadastrado com esse nome.");
+        }
+        Produto entity = produtoRepository.procurarPorNome(nomeProdutoAntes).get();
+        entity.setNome(dto.getNome());
+        entity.setPreco(dto.getPreco());
+        return new ProdutoDTO(produtoRepository.save(entity));
+    }
+
     public boolean validacaoExitenciaProduto(String nomeProduto) {
         if(produtoRepository.procurarPorNome(nomeProduto).isPresent()) {
             return true;
