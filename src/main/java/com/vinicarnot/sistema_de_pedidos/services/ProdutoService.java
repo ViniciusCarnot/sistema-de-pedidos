@@ -5,6 +5,8 @@ import com.vinicarnot.sistema_de_pedidos.entities.Produto;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,11 @@ public class ProdutoService {
         }
         Produto entity = produtoRepository.procurarPorNome(nomeProduto).get();
         return new ProdutoDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProdutoDTO> lerProdutos(Pageable pageable) {
+        return produtoRepository.lerProdutos(pageable);
     }
 
     public boolean validacaoExitenciaProduto(String nomeProduto) {
