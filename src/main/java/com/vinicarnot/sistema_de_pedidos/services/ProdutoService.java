@@ -36,6 +36,15 @@ public class ProdutoService {
         produtoRepository.delete(entity);
     }
 
+    @Transactional(readOnly = true)
+    public ProdutoDTO lerProduto(String nomeProduto) {
+        if(validacaoExitenciaProduto(nomeProduto) == false) {
+            throw new RecursoNaoEncontradoException("Não existe um produto cadastrado com esse nome.");
+        }
+        Produto entity = produtoRepository.procurarPorNome(nomeProduto).get();
+        return new ProdutoDTO(entity);
+    }
+
     public boolean validacaoExitenciaProduto(String nomeProduto) {
         if(produtoRepository.procurarPorNome(nomeProduto).isPresent()) {
             return true;

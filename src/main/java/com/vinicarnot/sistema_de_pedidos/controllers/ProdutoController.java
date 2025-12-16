@@ -34,4 +34,9 @@ public class ProdutoController {
         return ResponseEntity.ok().body("Produto deletado com sucesso.");
     }
 
+    @GetMapping("/{nome}")
+    public ResponseEntity<ProdutoDTO> lerProduto(@PathVariable String nome) {
+        return ResponseEntity.ok().body(produtoService.lerProduto(nome));
+    }
+
 }
