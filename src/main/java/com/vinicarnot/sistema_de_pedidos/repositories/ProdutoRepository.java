@@ -2,14 +2,12 @@ package com.vinicarnot.sistema_de_pedidos.repositories;
 
 import com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO;
 import com.vinicarnot.sistema_de_pedidos.entities.Produto;
-import com.vinicarnot.sistema_de_pedidos.projections.ProdutoProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Repository

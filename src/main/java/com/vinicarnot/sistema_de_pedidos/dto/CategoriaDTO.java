@@ -1,5 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.dto;
 
+import com.vinicarnot.sistema_de_pedidos.entities.Categoria;
 import lombok.Getter;
 
 @Getter
@@ -14,4 +15,7 @@ public class CategoriaDTO {
         this.nome = nome;
     }
 
+    public CategoriaDTO(Categoria entity) {
+        nome = entity.getNome();
+    }
 }
