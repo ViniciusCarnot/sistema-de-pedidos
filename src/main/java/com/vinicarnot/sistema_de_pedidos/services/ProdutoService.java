@@ -32,7 +32,7 @@ public class ProdutoService {
     @Transactional
     public void removerProduto(String nomeProduto) {
         if(validacaoExitenciaProduto(nomeProduto) == false) {
-            throw new RecursoNaoEncontradoException("Não existe um produto cadastrado com esse nome.");
+            throw new RecursoNaoEncontradoException("Produto não encontrado com esse nome.");
         }
         Produto entity = produtoRepository.procurarPorNome(nomeProduto).get();
         produtoRepository.delete(entity);

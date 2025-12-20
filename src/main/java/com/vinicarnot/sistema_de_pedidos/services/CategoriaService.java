@@ -4,6 +4,7 @@ import com.vinicarnot.sistema_de_pedidos.dto.CategoriaDTO;
 import com.vinicarnot.sistema_de_pedidos.entities.Categoria;
 import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,14 @@ public class CategoriaService {
         }
         Categoria entity = new Categoria(dto);
         return new CategoriaDTO(categoriaRepository.save(entity));
+    }
+
+    public void removerCategoria(String nome) {
+        if(validacaoExitenciaCategoria(nome) == false) {
+            throw new RecursoNaoEncontradoException("Categoria não encontrada com esse nome.");
+        }
+        Categoria entity = categoriaRepository.procurarPorNome(nome).get();
+        categoriaRepository.delete(entity);
     }
 
     public boolean validacaoExitenciaCategoria(String nomeCategoria) {

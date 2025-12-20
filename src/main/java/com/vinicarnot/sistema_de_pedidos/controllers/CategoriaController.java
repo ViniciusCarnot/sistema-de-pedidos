@@ -5,10 +5,7 @@ import com.vinicarnot.sistema_de_pedidos.services.CategoriaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -27,6 +24,12 @@ public class CategoriaController {
     public ResponseEntity<CategoriaDTO> adicionarCategoria(@Valid @RequestBody CategoriaDTO dto) {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nome}").buildAndExpand(dto.getNome()).toUri();
         return ResponseEntity.created(uri).body(categoriaService.adicionarCategoria(dto));
+    }
+
+    @DeleteMapping("/{nome}")
+    public ResponseEntity<String> removerCategoria(@PathVariable String nome) {
+        categoriaService.removerCategoria(nome);
+        return ResponseEntity.ok().body("Categoria deletada com sucesso.");
     }
 
 }
