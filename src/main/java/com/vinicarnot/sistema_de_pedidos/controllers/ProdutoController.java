@@ -31,15 +31,15 @@ public class ProdutoController {
         return ResponseEntity.created(uri).body(dtoResponse);
     }
 
-    @DeleteMapping("/{nome}")
-    public ResponseEntity<String> removerProduto(@PathVariable String nome) {
-        produtoService.removerProduto(nome);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> removerProduto(@PathVariable Long id) {
+        produtoService.removerProduto(id);
         return ResponseEntity.ok().body("Produto deletado com sucesso.");
     }
 
-    @GetMapping("/{nome}")
-    public ResponseEntity<ProdutoDTO> lerProduto(@PathVariable String nome) {
-        return ResponseEntity.ok().body(produtoService.lerProduto(nome));
+    @GetMapping("/{id}")
+    public ResponseEntity<ProdutoDTO> lerProduto(@PathVariable Long id) {
+        return ResponseEntity.ok().body(produtoService.lerProduto(id));
     }
 
     @GetMapping
@@ -47,9 +47,9 @@ public class ProdutoController {
         return ResponseEntity.ok().body(produtoService.lerProdutos(pageable));
     }
 
-    @PutMapping("/{nome}")
-    public ResponseEntity<ProdutoDTO> atualizarProduto(@PathVariable String nome, @Valid @RequestBody ProdutoDTO dto) {
-        return ResponseEntity.ok().body(produtoService.atualizarProduto(nome, dto));
+    @PutMapping("/{id}")
+    public ResponseEntity<ProdutoDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto) {
+        return ResponseEntity.ok().body(produtoService.atualizarProduto(id, dto));
     }
 
 }

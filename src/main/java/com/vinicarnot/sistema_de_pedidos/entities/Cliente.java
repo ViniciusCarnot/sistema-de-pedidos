@@ -28,12 +28,16 @@ public class Cliente {
     @Setter
     private String email;
 
+    private String senha;
+
     @Column(unique = true)
     @Setter
     private String cpfOuCnpj;
 
     @Setter
     private TipoCliente tipo;
+
+    //private UserRole role;
 
     @OneToMany(mappedBy = "cliente")
     private Set<Pedido> pedidos = new HashSet<>();
@@ -48,6 +52,17 @@ public class Cliente {
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Telefone> telefones = new HashSet<>();
+
+    public Cliente(Long id, String nome, String email, String senha, String cpfOuCnpj,
+                   TipoCliente tipo) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.cpfOuCnpj = cpfOuCnpj;
+        this.tipo = tipo;
+        //this.role = role;
+    }
 
     public void adicionarTelefone(Telefone telefone) {
         telefones.add(telefone);

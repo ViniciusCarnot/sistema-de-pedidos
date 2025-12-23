@@ -1,6 +1,7 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO;
+import com.vinicarnot.sistema_de_pedidos.entities.Categoria;
 import com.vinicarnot.sistema_de_pedidos.entities.Produto;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class ProdutoService {
@@ -21,30 +24,35 @@ public class ProdutoService {
 
     @Transactional
     public ProdutoDTO adicionarProduto(ProdutoDTO dto) {
-        Produto entity = new Produto(dto);
-        if(validacaoExitenciaProduto(entity.getNome())) {
+        Optional<Produto> entity = produtoRepository.procurarPorNome(dto.getNome());
+        if(entity.isPresent()) {
             throw new RecursoJaExistenteException("Já existe um produto cadastrado com esse nome.");
         }
-        entity = produtoRepository.save(entity);
-        return new ProdutoDTO(entity);
+        Produto produto = new Produto();
+        produto.setNome(dto.getNome());
+        produto.setPreco(dto.getPreco());
+        return new ProdutoDTO(produtoRepository.save(produto));
     }
 
     @Transactional
-    public void removerProduto(String nomeProduto) {
-        if(validacaoExitenciaProduto(nomeProduto) == false) {
-            throw new RecursoNaoEncontradoException("Produto não encontrado com esse nome.");
+    public void removerProduto(Long id) {
+        Optional<Produto> produtoOptional = produtoRepository.findById(id);
+        if(produtoOptional.isEmpty()) {
+            throw new RecursoNaoEncontradoException("Produto não encontrado com esse id.");
         }
-        Produto entity = produtoRepository.procurarPorNome(nomeProduto).get();
-        produtoRepository.delete(entity);
+        for(Categoria categoria : produtoOptional.get().getCategorias()) {
+            categoria.getProdutos().remove(produtoOptional.get());
+        }
+        produtoRepository.delete(produtoOptional.get());
     }
 
     @Transactional(readOnly = true)
-    public ProdutoDTO lerProduto(String nomeProduto) {
-        if(validacaoExitenciaProduto(nomeProduto) == false) {
-            throw new RecursoNaoEncontradoException("Não existe um produto cadastrado com esse nome.");
+    public ProdutoDTO lerProduto(Long id) {
+        Optional<Produto> entity = produtoRepository.findById(id);
+        if(entity.isEmpty()) {
+            throw new RecursoNaoEncontradoException("Produto não encontrado com esse id.");
         }
-        Produto entity = produtoRepository.procurarPorNome(nomeProduto).get();
-        return new ProdutoDTO(entity);
+        return new ProdutoDTO(entity.get());
     }
 
     @Transactional(readOnly = true)
@@ -53,21 +61,15 @@ public class ProdutoService {
     }
 
     @Transactional
-    public ProdutoDTO atualizarProduto(String nomeProdutoAntes, ProdutoDTO dto) {
-        if(validacaoExitenciaProduto(nomeProdutoAntes) == false) {
-            throw new RecursoNaoEncontradoException("Não existe um produto cadastrado com esse nome.");
+    public ProdutoDTO atualizarProduto(Long id, ProdutoDTO dto) {
+        Optional<Produto> entity = produtoRepository.findById(id);
+        if(entity.isEmpty()) {
+            throw new RecursoNaoEncontradoException("Produto não encontrado com esse id.");
         }
-        Produto entity = produtoRepository.procurarPorNome(nomeProdutoAntes).get();
-        entity.setNome(dto.getNome());
-        entity.setPreco(dto.getPreco());
-        return new ProdutoDTO(produtoRepository.save(entity));
+        entity.get().setNome(dto.getNome());
+        entity.get().setPreco(dto.getPreco());
+        return new ProdutoDTO(produtoRepository.save(entity.get()));
     }
 
-    public boolean validacaoExitenciaProduto(String nomeProduto) {
-        if(produtoRepository.procurarPorNome(nomeProduto).isPresent()) {
-            return true;
-        }
-        return false;
-    }
 
 }

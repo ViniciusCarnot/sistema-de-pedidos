@@ -13,11 +13,15 @@ import java.util.Optional;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
+    Optional<Produto> findById(Long id);
+
+    Optional<Produto> findByNome(String nome);
+
     @Query("SELECT obj FROM Produto obj " +
             "WHERE UPPER(obj.nome) LIKE UPPER(:nome)")
     Optional<Produto> procurarPorNome(String nome);
 
-    @Query("SELECT new com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO (obj.nome, obj.preco) FROM Produto obj " +
+    @Query("SELECT new com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO(obj.id, obj.nome, obj.preco) FROM Produto obj " +
             "ORDER BY obj.nome")
     Page<ProdutoDTO> lerProdutos(Pageable pageable);
 

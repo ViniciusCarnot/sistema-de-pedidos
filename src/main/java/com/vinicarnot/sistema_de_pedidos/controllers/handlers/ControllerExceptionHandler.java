@@ -4,6 +4,7 @@ import com.vinicarnot.sistema_de_pedidos.dto.ErroCustomizado;
 import com.vinicarnot.sistema_de_pedidos.dto.ErroCustomizadoValidacao;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,13 @@ public class ControllerExceptionHandler {
         for(FieldError f : e.getBindingResult().getFieldErrors()) {
             erro.adicionarErro(f.getField(), f.getDefaultMessage());
         }
+        return ResponseEntity.status(status).body(erro);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErroCustomizado> entityNotFoundException(EntityNotFoundException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        ErroCustomizado erro = new ErroCustomizadoValidacao(Instant.now(), status.value(), "Dados inválidos. EntityNotFoundException.", request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
 

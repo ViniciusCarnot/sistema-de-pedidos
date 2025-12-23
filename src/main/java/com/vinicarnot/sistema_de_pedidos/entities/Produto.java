@@ -38,9 +38,14 @@ public class Produto {
     @OneToMany(mappedBy = "id.produto")
     private Set<ItemPedido> itemsPedidos = new HashSet<>();
 
+    public Produto(Long id, String nome, BigDecimal preco) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+    }
+
     public Produto(ProdutoDTO dto) {
-        nome = dto.getNome();
-        preco = dto.getPreco();
+        this.id = dto.getId();
     }
 
     public List<Pedido> getPedidos() {
