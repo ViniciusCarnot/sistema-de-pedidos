@@ -33,6 +33,7 @@ public class Cliente implements UserDetails {
     @Setter
     private String email;
 
+    @Setter
     private String senha;
 
     @Column(unique = true)
@@ -42,6 +43,7 @@ public class Cliente implements UserDetails {
     @Setter
     private TipoCliente tipo;
 
+    @Setter
     private UserRole role;
 
     @OneToMany(mappedBy = "cliente")

@@ -1,7 +1,9 @@
 package com.vinicarnot.sistema_de_pedidos.dto;
 
 import com.vinicarnot.sistema_de_pedidos.entities.Cidade;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +13,8 @@ import lombok.NoArgsConstructor;
 public class CidadeDTO {
 
     private Long id;
+
+    @NotBlank(message = "O campo 'Nome' é obrigatório.")
     private String nome;
 
     public CidadeDTO(Cidade entity) {

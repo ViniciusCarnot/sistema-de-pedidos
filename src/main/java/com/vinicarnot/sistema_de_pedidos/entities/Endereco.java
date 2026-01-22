@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "tb_endereco")
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id", "logradouro", "numero", "bairro", "cidade"})
 public class Endereco {
 
     @Id

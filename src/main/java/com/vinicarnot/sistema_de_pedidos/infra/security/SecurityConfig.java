@@ -1,5 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.infra.security;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,8 +31,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/registro").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categorias").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categorias/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/produtos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/produtos/{id}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/categorias").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/categorias/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/categorias/{id}").hasRole("ADMIN")
