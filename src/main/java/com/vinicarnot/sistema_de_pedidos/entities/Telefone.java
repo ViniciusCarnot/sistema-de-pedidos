@@ -17,7 +17,6 @@ public class Telefone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String numero;
 
     @ManyToOne

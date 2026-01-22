@@ -17,7 +17,7 @@ public class CategoriaDTO {
 
     private Long id;
 
-    @NotBlank(message = "Nome é um campo obrigatório.")
+    @NotBlank(message = "O campo 'Nome' é obrigatório.")
     private String nome;
 
     private Set<ProdutoDTO> produtos = new HashSet<>();

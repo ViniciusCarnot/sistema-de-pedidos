@@ -21,7 +21,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/registro")
-    public ResponseEntity registro(@RequestBody @Valid ClienteRegistroDTO clienteRegistroDTO) {
+    public ResponseEntity<String> registro(@RequestBody @Valid ClienteRegistroDTO clienteRegistroDTO) {
         return authenticationService.registroCliente(clienteRegistroDTO);
     }
 

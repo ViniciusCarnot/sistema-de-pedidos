@@ -6,6 +6,7 @@ import com.vinicarnot.sistema_de_pedidos.dto.LoginResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.entities.Cliente;
 import com.vinicarnot.sistema_de_pedidos.infra.security.TokenService;
 import com.vinicarnot.sistema_de_pedidos.repositories.ClienteRepository;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,9 +28,9 @@ public class AuthenticationService {
         this.tokenService = tokenService;
     }
 
-    public ResponseEntity registroCliente(ClienteRegistroDTO dto) {
+    public ResponseEntity<String> registroCliente(ClienteRegistroDTO dto) {
         if(clienteRepository.findByEmail(dto.getEmail()) != null) {
-            return ResponseEntity.badRequest().build();
+            throw new RecursoJaExistenteException("Já existe uma conta cadastrada com esse email.");
         }
 
         String senhaCriptografada = new BCryptPasswordEncoder().encode(dto.getSenha());
@@ -41,7 +42,7 @@ public class AuthenticationService {
 
         clienteRepository.save(novoCliente);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("Cliente cadastrado com sucesso.");
     }
 
     public ResponseEntity loginCliente(ClienteLoginDTO dto) {

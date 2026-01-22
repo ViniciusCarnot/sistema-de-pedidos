@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/categorias/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/produtos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/produtos/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/categorias/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/produtos/{id}").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -8,14 +8,11 @@ import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,13 +32,6 @@ public class CategoriaService {
         if(categoriaOptional.isPresent()) {
             throw new RecursoJaExistenteException("Já existe uma categoria cadastrada com esse nome.");
         }
-        /*Categoria entity = new Categoria();
-        entity.setNome(dto.getNome());
-        for(ProdutoDTO pDTO : dto.getProdutos()) {
-            Produto pEntity = new Produto();
-            pEntity.setId(pDTO.getId());
-            entity.getProdutos().add(pEntity);
-        }*/
 
         Categoria entity = new Categoria();
         entity.setNome(dto.getNome());
@@ -57,13 +47,6 @@ public class CategoriaService {
         }
         return new CategoriaDTO(categoriaRepository.save(entity));
 
-
-
-        /*for(ProdutoDTO pDTO : dto.getProdutos()) {
-            Produto pEntity = produtoRepository.getReferenceById(pDTO.getId());
-            entity.getProdutos().add(pEntity);
-        }
-        return new CategoriaDTO(categoriaRepository.save(entity));*/
     }
 
     @Transactional
@@ -114,10 +97,4 @@ public class CategoriaService {
         return new CategoriaDTO(categoriaRepository.save(entity.get()));
     }
 
-    public boolean validacaoExitenciaCategoria(String nomeCategoria) {
-        if(categoriaRepository.procurarPorNome(nomeCategoria).isPresent()) {
-            return true;
-        }
-        return false;
-    }
 }

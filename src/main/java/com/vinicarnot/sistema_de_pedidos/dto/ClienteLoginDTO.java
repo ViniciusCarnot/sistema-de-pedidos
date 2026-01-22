@@ -9,10 +9,10 @@ import lombok.Getter;
 @Getter
 public class ClienteLoginDTO {
 
-    @NotBlank(message = "Email é um campo obrigatório.")
+    @NotBlank(message = "O campo 'Email' é obrigatório.")
     private String email;
 
-    @NotBlank(message = "Senha é um campo obrigatório.")
+    @NotBlank(message = "O campo 'Senha' é obrigatório.")
     private String senha;
 
 }

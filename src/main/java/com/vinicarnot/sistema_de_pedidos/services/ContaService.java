@@ -13,8 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 public class ContaService {
 
@@ -40,7 +38,6 @@ public class ContaService {
         Cliente cliente = clienteRepository.findById(clienteLogado.getId()).
                 orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado."));
 
-
         cliente.setNome(dto.getNome());
         cliente.setEmail(dto.getEmail());
         cliente.setCpfOuCnpj(dto.getCpfOuCnpj());
@@ -48,21 +45,11 @@ public class ContaService {
 
         cliente.getTelefones().clear();
 
-
-
         for(TelefoneDTO telefoneDTO : dto.getTelefones()) {
-            Optional<Telefone> telefone = telefoneRepository.findByNumero(telefoneDTO.getNumero());
-            if(telefone.isPresent()) {
-                continue;
-            } else {
-                telefoneRepository
-            }
-            /*
             Telefone telefone = new Telefone();
             telefone.setNumero(telefoneDTO.getNumero());
             telefone.setCliente(cliente);
             cliente.getTelefones().add(telefone);
-            */
         }
 
         cliente.getEnderecos().clear();
@@ -85,20 +72,6 @@ public class ContaService {
 
             cliente.getEnderecos().add(endereco);
         }
-
-        /*
-        Optional<Endereco> endereco = enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidade(dto.getEndereco().getLogradouro(),
-                dto.getEndereco().getNumero(), dto.getEndereco().getBairro(), cidade);
-
-        if(endereco.isEmpty()) {
-            Endereco novoEndereco = new Endereco();
-            novoEndereco.setLogradouro(dto.getEndereco().getLogradouro());
-            novoEndereco.setNumero(dto.getEndereco().getNumero());
-            novoEndereco.setBairro(dto.getEndereco().getBairro());
-            novoEndereco.setCidade(cidade);
-            novoEndereco.getClientes().add(cliente);
-        }
-        */
 
         return new ClienteAtualizarDadosDTO(clienteRepository.save(cliente));
     }

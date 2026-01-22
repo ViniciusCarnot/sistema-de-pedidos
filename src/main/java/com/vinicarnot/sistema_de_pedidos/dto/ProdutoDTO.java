@@ -21,11 +21,11 @@ public class ProdutoDTO {
 
     private Long id;
 
-    @NotBlank(message = "Nome é um campo obrigatório.")
+    @NotBlank(message = "O campo 'Nome' é obrigatório.")
     private String nome;
 
-    @NotNull(message = "Preço é um campo obrigatório.")
-    @Positive(message = "Preço deve ser um valor positivo.")
+    @NotNull(message = "O campo 'Preço' é obrigatório.")
+    @Positive(message = "O campo 'Preço' deve ser um valor positivo.")
     private BigDecimal preco;
 
     public ProdutoDTO(Produto entity) {
