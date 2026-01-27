@@ -27,7 +27,7 @@ public class ProdutoController {
     public ResponseEntity<ProdutoDTO> adicionarProduto(@Valid @RequestBody ProdutoDTO dto) {
         ProdutoDTO dtoResponse = produtoService.adicionarProduto(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nome}")
-                .buildAndExpand(dto.getNome()).toUri();
+                .buildAndExpand(dtoResponse.getNome()).toUri();
         return ResponseEntity.created(uri).body(dtoResponse);
     }
 

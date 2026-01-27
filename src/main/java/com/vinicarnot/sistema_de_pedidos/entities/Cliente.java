@@ -41,9 +41,11 @@ public class Cliente implements UserDetails {
     private String cpfOuCnpj;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     private TipoCliente tipo;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @OneToMany(mappedBy = "cliente")

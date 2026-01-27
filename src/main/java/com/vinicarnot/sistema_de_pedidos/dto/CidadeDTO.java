@@ -14,7 +14,6 @@ public class CidadeDTO {
 
     private Long id;
 
-    @NotBlank(message = "O campo 'Nome' é obrigatório.")
     private String nome;
 
     public CidadeDTO(Cidade entity) {

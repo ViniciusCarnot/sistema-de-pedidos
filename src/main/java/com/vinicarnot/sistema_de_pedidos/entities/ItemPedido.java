@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 public class ItemPedido {
 
     @EmbeddedId
+    @Setter
     private ItemPedidoPK id = new ItemPedidoPK();
 
     @Setter
@@ -29,9 +30,9 @@ public class ItemPedido {
     private BigDecimal preco;
 
     @Setter
-    private Double desconto;
+    private BigDecimal desconto;
 
-    public ItemPedido(Produto produto, Pedido pedido, Integer quantidade, BigDecimal preco, Double desconto) {
+    public ItemPedido(Produto produto, Pedido pedido, Integer quantidade, BigDecimal preco, BigDecimal desconto) {
         id.setProduto(produto);
         id.setPedido(pedido);
         this.quantidade = quantidade;

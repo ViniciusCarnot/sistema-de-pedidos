@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +34,7 @@ public class Pedido {
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
+    @Setter
     private Cliente cliente;
 
     @ManyToOne
@@ -40,7 +42,7 @@ public class Pedido {
     @Setter
     private Endereco enderecoDeEntrega;
 
-    @OneToMany(mappedBy = "id.pedido")
+    @OneToMany(mappedBy = "id.pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ItemPedido> itemsPedidos = new HashSet<>();
 
     public Pedido(Long id, Instant instanteDaCompra, Pagamento pagamento, Cliente cliente, Endereco enderecoDeEntrega) {

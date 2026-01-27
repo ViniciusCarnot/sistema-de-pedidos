@@ -1,9 +1,9 @@
 package com.vinicarnot.sistema_de_pedidos.dto;
 
-import com.vinicarnot.sistema_de_pedidos.entities.ItemPedido;
-import com.vinicarnot.sistema_de_pedidos.entities.Pagamento;
-import com.vinicarnot.sistema_de_pedidos.entities.Pedido;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vinicarnot.sistema_de_pedidos.entities.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,33 +23,43 @@ public class PedidoDTO {
 
     private ClienteDTO cliente;
 
+    @NotNull(message = "O campo 'Pagamento' é obrigatório.")
     private PagamentoDTO pagamento;
 
+    @NotNull(message = "O campo 'Endereço de Entrega' é obrigatório.")
     private EnderecoDTO enderecoDeEntrega;
 
     @NotEmpty(message = "O pedido deve ter pelo menos um item.")
     private List<ItemPedidoDTO> items = new ArrayList<>();
 
-    public PedidoDTO(Long id, Instant instanteDaCompra, ClienteDTO cliente, PagamentoDTO pagamento,
-    EnderecoDTO enderecoDeEntrega) {
-        this.id = id;
-        this.instanteDaCompra = instanteDaCompra;
-        this.cliente = cliente;
-        this.pagamento = pagamento;
-        this.enderecoDeEntrega = enderecoDeEntrega;
-    }
-
     public PedidoDTO(Pedido entity) {
         id = entity.getId();
         instanteDaCompra = entity.getInstanteDaCompra();
         cliente = new ClienteDTO(entity.getCliente());
+        if(entity.getPagamento() instanceof Boleto boleto) {
+            PagamentoBoletoDTO boletoDTO = new PagamentoBoletoDTO();
+            boletoDTO.setId(boleto.getId());
+            boletoDTO.setTipoPagamento(boleto.getTipoPagamento());
+            boletoDTO.setEstadoPagamento(boleto.getEstadoPagamento());
+            boletoDTO.setDataVencimento(boleto.getDataVencimento());
+            boletoDTO.setDataPagamento(boleto.getDataPagamento());
+            pagamento = boletoDTO;
+        } else if (entity.getPagamento() instanceof CartaoDeCredito cartaoDeCredito) {
+            PagamentoCartaoDeCreditoDTO cartaoDeCreditoDTO = new PagamentoCartaoDeCreditoDTO();
+            cartaoDeCreditoDTO.setId(cartaoDeCredito.getId());
+            cartaoDeCreditoDTO.setTipoPagamento(cartaoDeCredito.getTipoPagamento());
+            cartaoDeCreditoDTO.setEstadoPagamento(cartaoDeCredito.getEstadoPagamento());
+            cartaoDeCreditoDTO.setQuantidadeDeParcelas(cartaoDeCredito.getQuantidadeParcelas());
+            pagamento = cartaoDeCreditoDTO;
+        }
         enderecoDeEntrega = new EnderecoDTO(entity.getEnderecoDeEntrega());
         for(ItemPedido itemPedido : entity.getItemsPedidos()) {
             items.add(new ItemPedidoDTO(itemPedido));
         }
     }
 
-    public BigDecimal getTotal() {
+    @JsonProperty("valorTotal")
+    public BigDecimal getValorTotal() {
         BigDecimal total = BigDecimal.valueOf(0);
         for(ItemPedidoDTO dto : items) {
             total = total.add(dto.getSubTotal());

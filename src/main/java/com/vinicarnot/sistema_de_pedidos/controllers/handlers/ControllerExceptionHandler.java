@@ -44,7 +44,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErroCustomizado> entityNotFoundException(EntityNotFoundException e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        HttpStatus status = HttpStatus.NOT_FOUND;
         ErroCustomizado erro = new ErroCustomizadoValidacao(Instant.now(), status.value(), "Dados inválidos. EntityNotFoundException.", request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }

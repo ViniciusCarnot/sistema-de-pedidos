@@ -6,6 +6,7 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -16,11 +17,8 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 public class Boleto extends Pagamento {
 
-    public Boleto(Long id, EstadoPagamento estadoAtual,
-                  Pedido pedido, LocalDate dataVencimento,
-                  LocalDate dataPagamento)
-    {
-        super(id, estadoAtual, pedido);
+    public Boleto(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, LocalDate dataVencimento, LocalDate dataPagamento) {
+        super(id, estadoPagamento, tipoPagamento, pedido);
         this.dataVencimento = dataVencimento;
         this.dataPagamento = dataPagamento;
     }

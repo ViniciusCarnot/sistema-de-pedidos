@@ -13,11 +13,8 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 public class CartaoDeCredito extends Pagamento {
 
-    public CartaoDeCredito(Long id, EstadoPagamento estadoAtual,
-                           Pedido pedido,
-                           Integer quantidadeParcelas)
-    {
-        super(id, estadoAtual, pedido);
+    public CartaoDeCredito(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, Integer quantidadeParcelas) {
+        super(id, estadoPagamento, tipoPagamento, pedido);
         this.quantidadeParcelas = quantidadeParcelas;
     }
 
