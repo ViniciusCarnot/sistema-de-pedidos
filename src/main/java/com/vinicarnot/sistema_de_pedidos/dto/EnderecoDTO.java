@@ -25,6 +25,8 @@ public class EnderecoDTO {
 
     private CidadeDTO cidade;
 
+    private
+
     public EnderecoDTO(Endereco entity) {
         id = entity.getId();
         logradouro = entity.getLogradouro();

@@ -1,6 +1,7 @@
 package com.vinicarnot.sistema_de_pedidos.repositories;
 
 import com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.entities.Produto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +22,9 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
             "WHERE UPPER(obj.nome) LIKE UPPER(:nome)")
     Optional<Produto> procurarPorNome(String nome);
 
-    @Query("SELECT new com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO(obj.id, obj.nome, obj.preco) FROM Produto obj " +
+    @Query("SELECT new com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseDTO(obj.nome, obj.preco) FROM Produto obj " +
             "ORDER BY obj.nome")
-    Page<ProdutoDTO> lerProdutos(Pageable pageable);
+    Page<ReadProdutoResponseDTO> lerProdutos(Pageable pageable);
 
 
 }

@@ -1,21 +1,19 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.dto.*;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreatePedidoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdatePedidoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CreatePedidoResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdatePedidoResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.entities.*;
 import com.vinicarnot.sistema_de_pedidos.repositories.*;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.ClienteComDadosIncompletosException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
-import jakarta.persistence.*;
-import lombok.Setter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class PedidoService {
@@ -30,83 +28,76 @@ public class PedidoService {
 
     private final CidadeRepository cidadeRepository;
 
-    public PedidoService(ClienteRepository clienteRepository, PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository) {
+    private final EnderecoService enderecoService;
+
+    private final PagamentoService pagamentoService;
+
+    private final ItemPedidoService itemPedidoService;
+
+    public PedidoService(ClienteRepository clienteRepository, PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, EnderecoService enderecoService, PagamentoService pagamentoService, ItemPedidoService itemPedidoService) {
         this.clienteRepository = clienteRepository;
         this.pedidoRepository = pedidoRepository;
         this.produtoRepository = produtoRepository;
         this.enderecoRepository = enderecoRepository;
         this.cidadeRepository = cidadeRepository;
+        this.enderecoService = enderecoService;
+        this.pagamentoService = pagamentoService;
+        this.itemPedidoService = itemPedidoService;
     }
 
-    public PedidoDTO realizarPedido(PedidoDTO pedidoDTO) {
+    @Transactional(rollbackFor = Exception.class)
+    public CreatePedidoResponseDTO realizarPedido(CreatePedidoRequestDTO dtoRequest) {
         Cliente clienteLogado = (Cliente) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Cliente cliente = clienteRepository.getReferenceById(clienteLogado.getId());
-        //instanteDaCompra;pagamento;cliente;enderecoDeEntrega;itemsPedidos
+        Cliente cliente = clienteRepository.findById(clienteLogado.getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível achar uma conta cadastrada com esse email e senha. Verifique ambos."));
+
+        if(cliente.getCpfOuCnpj() == null || cliente.getTelefones() == null || cliente.getTipo() == null) {
+            throw new ClienteComDadosIncompletosException("Seus dados estão incompletos para prosseguir com o pedido. " +
+                    "Termine de preenche-los e tente novamente.");
+        }
 
         Pedido pedido = new Pedido();
         pedido.setInstanteDaCompra(Instant.now());
         pedido.setCliente(cliente);
+        pedido.setStatusPedido(StatusPedido.AGUARDANDO_PAGAMENTO);
 
-        Cidade cidade = cidadeRepository.findById(pedidoDTO.getEnderecoDeEntrega().getCidade().getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Cidade não encontrada."));
-
-        Endereco endereco = enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidade(pedidoDTO.getEnderecoDeEntrega().getLogradouro(),
-                        pedidoDTO.getEnderecoDeEntrega().getNumero(), pedidoDTO.getEnderecoDeEntrega().getBairro(), cidade).
-                orElseGet(() -> {
-                    Endereco novoEndereco = new Endereco();
-                    novoEndereco.setLogradouro(pedidoDTO.getEnderecoDeEntrega().getLogradouro());
-                    novoEndereco.setNumero(pedidoDTO.getEnderecoDeEntrega().getNumero());
-                    novoEndereco.setBairro(pedidoDTO.getEnderecoDeEntrega().getBairro());
-                    novoEndereco.setCidade(cidade);
-                    novoEndereco.getClientes().add(cliente);
-                    return enderecoRepository.save(novoEndereco);
-                });
-
+        Endereco endereco = enderecoService.criarEndereco(cliente, dtoRequest.getEnderecoDeEntrega());
         cliente.getEnderecos().add(endereco);
-
         pedido.setEnderecoDeEntrega(endereco);
 
-        for(ItemPedidoDTO itemPedidoDTO : pedidoDTO.getItems()) {
-            Produto produto = produtoRepository.getReferenceById(itemPedidoDTO.getProdutoId());
-            ItemPedido itemPedido = new ItemPedido(produto,
-                    pedido,
-                    itemPedidoDTO.getQuantidade(),
-                    produto.getPreco(),
-                    calculoDescontoItemPedido(produto, itemPedidoDTO)
-            );
-            pedido.getItemsPedidos().add(itemPedido);
-        }
+        itemPedidoService.adicionarItemPedido(pedido, dtoRequest.getItems());
 
-        Pagamento pagamento = criarFormaDePagamento(pedidoDTO.getPagamento(), pedido);
+        Pagamento pagamento = pagamentoService.criarFormaDePagamento(pedido, dtoRequest.getPagamento());
         pedido.setPagamento(pagamento);
 
-        return new PedidoDTO(pedidoRepository.save(pedido));
+        return new CreatePedidoResponseDTO(pedidoRepository.save(pedido));
     }
 
-    public Pagamento criarFormaDePagamento(PagamentoDTO pagamentoDTO, Pedido pedido) {
-        if(pagamentoDTO instanceof PagamentoBoletoDTO pagamentoBoletoDTO) {
-            Boleto boleto = new Boleto();
-            boleto.setTipoPagamento(pagamentoBoletoDTO.getTipoPagamento());
-            boleto.setEstadoPagamento(EstadoPagamento.PENDENTE);
-            boleto.setDataVencimento(LocalDate.now().plusMonths(3));
-            boleto.setPedido(pedido);
-            return boleto;
-        } else if(pagamentoDTO instanceof PagamentoCartaoDeCreditoDTO pagamentoCartaoDeCreditoDTO) {
-            CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
-            cartaoDeCredito.setTipoPagamento(pagamentoCartaoDeCreditoDTO.getTipoPagamento());
-            cartaoDeCredito.setEstadoPagamento(EstadoPagamento.PENDENTE);
-            cartaoDeCredito.setQuantidadeParcelas(pagamentoCartaoDeCreditoDTO.getQuantidadeDeParcelas());
-            cartaoDeCredito.setPedido(pedido);
-            return cartaoDeCredito;
-        } else {
-            throw new RecursoNaoEncontradoException("Forma de Pagamento inválida.");
+    @Transactional(rollbackFor = Exception.class)
+    public UpdatePedidoResponseDTO atualizarPedido(Long idPedido, UpdatePedidoRequestDTO dtoRequest) {
+        Cliente clienteLogado = (Cliente) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        Cliente cliente = clienteRepository.getReferenceById(clienteLogado.getId());
+
+        Pedido pedido = pedidoRepository.getReferenceById(idPedido);
+        StatusPedido statusPedido = pedido.getStatusPedido();
+
+        if(statusPedido.equals(StatusPedido.AGUARDANDO_PAGAMENTO)) {
+            //Necessário pois estamos utilizando @MapsId
+            pedido.setPagamento(null);
+            Pagamento pagamento = pagamentoService.atualizarFormaDePagamento(pedido, dtoRequest.getPagamento());
+            pedido.setPagamento(pagamento);
         }
-    }
 
-    public BigDecimal calculoDescontoItemPedido(Produto produto, ItemPedidoDTO itemPedidoDTO) {
-        BigDecimal precoNormalProduto = produto.getPreco();
-        BigDecimal precoVendido = itemPedidoDTO.getPreco();
-        return precoNormalProduto.subtract(precoVendido);
-    }
+        if(statusPedido.equals(StatusPedido.AGUARDANDO_PAGAMENTO) ||
+        statusPedido.equals(StatusPedido.PAGAMENTO_APROVADO) ||
+        statusPedido.equals(StatusPedido.EM_SEPARACAO) ||
+        statusPedido.equals(StatusPedido.PRONTO_PARA_ENVIO)) {
+            Endereco endereco = enderecoService.atualizarEndereco(cliente, dtoRequest.getEnderecoDeEntrega());
+            pedido.setEnderecoDeEntrega(endereco);
+        }
 
+        return new UpdatePedidoResponseDTO(pedidoRepository.save(pedido));
+    }
 }

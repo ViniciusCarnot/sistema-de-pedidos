@@ -37,7 +37,7 @@ public class ItemPedidoDTO {
 
     @JsonProperty("subTotal")
     public BigDecimal getSubTotal() {
-        return preco.multiply(BigDecimal.valueOf(quantidade));
+        return (preco.subtract(desconto)).multiply(BigDecimal.valueOf(quantidade));
     }
 
 }

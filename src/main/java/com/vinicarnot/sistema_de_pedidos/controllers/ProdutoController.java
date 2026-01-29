@@ -1,6 +1,11 @@
 package com.vinicarnot.sistema_de_pedidos.controllers;
 
 import com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateProdutoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateProdutoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CreateProdutoResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateProdutoResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.services.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -24,8 +29,8 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public ResponseEntity<ProdutoDTO> adicionarProduto(@Valid @RequestBody ProdutoDTO dto) {
-        ProdutoDTO dtoResponse = produtoService.adicionarProduto(dto);
+    public ResponseEntity<CreateProdutoResponseDTO> adicionarProduto(@Valid @RequestBody CreateProdutoRequestDTO dtoRequest) {
+        CreateProdutoResponseDTO dtoResponse = produtoService.adicionarProduto(dtoRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nome}")
                 .buildAndExpand(dtoResponse.getNome()).toUri();
         return ResponseEntity.created(uri).body(dtoResponse);
@@ -38,18 +43,18 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProdutoDTO> lerProduto(@PathVariable Long id) {
+    public ResponseEntity<ReadProdutoResponseDTO> lerProduto(@PathVariable Long id) {
         return ResponseEntity.ok().body(produtoService.lerProduto(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProdutoDTO>> lerProdutos(Pageable pageable) {
+    public ResponseEntity<Page<ReadProdutoResponseDTO>> lerProdutos(Pageable pageable) {
         return ResponseEntity.ok().body(produtoService.lerProdutos(pageable));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProdutoDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto) {
-        return ResponseEntity.ok().body(produtoService.atualizarProduto(id, dto));
+    public ResponseEntity<UpdateProdutoResponseDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody UpdateProdutoRequestDTO dtoRequest) {
+        return ResponseEntity.ok().body(produtoService.atualizarProduto(id, dtoRequest));
     }
 
 }

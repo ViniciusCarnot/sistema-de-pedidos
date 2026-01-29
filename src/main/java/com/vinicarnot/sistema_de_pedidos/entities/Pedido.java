@@ -28,6 +28,10 @@ public class Pedido {
     @Setter
     private Instant instanteDaCompra;
 
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private StatusPedido statusPedido;
+
     @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter
     private Pagamento pagamento;

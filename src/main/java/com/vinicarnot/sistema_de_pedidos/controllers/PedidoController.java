@@ -1,20 +1,20 @@
 package com.vinicarnot.sistema_de_pedidos.controllers;
 
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreatePedidoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdatePedidoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CreatePedidoResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.PedidoDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdatePedidoResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.services.PedidoService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
 @RestController
-@RequestMapping("/pedido")
+@RequestMapping("/pedidos")
 public class PedidoController {
 
     private final PedidoService pedidoService;
@@ -24,11 +24,16 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoDTO> realizarPedido(@RequestBody @Valid PedidoDTO dto) {
-        PedidoDTO dtoResponse = pedidoService.realizarPedido(dto);
+    public ResponseEntity<CreatePedidoResponseDTO> realizarPedido(@RequestBody @Valid CreatePedidoRequestDTO dtoRequest) {
+        CreatePedidoResponseDTO createPedidoResponseDTO = pedidoService.realizarPedido(dtoRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dtoResponse.getId()).toUri();
-        return ResponseEntity.created(uri).body(dtoResponse);
+                .buildAndExpand(createPedidoResponseDTO.getPedidoId()).toUri();
+        return ResponseEntity.created(uri).body(createPedidoResponseDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdatePedidoResponseDTO> atualizarPedido(@PathVariable Long id, @RequestBody @Valid UpdatePedidoRequestDTO dtoRequest) {
+        return ResponseEntity.ok(pedidoService.atualizarPedido(id, dtoRequest));
     }
 
 }

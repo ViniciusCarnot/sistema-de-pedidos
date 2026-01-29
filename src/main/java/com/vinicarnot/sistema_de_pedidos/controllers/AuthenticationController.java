@@ -26,7 +26,8 @@ public class AuthenticationController {
 
     @PostMapping("/registro")
     public ResponseEntity registro(@RequestBody @Valid ClienteRegistroDTO clienteRegistroDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registroCliente(clienteRegistroDTO));
+        authenticationService.registroCliente(clienteRegistroDTO);
+        return ResponseEntity.ok("Seu cadastro foi realizado com sucesso.");
     }
 
     @PostMapping("/login")

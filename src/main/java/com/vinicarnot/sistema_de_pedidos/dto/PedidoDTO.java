@@ -21,6 +21,8 @@ public class PedidoDTO {
 
     private Instant instanteDaCompra;
 
+    private StatusPedido statusPedido;
+
     private ClienteDTO cliente;
 
     @NotNull(message = "O campo 'Pagamento' é obrigatório.")
@@ -35,6 +37,7 @@ public class PedidoDTO {
     public PedidoDTO(Pedido entity) {
         id = entity.getId();
         instanteDaCompra = entity.getInstanteDaCompra();
+        statusPedido = entity.getStatusPedido();
         cliente = new ClienteDTO(entity.getCliente());
         if(entity.getPagamento() instanceof Boleto boleto) {
             PagamentoBoletoDTO boletoDTO = new PagamentoBoletoDTO();
