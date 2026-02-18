@@ -15,10 +15,10 @@ public class CreatePedidoRequestDTO {
     @NotEmpty(message = "O pedido deve ter pelo menos um item.")
     private Set<CreateItemPedidoRequestDTO> items = new HashSet<>();
 
-    @NotNull(message = "O campo 'Endereço de Entrega' é obrigatório.")
+    @NotNull(message = "O campo 'enderecoDeEntrega' é obrigatório.")
     private CreateEnderecoRequestDTO enderecoDeEntrega;
 
-    @NotNull(message = "O campo 'Pagamento' é obrigatório.")
+    @NotNull(message = "O campo 'pagamento' é obrigatório.")
     private CreatePagamentoRequestDTO pagamento;
 
 }

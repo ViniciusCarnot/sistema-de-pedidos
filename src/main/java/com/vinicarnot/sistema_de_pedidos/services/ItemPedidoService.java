@@ -1,15 +1,17 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateItemPedidoRequestDTO;
-import com.vinicarnot.sistema_de_pedidos.entities.ItemPedido;
-import com.vinicarnot.sistema_de_pedidos.entities.Pedido;
-import com.vinicarnot.sistema_de_pedidos.entities.Produto;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreatePedidoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.ItemPedido;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Pedido;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
+import com.vinicarnot.sistema_de_pedidos.domain.enums.StatusProduto;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 @Service
 public class ItemPedidoService {
@@ -21,21 +23,25 @@ public class ItemPedidoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void adicionarItemPedido(Pedido pedido, Set<CreateItemPedidoRequestDTO> createItemPedidoRequestDTOSet) {
-        for(CreateItemPedidoRequestDTO createItemPedidoRequestDTO : createItemPedidoRequestDTOSet) {
-            Produto produto = produtoRepository.getReferenceById(createItemPedidoRequestDTO.getId());
+    public void adicionarItemPedido(Pedido pedido, CreatePedidoRequestDTO dtoRequest) {
+        for(CreateItemPedidoRequestDTO createItemPedidoRequestDTO : dtoRequest.getItems()) {
+            Produto produto = produtoRepository.getReferenceById(createItemPedidoRequestDTO.getIdProduto());
+            if(produto.getStatusProduto().equals(StatusProduto.INATIVO)) {
+                throw new RecursoNaoEncontradoException("Produto com o id: " + createItemPedidoRequestDTO.getIdProduto() +
+                " não foi encontrado.");
+            }
             ItemPedido itemPedido = new ItemPedido(produto,
                     pedido,
                     createItemPedidoRequestDTO.getQuantidade(),
                     produto.getPreco(),
-                    calculoDescontoItemPedido(produto.getPreco(), createItemPedidoRequestDTO.getPreco())
+                    calculoDescontoItemPedido(produto.getPreco(), createItemPedidoRequestDTO.getPrecoPago())
             );
             pedido.getItemsPedidos().add(itemPedido);
         }
     }
 
-    public BigDecimal calculoDescontoItemPedido(BigDecimal precoNormalProduto, BigDecimal precoVendido) {
-        return precoNormalProduto.subtract(precoVendido);
+    public BigDecimal calculoDescontoItemPedido(BigDecimal precoNormalProduto, BigDecimal precoPago) {
+        return precoNormalProduto.subtract(precoPago);
     }
 
 }

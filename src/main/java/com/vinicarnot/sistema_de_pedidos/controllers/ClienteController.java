@@ -5,6 +5,7 @@ import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateClienteResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.services.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @PutMapping("/me")
     public ResponseEntity<UpdateClienteResponseDTO> atualizarConta(@RequestBody @Valid UpdateClienteRequestDTO dto) {
         return ResponseEntity.ok().body(clienteService.atualizarDadosDoCliente(dto));

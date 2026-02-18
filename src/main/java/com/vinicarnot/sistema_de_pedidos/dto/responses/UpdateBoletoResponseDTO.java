@@ -1,6 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.dto.responses;
 
-import com.vinicarnot.sistema_de_pedidos.entities.Boleto;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Boleto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,8 +16,8 @@ public class UpdateBoletoResponseDTO extends UpdatePagamentoResponseDTO {
     private LocalDate dataPagamento;
 
     public UpdateBoletoResponseDTO(Boleto boleto) {
-        setEstadoPagamento(boleto.getEstadoPagamento());
-        setTipoPagamento(boleto.getTipoPagamento());
+        setEstadoPagamento(boleto.getEstadoPagamento().getEstadoAtual());
+        setTipoPagamento(boleto.getTipoPagamento().getTipo());
         dataVencimento = (boleto.getDataVencimento());
         dataPagamento = (boleto.getDataVencimento());
     }

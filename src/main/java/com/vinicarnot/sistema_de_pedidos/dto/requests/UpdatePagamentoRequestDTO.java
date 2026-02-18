@@ -2,7 +2,7 @@ package com.vinicarnot.sistema_de_pedidos.dto.requests;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.vinicarnot.sistema_de_pedidos.entities.TipoPagamento;
+import com.vinicarnot.sistema_de_pedidos.domain.enums.TipoPagamento;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 })
 public abstract class UpdatePagamentoRequestDTO {
 
-    @NotNull(message = "O campo 'Tipo de Pagamento' do Pagamento é obrigatório.")
+    @NotNull(message = "O campo 'tipoPagamento' do Pagamento é obrigatório.")
     private TipoPagamento tipoPagamento;
 
 }

@@ -1,11 +1,14 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
-import com.vinicarnot.sistema_de_pedidos.dto.requests.*;
-import com.vinicarnot.sistema_de_pedidos.entities.Cidade;
-import com.vinicarnot.sistema_de_pedidos.entities.Cliente;
-import com.vinicarnot.sistema_de_pedidos.entities.Endereco;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateEnderecoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateEnderecoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Cidade;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Endereco;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Estado;
 import com.vinicarnot.sistema_de_pedidos.repositories.CidadeRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.EnderecoRepository;
+import com.vinicarnot.sistema_de_pedidos.repositories.EstadoRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,21 +20,27 @@ public class EnderecoService {
 
     private final CidadeRepository cidadeRepository;
 
-    public EnderecoService(EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository) {
+    private final EstadoRepository estadoRepository;
+
+    public EnderecoService(EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, EstadoRepository estadoRepository) {
         this.enderecoRepository = enderecoRepository;
         this.cidadeRepository = cidadeRepository;
+        this.estadoRepository = estadoRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Endereco criarEndereco(Cliente cliente, CreateEnderecoRequestDTO createEnderecoRequestDTO) {
-        Cidade cidade = cidadeRepository.findById(createEnderecoRequestDTO.getCidade().getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Cidade não encontrada."));
+    public Endereco criarEndereco(Cliente cliente, CreateEnderecoRequestDTO dtoRequest) {
+        Cidade cidade = cidadeRepository.findById(dtoRequest.getCidade().getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar uma cidade com o id: " + dtoRequest.getCidade().getId() + "."));
 
-        String logradouro = createEnderecoRequestDTO.getLogradouro();
-        String numero = createEnderecoRequestDTO.getNumero();
-        String bairro = createEnderecoRequestDTO.getBairro();
+        Estado estado = estadoRepository.findById(dtoRequest.getEstado().getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar um estado com o id: " + dtoRequest.getEstado().getId() + "."));
 
-        return enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidade(logradouro, numero, bairro, cidade)
+        String logradouro = dtoRequest.getLogradouro();
+        String numero = dtoRequest.getNumero();
+        String bairro = dtoRequest.getBairro();
+
+        return enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidadeAndCidadeEstado(logradouro, numero, bairro, cidade, estado)
                 .orElseGet(() -> {
                     Endereco novoEndereco = new Endereco();
                     novoEndereco.setLogradouro(logradouro);
@@ -44,17 +53,19 @@ public class EnderecoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Endereco atualizarEndereco(Cliente cliente, UpdateEnderecoRequestDTO updateEnderecoRequestDTO) {
-        Cidade cidade = cidadeRepository.findById(updateEnderecoRequestDTO.getCidade().getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Cidade não encontrada."));
+    public Endereco atualizarEndereco(Cliente cliente, UpdateEnderecoRequestDTO dtoRequest) {
+        Cidade cidade = cidadeRepository.findById(dtoRequest.getCidade().getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar uma cidade com o id: " + dtoRequest.getCidade().getId() + "."));
 
-        String logradouro = updateEnderecoRequestDTO.getLogradouro();
-        String numero = updateEnderecoRequestDTO.getNumero();
-        String bairro = updateEnderecoRequestDTO.getBairro();
+        Estado estado = estadoRepository.findById(dtoRequest.getEstado().getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar um estado com o id: " + dtoRequest.getEstado().getId() + "."));
 
-        return enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidade(logradouro,
-                        numero, bairro, cidade).
-                orElseGet(() -> {
+        String logradouro = dtoRequest.getLogradouro();
+        String numero = dtoRequest.getNumero();
+        String bairro = dtoRequest.getBairro();
+
+        return enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidadeAndCidadeEstado(logradouro, numero, bairro, cidade, estado)
+                        .orElseGet(() -> {
                     Endereco novoEndereco = new Endereco();
                     novoEndereco.setLogradouro(logradouro);
                     novoEndereco.setNumero(numero);

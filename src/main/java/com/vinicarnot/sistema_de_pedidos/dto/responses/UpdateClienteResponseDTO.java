@@ -1,9 +1,8 @@
 package com.vinicarnot.sistema_de_pedidos.dto.responses;
 
-import com.vinicarnot.sistema_de_pedidos.entities.Cliente;
-import com.vinicarnot.sistema_de_pedidos.entities.Endereco;
-import com.vinicarnot.sistema_de_pedidos.entities.Telefone;
-import com.vinicarnot.sistema_de_pedidos.entities.TipoCliente;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Endereco;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Telefone;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +15,9 @@ import java.util.Set;
 public class UpdateClienteResponseDTO {
 
     @Setter
+    private Long id;
+
+    @Setter
     private String nome;
 
     @Setter
@@ -25,17 +27,18 @@ public class UpdateClienteResponseDTO {
     private String cpfOuCnpj;
 
     @Setter
-    private TipoCliente tipoPessoa;
+    private String tipoPessoa;
 
     private Set<UpdateTelefoneResponseDTO> telefones = new HashSet<>();
 
     private Set<UpdateEnderecoResponseDTO> enderecos = new HashSet<>();
 
     public UpdateClienteResponseDTO(Cliente cliente) {
+        id = cliente.getId();
         nome = cliente.getNome();
         email = cliente.getEmail();
         cpfOuCnpj = cliente.getCpfOuCnpj();
-        tipoPessoa = cliente.getTipo();
+        tipoPessoa = cliente.getTipo().getTipo();
         for(Telefone telefone : cliente.getTelefones()) {
             telefones.add(new UpdateTelefoneResponseDTO(telefone));
         }

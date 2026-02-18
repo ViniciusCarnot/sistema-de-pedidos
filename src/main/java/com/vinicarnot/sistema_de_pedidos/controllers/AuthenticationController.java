@@ -1,10 +1,10 @@
 package com.vinicarnot.sistema_de_pedidos.controllers;
 
-import com.vinicarnot.sistema_de_pedidos.dto.ClienteLoginDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.ClienteRegistroDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.ClienteLoginRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateClienteRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CreateClienteResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.services.AuthenticationService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,14 +25,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("/registro")
-    public ResponseEntity registro(@RequestBody @Valid ClienteRegistroDTO clienteRegistroDTO) {
-        authenticationService.registroCliente(clienteRegistroDTO);
-        return ResponseEntity.ok("Seu cadastro foi realizado com sucesso.");
+    public ResponseEntity<CreateClienteResponseDTO> registro(@RequestBody @Valid CreateClienteRequestDTO dtoRequest) {
+        CreateClienteResponseDTO dtoResponse = authenticationService.registroCliente(dtoRequest);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")
+                .buildAndExpand(dtoResponse.getId()).toUri();
+        return ResponseEntity.created(uri).body(dtoResponse);
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid ClienteLoginDTO clienteLoginDTO) {
-        return authenticationService.loginCliente(clienteLoginDTO);
+    public ResponseEntity login(@RequestBody @Valid ClienteLoginRequestDTO dtoRequest) {
+        return authenticationService.loginCliente(dtoRequest);
     }
 
 }

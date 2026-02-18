@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateCartaoDeCreditoRequestDTO extends UpdatePagamentoRequestDTO {
 
-    @NotNull(message = "O campo 'Quantidade de Parcelas' do Cartão de Crédito é obrigatório.")
+    @NotNull(message = "O campo 'quantidadeDeParcelas' do Cartão de Crédito é obrigatório.")
     private Integer quantidadeDeParcelas;
 
 }

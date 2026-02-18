@@ -1,7 +1,7 @@
 package com.vinicarnot.sistema_de_pedidos.dto.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.vinicarnot.sistema_de_pedidos.entities.ItemPedido;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.ItemPedido;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,21 +15,28 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class CreateItemPedidoResponseDTO {
 
+    private Long idProduto;
     private String nomeProduto;
-    private BigDecimal preco;
-    private BigDecimal desconto;
+    private BigDecimal precoUnitario;
     private Integer quantidade;
+    private BigDecimal descontoUnitario;
 
     public CreateItemPedidoResponseDTO(ItemPedido itemPedido) {
+        idProduto = itemPedido.getProduto().getId();
         nomeProduto = itemPedido.getProduto().getNome();
-        preco = itemPedido.getProduto().getPreco();
-        desconto = itemPedido.getDesconto();
+        precoUnitario = itemPedido.getProduto().getPreco();
+        descontoUnitario = itemPedido.getDescontoUnitario();
         quantidade = itemPedido.getQuantidade();
     }
 
-    @JsonProperty("subTotal")
+    @JsonProperty("descontoTotalItem")
+    public BigDecimal getDescontoTotal() {
+        return descontoUnitario.multiply(BigDecimal.valueOf(quantidade));
+    }
+
+    @JsonProperty("subTotalItem")
     public BigDecimal getSubTotal() {
-        return (preco.subtract(desconto)).multiply(BigDecimal.valueOf(quantidade));
+        return (precoUnitario.multiply(BigDecimal.valueOf(quantidade))).subtract(getDescontoTotal());
     }
 
 }

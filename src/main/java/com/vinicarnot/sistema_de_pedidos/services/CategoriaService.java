@@ -1,9 +1,15 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
-import com.vinicarnot.sistema_de_pedidos.dto.CategoriaDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO;
-import com.vinicarnot.sistema_de_pedidos.entities.Categoria;
-import com.vinicarnot.sistema_de_pedidos.entities.Produto;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateCategoriaRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateProdutoCategoriaRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateCategoriaRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateProdutoCategoriaRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CreateCategoriaResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadCategoriaResponseAdminDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadCategoriaResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateCategoriaResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Categoria;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
 import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
@@ -26,75 +32,71 @@ public class CategoriaService {
         this.produtoRepository = produtoRepository;
     }
 
-    @Transactional
-    public CategoriaDTO adicionarCategoria(CategoriaDTO dto) {
-        Optional<Categoria> categoriaOptional = categoriaRepository.procurarPorNome(dto.getNome());
-        if(categoriaOptional.isPresent()) {
-            throw new RecursoJaExistenteException("Já existe uma categoria cadastrada com esse nome.");
+    @Transactional(rollbackFor = Exception.class)
+    public CreateCategoriaResponseDTO adicionarCategoria(CreateCategoriaRequestDTO dtoRequest) {
+        Optional<Categoria> categoria = categoriaRepository.findByNomeIgnoreCase(dtoRequest.getNome());
+        if(categoria.isPresent()) {
+            throw new RecursoJaExistenteException("Já existe uma categoria cadastrada com o nome: " + dtoRequest.getNome() + ".");
         }
 
-        Categoria entity = new Categoria();
-        entity.setNome(dto.getNome());
-        Optional<Produto> produtoDTOptional;
-        for(ProdutoDTO produtoDTO : dto.getProdutos()) {
-            produtoDTOptional = produtoRepository.findById(produtoDTO.getId());
-            if(produtoDTOptional.isEmpty()) {
-                throw new RecursoNaoEncontradoException("Produto com id: " + produtoDTO.getId() + " não encontrado.");
-            }
-            Produto produto = new Produto();
-            produto.setId(produtoDTO.getId());
-            entity.getProdutos().add(produto);
+        Categoria novaCategoria = new Categoria();
+        novaCategoria.setNome(dtoRequest.getNome());
+        for(CreateProdutoCategoriaRequestDTO createProdutoCategoriaRequestDTO : dtoRequest.getProdutos()) {
+            Produto produto = produtoRepository.findById(createProdutoCategoriaRequestDTO.getId()).
+                    orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + createProdutoCategoriaRequestDTO.getId() + " não encontrado."));
+            novaCategoria.getProdutos().add(produto);
         }
-        return new CategoriaDTO(categoriaRepository.save(entity));
-
+        return new CreateCategoriaResponseDTO(categoriaRepository.save(novaCategoria));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void removerCategoria(Long id) {
-        Optional<Categoria> entity = categoriaRepository.findById(id);
-        if(entity.isEmpty()) {
-            throw new RecursoNaoEncontradoException("Categoria não encontrada com esse id.");
-        }
-        categoriaRepository.delete(entity.get());
+        Categoria categoria = categoriaRepository.getReferenceById(id);
+        categoriaRepository.delete(categoria);
     }
 
     @Transactional(readOnly = true)
-    public CategoriaDTO lerCategoria(Long id) {
-        Optional<Categoria> entity = categoriaRepository.findById(id);
-        if(entity.isEmpty()) {
-            throw new RecursoNaoEncontradoException("Categoria não encontrada com esse id.");
-        }
-        return new CategoriaDTO(entity.get());
+    public ReadCategoriaResponseDTO lerCategoria(Long id) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria não encontrada com id: " + id + "."));
+        return new ReadCategoriaResponseDTO(categoria);
     }
 
     @Transactional(readOnly = true)
-    public Page<CategoriaDTO> lerCategorias(Pageable pageable) {
-        Page<Categoria> paginaEntity = categoriaRepository.lerCategorias(pageable);
-        if (paginaEntity.hasContent()) {
-            categoriaRepository.lerCategoriasComProdutos(paginaEntity.getContent());
-        }
-        return paginaEntity.map(entity -> new CategoriaDTO(entity));
+    public Page<ReadCategoriaResponseDTO> lerCategorias(Pageable pageable) {
+        Page<Categoria> pageCategoria = categoriaRepository.findAll(pageable);
+        return pageCategoria.map(categoria -> new ReadCategoriaResponseDTO(categoria));
     }
 
-    @Transactional
-    public CategoriaDTO atualizarCategoria(Long id, CategoriaDTO dto) {
-        Optional<Categoria> entity = categoriaRepository.findById(id);
-        if(entity.isEmpty()) {
-            throw new RecursoNaoEncontradoException("Categoria não encontrada com esse id.");
+    @Transactional(readOnly = true)
+    public ReadCategoriaResponseAdminDTO adminLerCategoria(Long id) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria não encontrada com id: " + id + "."));
+        return new ReadCategoriaResponseAdminDTO(categoria);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ReadCategoriaResponseAdminDTO> adminLerCategorias(Pageable pageable) {
+        Page<Categoria> pageCategoria = categoriaRepository.findAll(pageable);
+        return pageCategoria.map(categoria -> new ReadCategoriaResponseAdminDTO(categoria));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UpdateCategoriaResponseDTO atualizarCategoria(Long id, UpdateCategoriaRequestDTO dtoRequest) {
+        Categoria categoria = categoriaRepository.findById(id).
+                orElseThrow(() -> new RecursoNaoEncontradoException("Categoria com id: " + id + "não encontrada."));
+        Optional<Categoria> categoriaOptional = categoriaRepository.findByNomeIgnoreCase(dtoRequest.getNome());
+        if(categoriaOptional.isPresent()) {
+            throw new RecursoJaExistenteException("Já existe uma categoria cadastrada com o nome: " + dtoRequest.getNome() + ".");
         }
-        entity.get().setNome(dto.getNome());
-        entity.get().getProdutos().clear();
-        Optional<Produto> produtoDTOptional;
-        for(ProdutoDTO produtoDTO : dto.getProdutos()) {
-            produtoDTOptional = produtoRepository.findById(produtoDTO.getId());
-            if(produtoDTOptional.isEmpty()) {
-                throw new RecursoNaoEncontradoException("Produto com id: " + produtoDTO.getId() + " não encontrado.");
-            }
-            Produto produto = new Produto();
-            produto.setId(produtoDTO.getId());
-            entity.get().getProdutos().add(produto);
+        categoria.setNome(dtoRequest.getNome());
+        categoria.getProdutos().clear();
+        for(UpdateProdutoCategoriaRequestDTO updateProdutoCategoriaRequestDTO : dtoRequest.getProdutos()) {
+            Produto produto = produtoRepository.findById(updateProdutoCategoriaRequestDTO.getId()).
+                    orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + updateProdutoCategoriaRequestDTO.getId() + " não encontrado."));
+            categoria.getProdutos().add(produto);
         }
-        return new CategoriaDTO(categoriaRepository.save(entity.get()));
+        return new UpdateCategoriaResponseDTO(categoriaRepository.save(categoria));
     }
 
 }

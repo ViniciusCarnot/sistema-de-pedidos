@@ -1,5 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.infra.security;
 
+import com.vinicarnot.sistema_de_pedidos.dto.requests.JWTClienteDataDTO;
 import com.vinicarnot.sistema_de_pedidos.repositories.ClienteRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class SecurityTokenFilter extends OncePerRequestFilter {
@@ -26,27 +28,21 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = this.recoverToken(request);
-        if(token != null) {
-            var email = tokenService.validateToken(token);
-            UserDetails user = clienteRepository.findByEmail(email);
-
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        String authHeader = request.getHeader("Authorization");
+        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring("Bearer ".length());
+            Optional<JWTClienteDataDTO> jwtClienteDataDTO = tokenService.validateToken(token);
+            if(jwtClienteDataDTO.isPresent()) {
+                UserDetails cliente = clienteRepository.findByEmail(jwtClienteDataDTO.get().getEmail());
+                if(cliente != null) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(cliente, null, cliente.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+            filterChain.doFilter(request, response);
+        } else {
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
-    }
-
-    private String recoverToken(HttpServletRequest request) {
-
-        var authHeader = request.getHeader("Authorization");
-
-        if(authHeader == null) {
-            return null;
-        }
-
-        return authHeader.replace("Bearer ", "");
-
     }
 
 }

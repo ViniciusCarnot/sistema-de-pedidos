@@ -9,18 +9,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateEnderecoRequestDTO {
 
-    @NotBlank(message = "O campo 'Logradouro' é obrigatório.")
+    @NotBlank(message = "O campo 'logradouro' é obrigatório.")
     private String logradouro;
 
-    @NotBlank(message = "O campo 'Número' é obrigatório.")
+    @NotBlank(message = "O campo 'numero' é obrigatório.")
     private String numero;
 
     private String bairro;
 
-    @NotNull(message = "O campo 'Cidade' é obrigatório.")
+    @NotNull(message = "O campo 'cidade' é obrigatório.")
     private UpdateCidadeRequestDTO cidade;
 
-    @NotNull(message = "O campo 'Estado' é obrigatório.")
+    @NotNull(message = "O campo 'estado' é obrigatório.")
     private UpdateEstadoRequestDTO estado;
 
 }

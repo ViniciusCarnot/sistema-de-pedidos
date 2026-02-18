@@ -1,13 +1,16 @@
 package com.vinicarnot.sistema_de_pedidos.dto.responses;
 
-import com.vinicarnot.sistema_de_pedidos.entities.Boleto;
-import com.vinicarnot.sistema_de_pedidos.entities.CartaoDeCredito;
-import com.vinicarnot.sistema_de_pedidos.entities.ItemPedido;
-import com.vinicarnot.sistema_de_pedidos.entities.Pedido;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Boleto;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.CartaoDeCredito;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.ItemPedido;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Pedido;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +19,10 @@ import java.util.Set;
 public class CreatePedidoResponseDTO {
 
     @Setter
-    private Long pedidoId;
+    private Long id;
+
+    @Setter
+    private Instant instanteDaCompra;
 
     private Set<CreateItemPedidoResponseDTO> items = new HashSet<>();
 
@@ -27,7 +33,8 @@ public class CreatePedidoResponseDTO {
     private CreatePagamentoResponseDTO pagamento;
 
     public CreatePedidoResponseDTO(Pedido pedido) {
-        pedidoId = pedido.getId();
+        id = pedido.getId();
+        instanteDaCompra = pedido.getInstanteDaCompra();
         for(ItemPedido itemPedido : pedido.getItemsPedidos()) {
             items.add(new CreateItemPedidoResponseDTO(itemPedido));
         }
@@ -37,6 +44,13 @@ public class CreatePedidoResponseDTO {
         } else if (pedido.getPagamento() instanceof CartaoDeCredito cartaoDeCredito) {
             pagamento = new CreateCartaoDeCreditoResponseDTO(cartaoDeCredito);
         }
+    }
+
+    @JsonProperty("valorTotalPedido")
+    public BigDecimal getValorTotal() {
+        return items.stream()
+                .map(item -> item.getSubTotal())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
 

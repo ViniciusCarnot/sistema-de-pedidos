@@ -1,9 +1,11 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
-import com.vinicarnot.sistema_de_pedidos.dto.ClienteLoginDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.ClienteRegistroDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.LoginResponseDTO;
-import com.vinicarnot.sistema_de_pedidos.entities.Cliente;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.LoginResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.ClienteLoginRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateClienteRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CreateClienteResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
+import com.vinicarnot.sistema_de_pedidos.domain.enums.UserRole;
 import com.vinicarnot.sistema_de_pedidos.infra.security.TokenService;
 import com.vinicarnot.sistema_de_pedidos.repositories.ClienteRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthenticationService {
@@ -28,25 +31,25 @@ public class AuthenticationService {
         this.tokenService = tokenService;
     }
 
-    public ResponseEntity<String> registroCliente(ClienteRegistroDTO dto) {
-        if(clienteRepository.findByEmail(dto.getEmail()) != null) {
+    @Transactional(rollbackFor = Exception.class)
+    public CreateClienteResponseDTO registroCliente(CreateClienteRequestDTO dtoRequest) {
+        if(clienteRepository.findByEmail(dtoRequest.getEmail()) != null) {
             throw new RecursoJaExistenteException("Já existe uma conta cadastrada com esse email.");
         }
 
-        String senhaCriptografada = new BCryptPasswordEncoder().encode(dto.getSenha());
+        String senhaCriptografada = new BCryptPasswordEncoder().encode(dtoRequest.getSenha());
         Cliente novoCliente = new Cliente();
-        novoCliente.setNome(dto.getNome());
-        novoCliente.setEmail(dto.getEmail());
+        novoCliente.setNome(dtoRequest.getNome());
+        novoCliente.setEmail(dtoRequest.getEmail());
         novoCliente.setSenha(senhaCriptografada);
-        novoCliente.setRole(dto.getRole());
+        novoCliente.setRole(UserRole.NORMAL);
 
-        clienteRepository.save(novoCliente);
-
-        return ResponseEntity.ok().body("Cliente cadastrado com sucesso.");
+        return new CreateClienteResponseDTO(clienteRepository.save(novoCliente));
     }
 
-    public ResponseEntity loginCliente(ClienteLoginDTO dto) {
-        UsernamePasswordAuthenticationToken dadosDoCliente = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha());
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity loginCliente(ClienteLoginRequestDTO dtoRequest) {
+        UsernamePasswordAuthenticationToken dadosDoCliente = new UsernamePasswordAuthenticationToken(dtoRequest.getEmail(), dtoRequest.getSenha());
 
         var auth = authenticationManager.authenticate(dadosDoCliente);
 

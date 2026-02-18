@@ -1,8 +1,7 @@
 package com.vinicarnot.sistema_de_pedidos.repositories;
 
-import com.vinicarnot.sistema_de_pedidos.dto.ProdutoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseDTO;
-import com.vinicarnot.sistema_de_pedidos.entities.Produto;
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,17 +13,15 @@ import java.util.Optional;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
-    Optional<Produto> findById(Long id);
+    @Query(value = "SELECT obj FROM Produto obj " +
+            "WHERE (obj.id = :id) AND (UPPER(obj.statusProduto) != 'INATIVO')")
+    Optional<Produto> procurarPorIdComStatusAtivo(Long id);
 
-    Optional<Produto> findByNome(String nome);
+    Optional<Produto> findByNomeIgnoreCase(String nome);
 
-    @Query("SELECT obj FROM Produto obj " +
-            "WHERE UPPER(obj.nome) LIKE UPPER(:nome)")
-    Optional<Produto> procurarPorNome(String nome);
-
-    @Query("SELECT new com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseDTO(obj.nome, obj.preco) FROM Produto obj " +
-            "ORDER BY obj.nome")
-    Page<ReadProdutoResponseDTO> lerProdutos(Pageable pageable);
-
+    @Query(value = "SELECT new com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseDTO(obj.id, obj.nome, obj.preco) " +
+            "FROM Produto obj " +
+            "WHERE UPPER(obj.statusProduto) != 'INATIVO'")
+    Page<ReadProdutoResponseDTO> lerProdutosComStatusAtivo(Pageable pageable);
 
 }
