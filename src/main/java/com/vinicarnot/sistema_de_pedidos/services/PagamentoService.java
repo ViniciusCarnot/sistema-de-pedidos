@@ -7,6 +7,7 @@ import com.vinicarnot.sistema_de_pedidos.domain.entites.Pedido;
 import com.vinicarnot.sistema_de_pedidos.domain.enums.EstadoPagamento;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.*;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,7 +32,7 @@ public class PagamentoService {
             cartaoDeCredito.setPedido(pedido);
             return cartaoDeCredito;
         } else {
-            throw new RecursoNaoEncontradoException("Forma de Pagamento inválida.");
+            throw new HttpMessageNotReadableException("Forma de pagamento inválida");
         }
     }
 
@@ -52,7 +53,7 @@ public class PagamentoService {
             cartaoDeCredito.setPedido(pedido);
             return cartaoDeCredito;
         } else {
-            throw new RecursoNaoEncontradoException("Forma de Pagamento inválida.");
+            throw new HttpMessageNotReadableException("Forma de pagamento inválida");
         }
     }
 

@@ -124,7 +124,7 @@ public class PedidoService {
                 .getAuthentication()
                 .getPrincipal();
         Cliente cliente = clienteRepository.findById(clienteLogado.getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível achar uma conta cadastrada com esse email e senha. Verifique ambos."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar uma conta cadastrada com esse email e senha. Verifique ambos."));
 
         if(!(pedido.getCliente().equals(cliente))) {
             throw new RecursoNegadoException("Você não tem permissão para alterar os dados desse pedido.");
@@ -199,11 +199,11 @@ public class PedidoService {
 
     @Transactional(readOnly = true)
     public ReadPedidoResponseDTO lerProprioPedido(Long idPedido) {
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar o pedido com o id: " + idPedido + "."));
         Cliente clienteLogado = (Cliente) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Cliente cliente = clienteRepository.findById(clienteLogado.getId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível achar uma conta cadastrada com esse email e senha. Verifique ambos."));
-        Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar o pedido com o id: " + idPedido + "."));
         if(!(cliente.equals(pedido.getCliente()))) {
             throw new RecursoNegadoException("Você não tem permissão para acessar os dados desse pedido.");
         }

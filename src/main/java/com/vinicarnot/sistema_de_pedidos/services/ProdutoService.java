@@ -51,6 +51,15 @@ public class ProdutoService {
         produtoRepository.save(produto);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public UpdateProdutoResponseDTO atualizarProduto(Long id, UpdateProdutoRequestDTO dtoRequest) {
+        Produto produto = produtoRepository.findById(id).
+                orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com esse id."));
+        produto.setPreco(dtoRequest.getPreco());
+        produto.setStatusProduto(dtoRequest.getStatusProduto());
+        return new UpdateProdutoResponseDTO(produtoRepository.save(produto));
+    }
+
     @Transactional(readOnly = true)
     public ReadProdutoResponseDTO lerProduto(Long id) {
         Produto produto = produtoRepository.procurarPorIdComStatusAtivo(id).
@@ -75,15 +84,5 @@ public class ProdutoService {
         Page<Produto> pageProdutos = produtoRepository.findAll(pageable);
         return pageProdutos.map(produto -> new ReadProdutoResponseAdminDTO(produto));
     }
-
-    @Transactional(rollbackFor = Exception.class)
-    public UpdateProdutoResponseDTO atualizarProduto(Long id, UpdateProdutoRequestDTO dtoRequest) {
-        Produto produto = produtoRepository.findById(id).
-                orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com esse id."));
-        produto.setPreco(dtoRequest.getPreco());
-        produto.setStatusProduto(dtoRequest.getStatusProduto());
-        return new UpdateProdutoResponseDTO(produtoRepository.save(produto));
-    }
-
 
 }

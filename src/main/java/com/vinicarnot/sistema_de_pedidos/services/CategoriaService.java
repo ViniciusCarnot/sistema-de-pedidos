@@ -55,6 +55,24 @@ public class CategoriaService {
         categoriaRepository.delete(categoria);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public UpdateCategoriaResponseDTO atualizarCategoria(Long id, UpdateCategoriaRequestDTO dtoRequest) {
+        Categoria categoria = categoriaRepository.findById(id).
+                orElseThrow(() -> new RecursoNaoEncontradoException("Categoria com id: " + id + "não encontrada."));
+        Optional<Categoria> categoriaOptional = categoriaRepository.findByNomeIgnoreCase(dtoRequest.getNome());
+        if(categoriaOptional.isPresent()) {
+            throw new RecursoJaExistenteException("Já existe uma categoria cadastrada com o nome: " + dtoRequest.getNome() + ".");
+        }
+        categoria.setNome(dtoRequest.getNome());
+        categoria.getProdutos().clear();
+        for(UpdateProdutoCategoriaRequestDTO updateProdutoCategoriaRequestDTO : dtoRequest.getProdutos()) {
+            Produto produto = produtoRepository.findById(updateProdutoCategoriaRequestDTO.getId()).
+                    orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + updateProdutoCategoriaRequestDTO.getId() + " não encontrado."));
+            categoria.getProdutos().add(produto);
+        }
+        return new UpdateCategoriaResponseDTO(categoriaRepository.save(categoria));
+    }
+
     @Transactional(readOnly = true)
     public ReadCategoriaResponseDTO lerCategoria(Long id) {
         Categoria categoria = categoriaRepository.findById(id)
@@ -79,24 +97,6 @@ public class CategoriaService {
     public Page<ReadCategoriaResponseAdminDTO> adminLerCategorias(Pageable pageable) {
         Page<Categoria> pageCategoria = categoriaRepository.findAll(pageable);
         return pageCategoria.map(categoria -> new ReadCategoriaResponseAdminDTO(categoria));
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public UpdateCategoriaResponseDTO atualizarCategoria(Long id, UpdateCategoriaRequestDTO dtoRequest) {
-        Categoria categoria = categoriaRepository.findById(id).
-                orElseThrow(() -> new RecursoNaoEncontradoException("Categoria com id: " + id + "não encontrada."));
-        Optional<Categoria> categoriaOptional = categoriaRepository.findByNomeIgnoreCase(dtoRequest.getNome());
-        if(categoriaOptional.isPresent()) {
-            throw new RecursoJaExistenteException("Já existe uma categoria cadastrada com o nome: " + dtoRequest.getNome() + ".");
-        }
-        categoria.setNome(dtoRequest.getNome());
-        categoria.getProdutos().clear();
-        for(UpdateProdutoCategoriaRequestDTO updateProdutoCategoriaRequestDTO : dtoRequest.getProdutos()) {
-            Produto produto = produtoRepository.findById(updateProdutoCategoriaRequestDTO.getId()).
-                    orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + updateProdutoCategoriaRequestDTO.getId() + " não encontrado."));
-            categoria.getProdutos().add(produto);
-        }
-        return new UpdateCategoriaResponseDTO(categoriaRepository.save(categoria));
     }
 
 }

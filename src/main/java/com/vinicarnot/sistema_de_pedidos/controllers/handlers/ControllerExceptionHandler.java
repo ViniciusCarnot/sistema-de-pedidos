@@ -72,7 +72,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleInvalidJsonException(HttpMessageNotReadableException e) {
+    public ResponseEntity<String> httpMessageNotReadableException(HttpMessageNotReadableException e) {
         return ResponseEntity.badRequest().body("Erro na leitura do JSON: Valor de campo inválido ou fora do padrão.");
     }
 
