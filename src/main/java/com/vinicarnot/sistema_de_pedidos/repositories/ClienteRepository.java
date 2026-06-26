@@ -1,17 +1,29 @@
 package com.vinicarnot.sistema_de_pedidos.repositories;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
+import com.vinicarnot.sistema_de_pedidos.projections.UserDetailsProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-    UserDetails findByEmail(String email);
+    Optional<Cliente> findByEmail(String email);
 
     Optional<Cliente> findById(Long id);
+
+    @Query(nativeQuery = true, value = """
+				SELECT tb_cliente.email AS username, tb_cliente.senha AS senha, tb_role.id AS roleId, tb_role.nome AS roleNome
+				FROM tb_cliente
+				INNER JOIN tb_cliente_role ON tb_cliente.id = tb_cliente_role.cliente_id
+				INNER JOIN tb_role ON tb_role.id = tb_cliente_role.role_id
+				WHERE tb_cliente.email = :email
+			""")
+    List<UserDetailsProjection> procurarClienteERolesPorEmail(String email);
 
 }

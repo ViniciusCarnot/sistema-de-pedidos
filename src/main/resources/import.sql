@@ -84,10 +84,19 @@ INSERT INTO tb_endereco (id, bairro, logradouro, numero, cidade_id) VALUES (8, '
 INSERT INTO tb_endereco (id, bairro, logradouro, numero, cidade_id) VALUES (9, 'CCC', 'CCC', 'CCC', 3);
 INSERT INTO tb_endereco (id, bairro, logradouro, numero, cidade_id) VALUES (10, 'DDD', 'DDD', 'DDD', 4);
 
-INSERT INTO tb_cliente (id, cpf_ou_cnpj, email, nome, role, senha, tipo) VALUES (6, '842.107.660-31', 'albertorodrigues@email.com', 'Alberto Rodrigues', 'NORMAL', '$2a$10$hVXWCGm/1zQgBiB6RoZRyOj.46zUeMdj5ggvPIS3hxnY45X3LFm6K', 'PESSOA_FISICA');
-INSERT INTO tb_cliente (id, cpf_ou_cnpj, email, nome, role, senha, tipo) VALUES (7, '842.107.660-31', 'bernardosilva@email.com', 'Bernardo Silva', 'ADMIN', '$2a$10$Y19DyKkLcKmr5bpUmWu9c.FKXjNJYMDpMEh9V43/DN/XUvvwEM7ES', 'PESSOA_FISICA');
-INSERT INTO tb_cliente (id, cpf_ou_cnpj, email, nome, role, senha, tipo) VALUES (8, '418.502.610-33', 'carlosalves@email.com', 'Carlos Alves', 'ADMIN', '$2a$10$5nPzWzXF6CZfgxNxTQOpeOe2oz7Zjp0MWxX9KteYhmFzo92kZEkZq', 'PESSOA_FISICA');
-INSERT INTO tb_cliente (id, cpf_ou_cnpj, email, nome, role, senha, tipo) VALUES (9, '953.740.180-80', 'danielramos@email.com', 'Daniel Ramos', 'NORMAL', '$2a$10$zbiQe3elLSIvk9xJRPgUA.45R1hrnFpzWAydHkUxi78FtTAlg0zc6', 'PESSOA_JURIDICA');
+INSERT INTO tb_role (id, nome) VALUES (1, 'ROLE_NORMAL');
+INSERT INTO tb_role (id, nome) VALUES (2, 'ROLE_ADMIN');
+
+INSERT INTO tb_cliente (id, nome, email, senha, cpf_ou_cnpj, tipo) VALUES (6, 'Alberto Rodrigues', 'albertorodrigues@email.com', '$2a$10$hVXWCGm/1zQgBiB6RoZRyOj.46zUeMdj5ggvPIS3hxnY45X3LFm6K', '842.107.660-31', 'PESSOA_FISICA');
+INSERT INTO tb_cliente (id, nome, email, senha, cpf_ou_cnpj, tipo) VALUES (7, 'Bernardo Silva', 'bernardosilva@email.com', '$2a$10$Y19DyKkLcKmr5bpUmWu9c.FKXjNJYMDpMEh9V43/DN/XUvvwEM7ES', '842.107.660-31', 'PESSOA_FISICA');
+INSERT INTO tb_cliente (id, nome, email, senha, cpf_ou_cnpj, tipo) VALUES (8, 'Carlos Alves', 'carlosalves@email.com', '$2a$10$5nPzWzXF6CZfgxNxTQOpeOe2oz7Zjp0MWxX9KteYhmFzo92kZEkZq', '418.502.610-33', 'PESSOA_FISICA');
+INSERT INTO tb_cliente (id, nome, email, senha, cpf_ou_cnpj, tipo) VALUES (9, 'Daniel Ramos', 'danielramos@email.com', '$2a$10$zbiQe3elLSIvk9xJRPgUA.45R1hrnFpzWAydHkUxi78FtTAlg0zc6', '953.740.180-80', 'PESSOA_JURIDICA');
+
+INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (6, 1);
+INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (6, 2);
+INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (7, 2);
+INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (8, 1);
+INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (9, 1);
 
 INSERT INTO tb_telefone (id, numero, cliente_id) VALUES (5, '(99) 99999-9999', 6);
 INSERT INTO tb_telefone (id, numero, cliente_id) VALUES (6, '(61) 98115-6673', 6);

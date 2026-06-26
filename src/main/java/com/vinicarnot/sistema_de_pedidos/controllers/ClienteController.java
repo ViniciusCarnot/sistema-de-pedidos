@@ -24,15 +24,6 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @Operation(summary = "Usuário atualiza próprio conta.", method = "PUT")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "401", description = "Erro: login inválido ou login expirado."),
-            @ApiResponse(responseCode = "403", description = "Erro: falha na autorização. Usuário sem as permissões necessárias."),
-            @ApiResponse(responseCode = "404", description = "Erro: não foi possível encontrar um usuário com as credenciais informadas."),
-            @ApiResponse(responseCode = "404", description = "Erro: não foi possível encontrar uma cidade com o id informado."),
-            @ApiResponse(responseCode = "404", description = "Erro: não foi possível encontrar um estado com o id informado."),
-            @ApiResponse(responseCode = "201", description = "Conta atualizada com sucesso.")
-    })
     @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @PutMapping("/me")
     public ResponseEntity<UpdateClienteResponseDTO> atualizarConta(@RequestBody @Valid UpdateClienteRequestDTO dto) {

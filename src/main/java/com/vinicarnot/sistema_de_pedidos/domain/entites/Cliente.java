@@ -1,7 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.domain.entites;
 
 import com.vinicarnot.sistema_de_pedidos.domain.enums.TipoCliente;
-import com.vinicarnot.sistema_de_pedidos.domain.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
@@ -9,12 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -46,9 +43,12 @@ public class Cliente implements UserDetails {
     @Setter
     private TipoCliente tipo;
 
-    @Enumerated(EnumType.STRING)
-    @Setter
-    private UserRole role;
+    @ManyToMany
+    @JoinTable(name = "tb_cliente_role",
+            joinColumns = @JoinColumn(name = "cliente_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "cliente")
     private Set<Pedido> pedidos = new HashSet<>();
@@ -68,24 +68,31 @@ public class Cliente implements UserDetails {
     private Set<Telefone> telefones = new HashSet<>();
 
     public Cliente(Long id, String nome, String email, String senha, String cpfOuCnpj,
-                   TipoCliente tipo, UserRole role) {
+                   TipoCliente tipo) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.cpfOuCnpj = cpfOuCnpj;
         this.tipo = tipo;
-        this.role = role;
+    }
+
+    public void adicionarRole(Role role) {
+        roles.add(role);
+    }
+
+    public boolean temRole(String nomeRole) {
+        for(Role role : roles) {
+            if(role.getAuthority().equals(nomeRole)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_NORMAL"));
-        }
-        else {
-            return List.of(new SimpleGrantedAuthority("ROLE_NORMAL"));
-        }
+        return roles;
     }
 
     @Override

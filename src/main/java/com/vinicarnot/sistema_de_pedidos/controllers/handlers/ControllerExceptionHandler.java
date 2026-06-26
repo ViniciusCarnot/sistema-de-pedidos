@@ -76,8 +76,8 @@ public class ControllerExceptionHandler {
         return ResponseEntity.badRequest().body("Erro na leitura do JSON: Valor de campo inválido ou fora do padrão.");
     }
 
-    @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ErroCustomizado> authorizationDeniedException(AuthorizationDeniedException e, HttpServletRequest request) {
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErroCustomizado> forbiddenException(ForbiddenException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.FORBIDDEN;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), "Cliente sem permissão para acessar este recurso.", request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
