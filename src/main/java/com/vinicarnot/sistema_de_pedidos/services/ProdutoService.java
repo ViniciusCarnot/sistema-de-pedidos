@@ -1,13 +1,14 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
-import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateProdutoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarProdutoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateProdutoRequestDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.CreateProdutoResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseAdminDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.LerProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateProdutoResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Categoria;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
+import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.specifications.ProdutoSpecifications;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
@@ -27,10 +28,13 @@ public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
 
+    private final CategoriaRepository categoriaRepository;
+
     private final ClienteService clienteService;
 
-    public ProdutoService(ProdutoRepository produtoRepository, ClienteService clienteService) {
+    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository, ClienteService clienteService) {
         this.produtoRepository = produtoRepository;
+        this.categoriaRepository = categoriaRepository;
         this.clienteService = clienteService;
     }
 
@@ -53,7 +57,7 @@ public class ProdutoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CreateProdutoResponseDTO adicionarProduto(CreateProdutoRequestDTO dtoRequest) {
+    public CriarProdutoRespostaDTO adicionarProduto(CriarProdutoRequisicaoDTO dtoRequest) {
         Optional<Produto> produto = produtoRepository.findByNomeIgnoreCase(dtoRequest.getNome());
         if(produto.isPresent()) {
             throw new RecursoJaExistenteException("Já existe um produto cadastrado com esse nome.");
@@ -62,7 +66,7 @@ public class ProdutoService {
         novoProduto.setNome(dtoRequest.getNome());
         novoProduto.setPreco(dtoRequest.getPreco());
         novoProduto.setStatusProduto(dtoRequest.getStatusProduto());
-        return new CreateProdutoResponseDTO(produtoRepository.save(novoProduto));
+        return new CriarProdutoRespostaDTO(produtoRepository.save(novoProduto));
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -8,16 +8,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
-public class CreateProdutoRequestDTO {
+public class CriarProdutoRequisicaoDTO {
 
     @NotBlank(message = "O campo 'nome' é obrigatório.")
     private String nome;
 
     @NotNull(message = "O campo 'preco' é obrigatório.")
-    @PositiveOrZero(message = "O valor do campo 'Preço' deve ser " +
+    @PositiveOrZero(message = "O valor do campo 'preco' deve ser " +
             "positivo ou igual a zero.")
     private BigDecimal preco;
 

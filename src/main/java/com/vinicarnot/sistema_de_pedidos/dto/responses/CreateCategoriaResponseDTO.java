@@ -19,13 +19,13 @@ public class CreateCategoriaResponseDTO {
     @Setter
     private String nome;
 
-    private Set<CreateProdutoResponseDTO> produtos = new HashSet<>();
+    private Set<CriarProdutoRespostaDTO> produtos = new HashSet<>();
 
     public CreateCategoriaResponseDTO(Categoria categoria) {
         id = categoria.getId();
         nome = categoria.getNome();
         for(Produto produto : categoria.getProdutos()) {
-            produtos.add(new CreateProdutoResponseDTO(produto));
+            produtos.add(new CriarProdutoRespostaDTO(produto));
         }
     }
 
