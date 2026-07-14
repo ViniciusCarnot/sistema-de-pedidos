@@ -4,12 +4,9 @@ import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateProdutoRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateProdutoRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.CreateProdutoResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseAdminDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.LerProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateProdutoResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.services.ProdutoService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,8 +28,22 @@ public class ProdutoController {
         this.produtoService = produtoService;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<LerProdutoRespostaDTO> lerProduto(@PathVariable Long id) {
+        return ResponseEntity.ok(produtoService.lerProduto(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<LerProdutoRespostaDTO>> lerProdutos(
+            @RequestParam(name = "nome", defaultValue = "") String nome,
+            @RequestParam(name = "precoMaximo", defaultValue = "12000.00") String precoMaximo,
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(produtoService.lerProdutos(nome, precoMaximo, pageable));
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/produtos")
+    @PostMapping
     public ResponseEntity<CreateProdutoResponseDTO> adicionarProduto(@Valid @RequestBody CreateProdutoRequestDTO dtoRequest) {
         CreateProdutoResponseDTO dtoResponse = produtoService.adicionarProduto(dtoRequest);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -41,30 +52,16 @@ public class ProdutoController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/produtos/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> removerProduto(@PathVariable Long id) {
         produtoService.removerProduto(id);
         return ResponseEntity.ok("Produto deletado com sucesso.");
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/produtos/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UpdateProdutoResponseDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody UpdateProdutoRequestDTO dtoRequest) {
         return ResponseEntity.ok(produtoService.atualizarProduto(id, dtoRequest));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ReadProdutoResponseDTO> lerProduto(@PathVariable Long id) {
-        return ResponseEntity.ok(produtoService.lerProduto(id));
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<ReadProdutoResponseDTO>> lerProdutos(
-            @RequestParam(name = "nome", defaultValue = "") String nome,
-            @RequestParam(name = "precoMaximo", defaultValue = "12000.00") String precoMaximo,
-            Pageable pageable
-    ) {
-        return ResponseEntity.ok(produtoService.lerProdutos(nome, precoMaximo, pageable));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

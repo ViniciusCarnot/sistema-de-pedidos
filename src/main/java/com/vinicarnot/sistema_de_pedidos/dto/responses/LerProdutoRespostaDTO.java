@@ -12,16 +12,18 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadProdutoResponseDTO {
+public class LerProdutoRespostaDTO {
 
     private Long id;
     private String nome;
     private BigDecimal preco;
+    private String statusProduto;
 
-    public ReadProdutoResponseDTO(Produto produto) {
+    public LerProdutoRespostaDTO(Produto produto) {
         id = produto.getId();
         nome = produto.getNome();
         preco = produto.getPreco();
+        statusProduto = produto.getStatusProduto().getStatus();
     }
 
 }

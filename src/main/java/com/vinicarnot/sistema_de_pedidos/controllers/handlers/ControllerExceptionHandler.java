@@ -8,15 +8,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ControllerExceptionHandler {
 
     @ExceptionHandler(RecursoJaExistenteException.class)
@@ -80,6 +82,14 @@ public class ControllerExceptionHandler {
     public ResponseEntity<ErroCustomizado> forbiddenException(ForbiddenException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.FORBIDDEN;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), "Cliente sem permissão para acessar este recurso.", request.getRequestURI());
+        return ResponseEntity.status(status).body(erro);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErroCustomizado> accessDeniedException(AccessDeniedException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), "Acesso negado. Você não possui a permissão necessária para acessar este recurso.",
+                request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
 

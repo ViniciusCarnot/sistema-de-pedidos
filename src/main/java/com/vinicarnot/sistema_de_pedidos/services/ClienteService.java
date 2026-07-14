@@ -47,7 +47,7 @@ public class ClienteService implements UserDetailsService {
 
     @Transactional(rollbackFor = Exception.class)
     public CreateClienteResponseDTO registrar(CreateClienteRequestDTO dtoRequest) {
-        if(clienteRepository.findByEmail(dtoRequest.getEmail()).isEmpty()) {
+        if(clienteRepository.findByEmail(dtoRequest.getEmail()).isPresent()) {
             throw new RecursoJaExistenteException("Já existe uma conta cadastrada com esse email.");
         }
         String senhaCriptografada = new BCryptPasswordEncoder().encode(dtoRequest.getSenha());

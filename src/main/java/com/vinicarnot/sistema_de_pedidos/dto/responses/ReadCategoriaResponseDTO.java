@@ -20,14 +20,14 @@ public class ReadCategoriaResponseDTO {
     @Setter
     private String nome;
 
-    private Set<ReadProdutoResponseDTO> produtos = new HashSet<>();
+    private Set<LerProdutoRespostaDTO> produtos = new HashSet<>();
 
     public ReadCategoriaResponseDTO(Categoria categoria) {
         id = categoria.getId();
         nome = categoria.getNome();
         for(Produto produto : categoria.getProdutos()) {
-            if(produto.getStatusProduto().equals(StatusProduto.ATIVO)) {
-                produtos.add(new ReadProdutoResponseDTO(produto));
+            if(produto.getStatusProduto().equals(StatusProduto.DISPONIVEL)) {
+                produtos.add(new LerProdutoRespostaDTO(produto));
             }
         }
     }

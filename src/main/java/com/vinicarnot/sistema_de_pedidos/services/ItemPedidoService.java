@@ -26,7 +26,7 @@ public class ItemPedidoService {
     public void adicionarItemPedido(Pedido pedido, CreatePedidoRequestDTO dtoRequest) {
         for(CreateItemPedidoRequestDTO createItemPedidoRequestDTO : dtoRequest.getItems()) {
             Produto produto = produtoRepository.getReferenceById(createItemPedidoRequestDTO.getIdProduto());
-            if(produto.getStatusProduto().equals(StatusProduto.INATIVO)) {
+            if(produto.getStatusProduto().equals(StatusProduto.INDISPONIVEL)) {
                 throw new RecursoNaoEncontradoException("Produto com o id: " + createItemPedidoRequestDTO.getIdProduto() +
                 " não foi encontrado.");
             }
