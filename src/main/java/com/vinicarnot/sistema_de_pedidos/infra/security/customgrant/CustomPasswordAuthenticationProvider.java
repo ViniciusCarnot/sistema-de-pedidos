@@ -64,11 +64,11 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
         try {
             user = userDetailsService.loadUserByUsername(username);
         } catch (UsernameNotFoundException e) {
-            throw new OAuth2AuthenticationException("Invalid credentials");
+            throw new OAuth2AuthenticationException("Usuário ou senha incorretos.");
         }
 
         if (!passwordEncoder.matches(password, user.getPassword()) || !user.getUsername().equals(username)) {
-            throw new OAuth2AuthenticationException("Invalid credentials");
+            throw new OAuth2AuthenticationException("Usuário ou senha incorretos.");
         }
 
         authorizedScopes = user.getAuthorities().stream()

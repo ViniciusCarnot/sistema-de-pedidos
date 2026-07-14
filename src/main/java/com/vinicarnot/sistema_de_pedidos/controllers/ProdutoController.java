@@ -10,12 +10,16 @@ import com.vinicarnot.sistema_de_pedidos.services.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.net.URI;
+import java.util.List;
 
 
 @RestController
@@ -35,11 +39,12 @@ public class ProdutoController {
 
     @GetMapping
     public ResponseEntity<Page<LerProdutoRespostaDTO>> lerProdutos(
-            @RequestParam(name = "nome", defaultValue = "") String nome,
-            @RequestParam(name = "precoMaximo", defaultValue = "12000.00") String precoMaximo,
-            Pageable pageable
-    ) {
-        return ResponseEntity.ok(produtoService.lerProdutos(nome, precoMaximo, pageable));
+            @RequestParam(name = "nome", required = false) String nome,
+            @RequestParam(name = "precoMaximo", required = false) BigDecimal precoMaximo,
+            @RequestParam(value = "categoriasIds", required = false) List<Long> categoriasIds,
+            @PageableDefault(page = 0, size = 12, sort = "preco") Pageable pageable
+            ) {
+        return ResponseEntity.ok(produtoService.lerProdutos(nome, precoMaximo, categoriasIds, pageable));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

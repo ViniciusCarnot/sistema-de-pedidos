@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,6 +39,17 @@ public class ProdutoService {
         Produto produto = produtoRepository.findById(id).
                 orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com esse id."));
         return new LerProdutoRespostaDTO(produto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LerProdutoRespostaDTO> lerProdutos(String nome, BigDecimal precoMaximo, List<Long> categoriasIds, Pageable pageable) {
+
+        Specification<Produto> spec = ProdutoSpecifications.filtrar(nome, precoMaximo, categoriasIds);
+
+        Page<Produto> produtoPage = produtoRepository.findAll(spec, pageable);
+
+        return produtoPage.map(produto -> new LerProdutoRespostaDTO(produto));
+
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -70,19 +82,6 @@ public class ProdutoService {
         produto.setPreco(dtoRequest.getPreco());
         produto.setStatusProduto(dtoRequest.getStatusProduto());
         return new UpdateProdutoResponseDTO(produtoRepository.save(produto));
-    }
-
-    @Transactional(readOnly = true)
-    public Page<LerProdutoRespostaDTO> lerProdutos(String nome, String precoMaximo, Pageable pageable) {
-
-        BigDecimal precoMaximoBigDecimal = new BigDecimal(precoMaximo);
-
-        Specification<Produto> spec = ProdutoSpecifications.filtrar(nome, precoMaximoBigDecimal);
-
-        Page<Produto> result = produtoRepository.findAll(spec, pageable);
-
-        return result.map(produto -> new LerProdutoRespostaDTO(produto));
-
     }
 
     @Transactional(readOnly = true)
