@@ -23,6 +23,9 @@ public class ItemPedido {
     private ItemPedidoPK id = new ItemPedidoPK();
 
     @Setter
+    private String nomeProduto;
+
+    @Setter
     private Integer quantidade;
 
     @Column(precision = 12, scale = 2)
@@ -32,11 +35,12 @@ public class ItemPedido {
     @Setter
     private BigDecimal descontoUnitario;
 
-    public ItemPedido(Produto produto, Pedido pedido, Integer quantidade, BigDecimal precoUnitario, BigDecimal descontoUnitario) {
+    public ItemPedido(Produto produto, Pedido pedido, Integer quantidade, BigDecimal descontoUnitario) {
         id.setProduto(produto);
         id.setPedido(pedido);
+        nomeProduto = produto.getNome();
         this.quantidade = quantidade;
-        this.precoUnitario = precoUnitario;
+        precoUnitario = produto.getPreco();
         this.descontoUnitario = descontoUnitario;
     }
 

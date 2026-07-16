@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @Getter
 @NoArgsConstructor
-public class UpdateProdutoRequestDTO {
+public class AtualizarProdutoRequisicaoDTO {
 
     @NotBlank(message = "O campo 'nome' é obrigatório.")
     private String nome;

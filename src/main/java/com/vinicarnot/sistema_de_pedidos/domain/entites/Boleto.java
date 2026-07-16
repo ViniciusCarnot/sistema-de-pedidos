@@ -15,11 +15,11 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "tb_boleto")
-@DiscriminatorValue("BOLETO")
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@DiscriminatorValue("BOLETO")
 public class Boleto extends Pagamento {
 
     public Boleto(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, LocalDate dataVencimento, LocalDate dataPagamento) {

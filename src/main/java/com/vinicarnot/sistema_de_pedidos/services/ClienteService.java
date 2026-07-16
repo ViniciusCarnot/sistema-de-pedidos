@@ -1,11 +1,11 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Role;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateClienteRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarClienteRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateClienteRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateEnderecoRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateTelefoneRequestDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.CreateClienteResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarClienteRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadClienteResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateClienteResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ClienteService implements UserDetailsService {
@@ -46,20 +45,21 @@ public class ClienteService implements UserDetailsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CreateClienteResponseDTO registrar(CreateClienteRequestDTO dtoRequest) {
-        if(clienteRepository.findByEmail(dtoRequest.getEmail()).isPresent()) {
+    public CriarClienteRespostaDTO cadastrarCliente(CriarClienteRequisicaoDTO dtoRequisicao) {
+        if(clienteRepository.findByEmail(dtoRequisicao.getEmail()).isPresent()) {
             throw new RecursoJaExistenteException("Já existe uma conta cadastrada com esse email.");
         }
-        String senhaCriptografada = new BCryptPasswordEncoder().encode(dtoRequest.getSenha());
+        String senhaCriptografada = new BCryptPasswordEncoder().encode(dtoRequisicao.getSenha());
         Cliente novoCliente = new Cliente();
-        novoCliente.setNome(dtoRequest.getNome());
-        novoCliente.setEmail(dtoRequest.getEmail());
+        novoCliente.setNome(dtoRequisicao.getNome());
+        novoCliente.setEmail(dtoRequisicao.getEmail());
         novoCliente.setSenha(senhaCriptografada);
         Role role = roleRepository.findByNome("ROLE_NORMAL")
                         .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível atribuir a role 'ROLE_NORMAL' ao novo cliente."));
         novoCliente.adicionarRole(role);
+        novoCliente.setAtivo(true);
 
-        return new CreateClienteResponseDTO(clienteRepository.save(novoCliente));
+        return new CriarClienteRespostaDTO(clienteRepository.save(novoCliente));
 
     }
 
@@ -105,6 +105,7 @@ public class ClienteService implements UserDetailsService {
         Cliente cliente = new Cliente();
         cliente.setEmail(result.get(0).getUsername());
         cliente.setSenha(result.get(0).getSenha());
+        cliente.setAtivo(result.get(0).getAtivo());
         for (UserDetailsProjection projection : result) {
             cliente.adicionarRole(new Role(projection.getRoleId(), projection.getRoleNome()));
         }

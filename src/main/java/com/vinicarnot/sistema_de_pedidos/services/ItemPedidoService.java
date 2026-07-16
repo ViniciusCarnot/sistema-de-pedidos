@@ -33,7 +33,6 @@ public class ItemPedidoService {
             ItemPedido itemPedido = new ItemPedido(produto,
                     pedido,
                     createItemPedidoRequestDTO.getQuantidade(),
-                    produto.getPreco(),
                     calculoDescontoItemPedido(produto.getPreco(), createItemPedidoRequestDTO.getPrecoPago())
             );
             pedido.getItemsPedidos().add(itemPedido);

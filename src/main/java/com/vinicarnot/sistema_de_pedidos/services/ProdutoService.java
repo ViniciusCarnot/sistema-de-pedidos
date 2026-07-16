@@ -1,11 +1,10 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarProdutoRequisicaoDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateProdutoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarProdutoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarProdutoRespostaDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseAdminDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.LerProdutoRespostaDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateProdutoResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.AtualizarProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Categoria;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
 import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
@@ -40,8 +39,8 @@ public class ProdutoService {
 
     @Transactional(readOnly = true)
     public LerProdutoRespostaDTO lerProduto(Long id) {
-        Produto produto = produtoRepository.findById(id).
-                orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com esse id."));
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com o id: " + id + " não foi encontrado."));
         return new LerProdutoRespostaDTO(produto);
     }
 
@@ -60,7 +59,7 @@ public class ProdutoService {
     public CriarProdutoRespostaDTO adicionarProduto(CriarProdutoRequisicaoDTO dtoRequest) {
         Optional<Produto> produto = produtoRepository.findByNomeIgnoreCase(dtoRequest.getNome());
         if(produto.isPresent()) {
-            throw new RecursoJaExistenteException("Já existe um produto cadastrado com esse nome.");
+            throw new RecursoJaExistenteException("Já existe um produto cadastrado com o nome: " + dtoRequest.getNome() + ".");
         }
         Produto novoProduto = new Produto();
         novoProduto.setNome(dtoRequest.getNome());
@@ -70,35 +69,22 @@ public class ProdutoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public AtualizarProdutoRespostaDTO atualizarProduto(Long idProduto, AtualizarProdutoRequisicaoDTO dtoRequest) {
+        Produto produto = produtoRepository.findById(idProduto).
+                orElseThrow(() -> new RecursoNaoEncontradoException("Produto com o id: " + idProduto + " não encontrado."));
+        produto.setNome(dtoRequest.getNome());
+        produto.setPreco(dtoRequest.getPreco());
+        produto.setStatusProduto(dtoRequest.getStatusProduto());
+        return new AtualizarProdutoRespostaDTO(produtoRepository.save(produto));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void removerProduto(Long id) {
         Produto produto = produtoRepository.getReferenceById(id);
         for(Categoria categoria : produto.getCategorias()) {
             categoria.getProdutos().remove(produto);
         }
         produtoRepository.delete(produto);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public UpdateProdutoResponseDTO atualizarProduto(Long id, UpdateProdutoRequestDTO dtoRequest) {
-        Produto produto = produtoRepository.findById(id).
-                orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com esse id."));
-        produto.setNome(dtoRequest.getNome());
-        produto.setPreco(dtoRequest.getPreco());
-        produto.setStatusProduto(dtoRequest.getStatusProduto());
-        return new UpdateProdutoResponseDTO(produtoRepository.save(produto));
-    }
-
-    @Transactional(readOnly = true)
-    public ReadProdutoResponseAdminDTO adminLerProduto(Long id) {
-        Produto produto = produtoRepository.findById(id).
-                orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com esse id."));
-        return new ReadProdutoResponseAdminDTO(produto);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<ReadProdutoResponseAdminDTO> adminLerProdutos(Pageable pageable) {
-        Page<Produto> pageProdutos = produtoRepository.findAll(pageable);
-        return pageProdutos.map(produto -> new ReadProdutoResponseAdminDTO(produto));
     }
 
 }

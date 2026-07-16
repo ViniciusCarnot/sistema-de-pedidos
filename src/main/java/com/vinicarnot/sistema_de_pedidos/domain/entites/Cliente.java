@@ -43,6 +43,10 @@ public class Cliente implements UserDetails {
     @Setter
     private TipoCliente tipo;
 
+    @Column(nullable = false)
+    @Setter
+    private boolean ativo;
+
     @ManyToMany
     @JoinTable(name = "tb_cliente_role",
             joinColumns = @JoinColumn(name = "cliente_id"),
@@ -68,13 +72,14 @@ public class Cliente implements UserDetails {
     private Set<Telefone> telefones = new HashSet<>();
 
     public Cliente(Long id, String nome, String email, String senha, String cpfOuCnpj,
-                   TipoCliente tipo) {
+                   TipoCliente tipo, boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.cpfOuCnpj = cpfOuCnpj;
         this.tipo = tipo;
+        this.ativo = ativo;
     }
 
     public void adicionarRole(Role role) {
@@ -97,12 +102,12 @@ public class Cliente implements UserDetails {
 
     @Override
     public String getPassword() {
-        return senha;
+        return this.senha;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return this.email;
     }
 
     @Override
@@ -122,6 +127,6 @@ public class Cliente implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.ativo;
     }
 }

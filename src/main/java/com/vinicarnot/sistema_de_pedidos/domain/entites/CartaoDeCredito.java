@@ -12,11 +12,11 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "tb_cartao_de_credito")
-@DiscriminatorValue("CARTAO_DE_CREDITO")
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@DiscriminatorValue("CARTAO_DE_CREDITO")
 public class CartaoDeCredito extends Pagamento {
 
     public CartaoDeCredito(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, Integer quantidadeParcelas) {

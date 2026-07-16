@@ -12,14 +12,14 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateClienteResponseDTO {
+public class CriarClienteRespostaDTO {
 
     private Long id;
     private String nome;
     private String email;
     private List<RoleResponseDTO> roles = new ArrayList<>();
 
-    public CreateClienteResponseDTO(Cliente cliente) {
+    public CriarClienteRespostaDTO(Cliente cliente) {
         id = cliente.getId();
         nome = cliente.getNome();
         email = cliente.getEmail();

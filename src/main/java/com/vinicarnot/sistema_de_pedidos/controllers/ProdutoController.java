@@ -1,11 +1,10 @@
 package com.vinicarnot.sistema_de_pedidos.controllers;
 
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarProdutoRequisicaoDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateProdutoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarProdutoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarProdutoRespostaDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadProdutoResponseAdminDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.LerProdutoRespostaDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateProdutoResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.AtualizarProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.services.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -56,28 +55,16 @@ public class ProdutoController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{idProduto}")
+    public ResponseEntity<AtualizarProdutoRespostaDTO> atualizarProduto(@PathVariable Long idProduto, @Valid @RequestBody AtualizarProdutoRequisicaoDTO dtoRequest) {
+        return ResponseEntity.ok(produtoService.atualizarProduto(idProduto, dtoRequest));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> removerProduto(@PathVariable Long id) {
         produtoService.removerProduto(id);
         return ResponseEntity.ok("Produto deletado com sucesso.");
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/{id}")
-    public ResponseEntity<UpdateProdutoResponseDTO> atualizarProduto(@PathVariable Long id, @Valid @RequestBody UpdateProdutoRequestDTO dtoRequest) {
-        return ResponseEntity.ok(produtoService.atualizarProduto(id, dtoRequest));
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/produtos/{id}")
-    public ResponseEntity<ReadProdutoResponseAdminDTO> adminLerProduto(@PathVariable Long id) {
-        return ResponseEntity.ok(produtoService.adminLerProduto(id));
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/produtos")
-    public ResponseEntity<Page<ReadProdutoResponseAdminDTO>> adminLerProdutos(Pageable pageable) {
-        return ResponseEntity.ok(produtoService.adminLerProdutos(pageable));
     }
 
 }

@@ -71,6 +71,16 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
             throw new OAuth2AuthenticationException("Usuário ou senha incorretos.");
         }
 
+        // VALIDAÇÃO DA CONTA ATIVA: Se as credenciais estiverem certas, valida se o usuário está ativo
+        if (!user.isEnabled()) {
+            throw new OAuth2AuthenticationException("Esta conta foi desativada. Entre em contato com o suporte.");
+        }
+
+        // --- DEBBUG: Imprime no console do Spring para você ver o valor real ---
+        System.out.println(">>> Tentativa de login do usuário: " + username);
+        System.out.println(">>> O método user.isEnabled() retornou: " + user.isEnabled());
+        // ----------------------------------------------------------------------
+
         authorizedScopes = user.getAuthorities().stream()
                 .map(scope -> scope.getAuthority())
                 .filter(scope -> registeredClient.getScopes().contains(scope))

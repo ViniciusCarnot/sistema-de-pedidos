@@ -12,14 +12,14 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateProdutoResponseDTO {
+public class AtualizarProdutoRespostaDTO {
 
     private Long id;
     private String nome;
     private BigDecimal preco;
     private String statusProduto;
 
-    public UpdateProdutoResponseDTO(Produto produto) {
+    public AtualizarProdutoRespostaDTO(Produto produto) {
         id = produto.getId();
         nome = produto.getNome();
         preco = produto.getPreco();

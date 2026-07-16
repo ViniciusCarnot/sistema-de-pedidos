@@ -1,12 +1,12 @@
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('PC Gamer Entrada', 3300.0, 'INDISPONIVEL');
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('GTA San Andreas', 65.0, 'DISPONIVEL');
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('GTA Vice City', 25.0, 'DISPONIVEL');
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('Monitor 27pol QHD 165Hz', 850.0, 'DISPONIVEL');
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('Monitor 24pol FHD 165Hz', 600.0, 'DISPONIVEL');
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('Uncharted 4', 85.0, 'DISPONIVEL');
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('Impressora de Entrada', 128.99, 'DISPONIVEL');
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('PC GAMER Intermediário', 7500.0, 'DISPONIVEL');
-INSERT INTO tb_produto (nome, preco, status_produto) VALUES ('Need For Speed Most Wanted [2005] PS2 ', 15.0, 'INDISPONIVEL');
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('PC Gamer Entrada', 3300.0, 'INDISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('GTA San Andreas', 65.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('GTA Vice City', 25.0, 'DISPONIVEL', false);
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Monitor 27pol QHD 165Hz', 850.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Monitor 24pol FHD 165Hz', 600.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Uncharted 4', 85.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Impressora de Entrada', 128.99, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('PC GAMER Intermediário', 7500.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Need For Speed Most Wanted [2005] PS2 ', 15.0, 'INDISPONIVEL', true);
 
 INSERT INTO tb_categoria (nome) VALUES ('PC');
 INSERT INTO tb_categoria (nome) VALUES ('Jogos');
@@ -87,10 +87,10 @@ INSERT INTO tb_endereco (bairro, logradouro, numero, cidade_id) VALUES ('DDD', '
 INSERT INTO tb_role (nome) VALUES ('ROLE_NORMAL');
 INSERT INTO tb_role (nome) VALUES ('ROLE_ADMIN');
 
-INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo) VALUES ('Alberto Rodrigues', 'albertorodrigues@email.com', '$2a$10$hVXWCGm/1zQgBiB6RoZRyOj.46zUeMdj5ggvPIS3hxnY45X3LFm6K', '842.107.660-31', 'PESSOA_FISICA');
-INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo) VALUES ('Bernardo Silva', 'bernardosilva@email.com', '$2a$10$Y19DyKkLcKmr5bpUmWu9c.FKXjNJYMDpMEh9V43/DN/XUvvwEM7ES', '842.107.660-31', 'PESSOA_FISICA');
-INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo) VALUES ('Carlos Alves', 'carlosalves@email.com', '$2a$10$5nPzWzXF6CZfgxNxTQOpeOe2oz7Zjp0MWxX9KteYhmFzo92kZEkZq', '418.502.610-33', 'PESSOA_FISICA');
-INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo) VALUES ('Daniel Ramos', 'danielramos@email.com', '$2a$10$zbiQe3elLSIvk9xJRPgUA.45R1hrnFpzWAydHkUxi78FtTAlg0zc6', '953.740.180-80', 'PESSOA_JURIDICA');
+INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Alberto Rodrigues', 'alberto@email.com', '$2a$10$hVXWCGm/1zQgBiB6RoZRyOj.46zUeMdj5ggvPIS3hxnY45X3LFm6K', '842.107.660-31', 'PESSOA_FISICA', true);
+INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Bernardo Silva', 'bernardo@email.com', '$2a$10$Y19DyKkLcKmr5bpUmWu9c.FKXjNJYMDpMEh9V43/DN/XUvvwEM7ES', '842.107.660-31', 'PESSOA_FISICA', false);
+INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Carlos Alves', 'carlos@email.com', '$2a$10$5nPzWzXF6CZfgxNxTQOpeOe2oz7Zjp0MWxX9KteYhmFzo92kZEkZq', '418.502.610-33', 'PESSOA_FISICA', true);
+INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Daniel Ramos', 'daniel@email.com', '$2a$10$zbiQe3elLSIvk9xJRPgUA.45R1hrnFpzWAydHkUxi78FtTAlg0zc6', '953.740.180-80', 'PESSOA_JURIDICA', false);
 
 INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (1, 1);
 INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (1, 2);
@@ -118,10 +118,10 @@ INSERT INTO tb_pedido (instante_da_compra, cliente_id, endereco_de_entrega_id, s
 INSERT INTO tb_pedido (instante_da_compra, cliente_id, endereco_de_entrega_id, status_pedido) VALUES (TIMESTAMP WITH TIME ZONE '2026-02-03T15:43:39Z', 2, 2, 'ENTREGUE');
 INSERT INTO tb_pedido (instante_da_compra, cliente_id, endereco_de_entrega_id, status_pedido) VALUES (TIMESTAMP WITH TIME ZONE '2026-02-12T23:39:21Z', 3, 3, 'AGUARDANDO_PAGAMENTO');
 
-INSERT INTO tb_item_pedido (produto_id, pedido_id, quantidade, desconto_unitario, preco_unitario) VALUES (2, 1, 1, 0.00, 65.00);
-INSERT INTO tb_item_pedido (produto_id, pedido_id, quantidade, desconto_unitario, preco_unitario) VALUES (3, 1, 1, 10.00, 25.00);
-INSERT INTO tb_item_pedido (produto_id, pedido_id, quantidade, desconto_unitario, preco_unitario) VALUES (1, 2, 1, 300.00, 3300.00);
-INSERT INTO tb_item_pedido (produto_id, pedido_id, quantidade, desconto_unitario, preco_unitario) VALUES (4, 3, 1, 50.00, 850.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, desconto_unitario, preco_unitario) VALUES (2, 1, 'GTA San Andreas', 1, 0.00, 65.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, desconto_unitario, preco_unitario) VALUES (3, 1, 'GTA Vice City', 1, 10.00, 25.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, desconto_unitario, preco_unitario) VALUES (1, 2, 'PC Gamer Entrada', 1, 300.00, 3300.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, desconto_unitario, preco_unitario) VALUES (4, 3, 'Monitor 27pol QHD 165Hz',1, 50.00, 850.00);
 
 INSERT INTO tb_pagamento (pedido_id, tipo_pagamento, estado_pagamento) VALUES (1, 'BOLETO', 'PENDENTE');
 INSERT INTO tb_pagamento (pedido_id, tipo_pagamento, estado_pagamento) VALUES (2, 'CARTAO_DE_CREDITO', 'PENDENTE');

@@ -17,13 +17,18 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     Optional<Cliente> findById(Long id);
 
-    @Query(nativeQuery = true, value = """
-				SELECT tb_cliente.email AS username, tb_cliente.senha AS senha, tb_role.id AS roleId, tb_role.nome AS roleNome
-				FROM tb_cliente
-				INNER JOIN tb_cliente_role ON tb_cliente.id = tb_cliente_role.cliente_id
-				INNER JOIN tb_role ON tb_role.id = tb_cliente_role.role_id
-				WHERE tb_cliente.email = :email
-			""")
+    @Query(nativeQuery = true, value =
+		"SELECT " +
+			"tb_cliente.email AS username, " +
+			"tb_cliente.senha AS senha, " +
+			"tb_role.id AS roleId, " +
+			"tb_role.nome AS roleNome, " +
+			"tb_cliente.ativo AS ativo " +
+		"FROM tb_cliente " +
+		"INNER JOIN tb_cliente_role ON tb_cliente.id = tb_cliente_role.cliente_id " +
+		"INNER JOIN tb_role ON tb_role.id = tb_cliente_role.role_id " +
+		"WHERE tb_cliente.email = :email "
+	)
     List<UserDetailsProjection> procurarClienteERolesPorEmail(String email);
 
 }

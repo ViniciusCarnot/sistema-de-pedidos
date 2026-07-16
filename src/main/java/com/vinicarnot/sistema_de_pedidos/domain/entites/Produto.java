@@ -37,17 +37,21 @@ public class Produto {
     @Setter
     private StatusProduto statusProduto;
 
+    @Setter
+    private Boolean ativo;
+
     @ManyToMany(mappedBy = "produtos")
     private Set<Categoria> categorias = new HashSet<>();
 
     @OneToMany(mappedBy = "id.produto")
     private Set<ItemPedido> itemsPedidos = new HashSet<>();
 
-    public Produto(Long id, String nome, BigDecimal preco, StatusProduto statusProduto) {
+    public Produto(Long id, String nome, BigDecimal preco, StatusProduto statusProduto, Boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.preco = preco;
         this.statusProduto = statusProduto;
+        this.ativo = ativo;
     }
 
     public List<Pedido> getPedidos() {
