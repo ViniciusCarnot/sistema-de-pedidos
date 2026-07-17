@@ -15,17 +15,18 @@ import java.math.BigDecimal;
 public class LerProdutoRespostaDTO {
 
     private Long id;
+
     private String nome;
+
     private BigDecimal preco;
+
     private String disponibilidade;
-    private Boolean visibilidade;
 
     public LerProdutoRespostaDTO(Produto produto) {
         id = produto.getId();
         nome = produto.getNome();
         preco = produto.getPreco();
         disponibilidade = produto.getDisponibilidade().getStatus();
-        visibilidade = produto.getVisibilidade();
     }
 
 }

@@ -10,12 +10,20 @@ INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Nee
 
 INSERT INTO tb_categoria (nome) VALUES ('PC');
 INSERT INTO tb_categoria (nome) VALUES ('Jogos');
+INSERT INTO tb_categoria (nome) VALUES ('Jogos Antigos');
 
 INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (1, 1);
-INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (1, 8);
 INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (2, 2);
+INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (3, 2);
 INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (2, 3);
+INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (3, 3);
+INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (1, 4);
+INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (1, 5);
 INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (2, 6);
+INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (1, 7);
+INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (1, 8);
+INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (2, 9);
+INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (3, 9);
 
 INSERT INTO tb_estado (nome) VALUES ('Acre');
 INSERT INTO tb_estado (nome) VALUES ('Alagoas');

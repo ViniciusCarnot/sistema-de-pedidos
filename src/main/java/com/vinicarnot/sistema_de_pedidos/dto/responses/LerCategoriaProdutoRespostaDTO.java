@@ -26,9 +26,7 @@ public class LerCategoriaProdutoRespostaDTO {
         id = categoria.getId();
         nome = categoria.getNome();
         for(Produto produto : categoria.getProdutos()) {
-            if(produto.getDisponibilidade().equals(Disponibilidade.DISPONIVEL)) {
-                produtos.add(new LerProdutoRespostaDTO(produto));
-            }
+            produtos.add(new LerProdutoRespostaDTO(produto));
         }
     }
 

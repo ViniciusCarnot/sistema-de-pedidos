@@ -9,13 +9,16 @@ import com.vinicarnot.sistema_de_pedidos.domain.entites.Categoria;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
 import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
+import com.vinicarnot.sistema_de_pedidos.repositories.specifications.ProdutoSpecifications;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,6 +38,29 @@ public class CategoriaService {
         return pageCategoria.map(categoria -> new LerCategoriaRespostaDTO(categoria));
     }
 
+    @Transactional(readOnly = true)
+    public LerCategoriaRespostaDTO lerCategoria(Long idCategoria) {
+        Categoria categoria = categoriaRepository.findById(idCategoria)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria com o id: " + idCategoria + " não encontrada."));
+        return new LerCategoriaRespostaDTO(categoria);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LerProdutoRespostaDTO> lerProdutosDeUmaCategoria(Long idCategoria, Pageable pageable) {
+        if(!categoriaRepository.existsById(idCategoria)) {
+            throw new RecursoNaoEncontradoException("Categoria com o id: " + idCategoria + " não encontrada.");
+        }
+        Specification<Produto> spec = ProdutoSpecifications.filtrar(
+                null,
+                null,
+                List.of(idCategoria),
+                true
+        );
+        Page<Produto> produtoPage = produtoRepository.findAll(spec, pageable);
+        return produtoPage.map(produto -> new LerProdutoRespostaDTO(produto));
+    }
+
+    /*
     @Transactional(rollbackFor = Exception.class)
     public CreateCategoriaResponseDTO adicionarCategoria(CreateCategoriaRequestDTO dtoRequest) {
         Optional<Categoria> categoria = categoriaRepository.findByNomeIgnoreCase(dtoRequest.getNome());
@@ -88,5 +114,6 @@ public class CategoriaService {
         Page<Categoria> pageCategoria = categoriaRepository.findAll(pageable);
         return pageCategoria.map(categoria -> new ReadCategoriaResponseAdminDTO(categoria));
     }
+    */
 
 }
