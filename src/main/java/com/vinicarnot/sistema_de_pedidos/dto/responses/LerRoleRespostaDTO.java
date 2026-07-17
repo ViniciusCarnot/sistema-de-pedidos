@@ -1,11 +1,24 @@
 package com.vinicarnot.sistema_de_pedidos.dto.responses;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Role;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public record LerRoleRespostaDTO(String nome) {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class LerRoleRespostaDTO {
 
-    public LerRoleRespostaDTO LerRoleRespostaDTO(Role role) {
-        return new LerRoleRespostaDTO(role.getAuthority());
+    private Long id;
+
+    private String nome;
+
+    public LerRoleRespostaDTO(Role role) {
+        id = role.getId();
+        nome = role.getAuthority();
     }
 
 }

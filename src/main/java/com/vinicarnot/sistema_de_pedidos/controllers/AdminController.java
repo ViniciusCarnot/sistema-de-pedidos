@@ -3,6 +3,7 @@ package com.vinicarnot.sistema_de_pedidos.controllers;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.*;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
 import com.vinicarnot.sistema_de_pedidos.services.CategoriaService;
+import com.vinicarnot.sistema_de_pedidos.services.ClienteService;
 import com.vinicarnot.sistema_de_pedidos.services.PedidoService;
 import com.vinicarnot.sistema_de_pedidos.services.ProdutoService;
 import jakarta.validation.Valid;
@@ -26,11 +27,13 @@ public class AdminController {
     private final ProdutoService produtoService;
     private final CategoriaService categoriaService;
     private final PedidoService pedidoService;
+    private final ClienteService clienteService;
 
-    public AdminController(ProdutoService produtoService, CategoriaService categoriaService, PedidoService pedidoService) {
+    public AdminController(ProdutoService produtoService, CategoriaService categoriaService, PedidoService pedidoService, ClienteService clienteService) {
         this.produtoService = produtoService;
         this.categoriaService = categoriaService;
         this.pedidoService = pedidoService;
+        this.clienteService = clienteService;
     }
 
     @GetMapping("/produtos/{idProduto}")
@@ -89,6 +92,16 @@ public class AdminController {
     public ResponseEntity<Void> adminRemoverCategoria(@PathVariable Long idCategoria) {
         categoriaService.adminRemoverCategoria(idCategoria);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/clientes")
+    public ResponseEntity<Page<AdminLerClienteRespostaDTO>> adminLerClientes(@PageableDefault(page = 0, size = 12, sort = "nome") Pageable pageable) {
+        return ResponseEntity.ok(clienteService.adminLerClientes(pageable));
+    }
+
+    @GetMapping("/clientes/{emailCliente}")
+    public ResponseEntity<AdminLerClienteRespostaDTO> adminLerCliente(@PathVariable String emailCliente) {
+        return ResponseEntity.ok(clienteService.adminLerCliente(emailCliente));
     }
 
     /*

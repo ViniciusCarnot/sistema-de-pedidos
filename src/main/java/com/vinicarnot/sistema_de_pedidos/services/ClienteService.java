@@ -5,6 +5,7 @@ import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarClienteRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateClienteRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateEnderecoRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateTelefoneRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.AdminLerClienteRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarClienteRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadClienteResponseDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateClienteResponseDTO;
@@ -16,6 +17,8 @@ import com.vinicarnot.sistema_de_pedidos.repositories.*;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
 import com.vinicarnot.sistema_de_pedidos.util.CustomUserUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -97,7 +100,7 @@ public class ClienteService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        List<UserDetailsProjection> result = clienteRepository.procurarClienteERolesPorEmail(username);
+        List<UserDetailsProjection> result = clienteRepository.procurarUserDetailsProjectionPorEmail(username);
         if (result.size() == 0) {
             throw new UsernameNotFoundException("Email não encontrado.");
         }
@@ -127,6 +130,18 @@ public class ClienteService implements UserDetailsService {
     public ReadClienteResponseDTO getMe() {
         Cliente entity = autenticado();
         return new ReadClienteResponseDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AdminLerClienteRespostaDTO> adminLerClientes(Pageable pageable) {
+        Page<Cliente> clientePage = clienteRepository.procurarTodosOsClientesERoles(pageable);
+        return clientePage.map(cliente -> new AdminLerClienteRespostaDTO(cliente));
+    }
+
+    public AdminLerClienteRespostaDTO adminLerCliente(String emailCliente) {
+        Cliente cliente = clienteRepository.procurarClienteERolesPorEmail(emailCliente)
+                .orElseThrow(() -> new UsernameNotFoundException("Não foi possível encontrar uma conta cadastrada com o email: " + emailCliente + "."));
+        return new AdminLerClienteRespostaDTO(cliente);
     }
 
 }
