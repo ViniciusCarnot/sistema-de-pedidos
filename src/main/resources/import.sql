@@ -6,11 +6,15 @@ INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Mon
 INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Uncharted 4', 85.0, 'DISPONIVEL', true);
 INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Impressora de Entrada', 128.99, 'DISPONIVEL', true);
 INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('PC GAMER Intermediário', 7500.0, 'DISPONIVEL', false);
-INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Need For Speed Most Wanted [2005] PS2 ', 15.0, 'INDISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Need For Speed Most Wanted [2005] PS2', 15.0, 'INDISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Teclado Aula F75', 315.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Teclado Mancer', 90.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Teclado Raze', 450.0, 'DISPONIVEL', true);
 
 INSERT INTO tb_categoria (nome) VALUES ('PC');
 INSERT INTO tb_categoria (nome) VALUES ('Jogos');
 INSERT INTO tb_categoria (nome) VALUES ('Jogos Antigos');
+INSERT INTO tb_categoria (nome) VALUES ('Mouses');
 
 INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (1, 1);
 INSERT INTO tb_categoria_produto (categoria_id, produto_id) VALUES (2, 2);

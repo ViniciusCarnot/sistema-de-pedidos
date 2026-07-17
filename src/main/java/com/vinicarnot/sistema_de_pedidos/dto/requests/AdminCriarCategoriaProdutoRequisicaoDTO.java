@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CreateProdutoCategoriaRequestDTO {
+public class AdminCriarCategoriaProdutoRequisicaoDTO {
 
     @NotNull(message = "O campo 'id' do Produto é obrigatório.")
     private Long id;

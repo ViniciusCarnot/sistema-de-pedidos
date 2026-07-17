@@ -67,34 +67,31 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
-    /*
+    @GetMapping("/categorias/{idCategoria}/produtos")
+    public ResponseEntity<Page<AdminLerProdutoRespostaDTO>> adminLerProdutosDeUmaCategoria(@PathVariable Long idCategoria, @PageableDefault(page = 0, size = 12, sort = "nome") Pageable pageable) {
+        return ResponseEntity.ok(categoriaService.adminLerProdutosDeUmaCategoria(idCategoria, pageable));
+    }
+
+
     @PostMapping("/categorias")
-    public ResponseEntity<CreateCategoriaResponseDTO> adicionarCategoria(@Valid @RequestBody CreateCategoriaRequestDTO dtoRequest) {
-        CreateCategoriaResponseDTO dtoResponse = categoriaService.adicionarCategoria(dtoRequest);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nome}").buildAndExpand(dtoResponse.getNome()).toUri();
-        return ResponseEntity.created(uri).body(dtoResponse);
+    public ResponseEntity<AdminCriarCategoriaRespostaDTO> adminAdicionarCategoria(@Valid @RequestBody AdminCriarCategoriaRequisicaoDTO dtoRequisicao) {
+        AdminCriarCategoriaRespostaDTO dtoResposta = categoriaService.adminAdicionarCategoria(dtoRequisicao);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dtoResposta.getId()).toUri();
+        return ResponseEntity.created(uri).body(dtoResposta);
     }
 
-    @DeleteMapping("/categorias/{id}")
-    public ResponseEntity<String> removerCategoria(@PathVariable Long id) {
-        categoriaService.removerCategoria(id);
-        return ResponseEntity.ok("Categoria removida com sucesso.");
+    @PutMapping("/categorias/{idCategoria}")
+    public ResponseEntity<AdminAtualizarCategoriaRespostaDTO> adminAtualizarCategoria(@PathVariable Long idCategoria, @Valid @RequestBody AdminAtualizarCategoriaRequisicaoDTO dtoRequisicao) {
+        return ResponseEntity.ok(categoriaService.adminAtualizarCategoria(idCategoria, dtoRequisicao));
     }
 
-    @PutMapping("/categorias/{id}")
-    public ResponseEntity<UpdateCategoriaResponseDTO> atualizarCategoria(@PathVariable Long id, @Valid @RequestBody UpdateCategoriaRequestDTO dtoRequest) {
-        return ResponseEntity.ok(categoriaService.atualizarCategoria(id, dtoRequest));
+    @DeleteMapping("/categorias/{idCategoria}")
+    public ResponseEntity<Void> adminRemoverCategoria(@PathVariable Long idCategoria) {
+        categoriaService.adminRemoverCategoria(idCategoria);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/categorias/{id}")
-    public ResponseEntity<ReadCategoriaResponseAdminDTO> adminLerCategoria(@PathVariable Long id) {
-        return ResponseEntity.ok(categoriaService.adminLerCategoria(id));
-    }
-
-    @GetMapping("/categorias")
-    public ResponseEntity<Page<ReadCategoriaResponseAdminDTO>> adminLerCategorias(Pageable pageable) {
-        return ResponseEntity.ok(categoriaService.adminLerCategorias(pageable));
-    }
+    /*
 
     @DeleteMapping("/pedidos/{id}")
     public ResponseEntity<String> adminCancelarPedido(@PathVariable Long id) {

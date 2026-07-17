@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Getter
 @NoArgsConstructor
-public class CreateCategoriaResponseDTO {
+public class AdminAtualizarCategoriaRespostaDTO {
 
     @Setter
     private Long id;
@@ -19,13 +19,13 @@ public class CreateCategoriaResponseDTO {
     @Setter
     private String nome;
 
-    private Set<AdminCriarProdutoRespostaDTO> produtos = new HashSet<>();
+    private Set<AdminAtualizarCategoriaProdutoRespostaDTO> produtos = new HashSet<>();
 
-    public CreateCategoriaResponseDTO(Categoria categoria) {
+    public AdminAtualizarCategoriaRespostaDTO(Categoria categoria) {
         id = categoria.getId();
         nome = categoria.getNome();
         for(Produto produto : categoria.getProdutos()) {
-            produtos.add(new AdminCriarProdutoRespostaDTO(produto));
+            produtos.add(new AdminAtualizarCategoriaProdutoRespostaDTO(produto));
         }
     }
 

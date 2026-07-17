@@ -101,6 +101,12 @@ public class ProdutoService {
     public AdminAtualizarProdutoRespostaDTO adminAtualizarProduto(Long idProduto, AdminAtualizarProdutoRequisicaoDTO dtoRequisicao) {
         Produto produto = produtoRepository.findById(idProduto).
                 orElseThrow(() -> new RecursoNaoEncontradoException("Produto com o id: " + idProduto + " não encontrado."));
+        Optional<Produto> produtoOptional = produtoRepository.findByNomeIgnoreCase(dtoRequisicao.getNome());
+        if(produtoOptional.isPresent()) {
+            if(!dtoRequisicao.getNome().equalsIgnoreCase(produto.getNome())) {
+                throw new RecursoJaExistenteException("Já existe um produto cadastrado com o nome: " + dtoRequisicao.getNome() + ".");
+            }
+        }
         produto.setNome(dtoRequisicao.getNome());
         produto.setPreco(dtoRequisicao.getPreco());
         produto.setDisponibilidade(dtoRequisicao.getDisponibilidade());
