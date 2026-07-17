@@ -1,12 +1,12 @@
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('PC Gamer Entrada', 3300.0, 'INDISPONIVEL', true);
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('GTA San Andreas', 65.0, 'DISPONIVEL', true);
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('GTA Vice City', 25.0, 'DISPONIVEL', false);
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Monitor 27pol QHD 165Hz', 850.0, 'DISPONIVEL', true);
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Monitor 24pol FHD 165Hz', 600.0, 'DISPONIVEL', true);
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Uncharted 4', 85.0, 'DISPONIVEL', true);
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Impressora de Entrada', 128.99, 'DISPONIVEL', true);
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('PC GAMER Intermediário', 7500.0, 'DISPONIVEL', true);
-INSERT INTO tb_produto (nome, preco, status_produto, ativo) VALUES ('Need For Speed Most Wanted [2005] PS2 ', 15.0, 'INDISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('PC Gamer Entrada', 3300.0, 'INDISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('GTA San Andreas', 65.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('GTA Vice City', 25.0, 'DISPONIVEL', false);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Monitor 27pol QHD 165Hz', 850.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Monitor 24pol FHD 165Hz', 600.0, 'DISPONIVEL', false);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Uncharted 4', 85.0, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Impressora de Entrada', 128.99, 'DISPONIVEL', true);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('PC GAMER Intermediário', 7500.0, 'DISPONIVEL', false);
+INSERT INTO tb_produto (nome, preco, disponibilidade, visibilidade) VALUES ('Need For Speed Most Wanted [2005] PS2 ', 15.0, 'INDISPONIVEL', true);
 
 INSERT INTO tb_categoria (nome) VALUES ('PC');
 INSERT INTO tb_categoria (nome) VALUES ('Jogos');

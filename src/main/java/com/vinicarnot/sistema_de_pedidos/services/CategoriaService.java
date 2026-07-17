@@ -4,10 +4,7 @@ import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateCategoriaRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateProdutoCategoriaRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateCategoriaRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateProdutoCategoriaRequestDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.CreateCategoriaResponseDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadCategoriaResponseAdminDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadCategoriaResponseDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateCategoriaResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Categoria;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
 import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
@@ -30,6 +27,12 @@ public class CategoriaService {
     public CategoriaService(CategoriaRepository categoriaRepository, ProdutoRepository produtoRepository) {
         this.categoriaRepository = categoriaRepository;
         this.produtoRepository = produtoRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LerCategoriaRespostaDTO> lerCategorias(Pageable pageable) {
+        Page<Categoria> pageCategoria = categoriaRepository.findAll(pageable);
+        return pageCategoria.map(categoria -> new LerCategoriaRespostaDTO(categoria));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -71,19 +74,6 @@ public class CategoriaService {
             categoria.getProdutos().add(produto);
         }
         return new UpdateCategoriaResponseDTO(categoriaRepository.save(categoria));
-    }
-
-    @Transactional(readOnly = true)
-    public ReadCategoriaResponseDTO lerCategoria(Long id) {
-        Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria não encontrada com id: " + id + "."));
-        return new ReadCategoriaResponseDTO(categoria);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<ReadCategoriaResponseDTO> lerCategorias(Pageable pageable) {
-        Page<Categoria> pageCategoria = categoriaRepository.findAll(pageable);
-        return pageCategoria.map(categoria -> new ReadCategoriaResponseDTO(categoria));
     }
 
     @Transactional(readOnly = true)

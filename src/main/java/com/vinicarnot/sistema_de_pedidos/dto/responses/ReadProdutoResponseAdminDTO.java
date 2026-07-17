@@ -22,7 +22,7 @@ public class ReadProdutoResponseAdminDTO {
         id = produto.getId();
         nome = produto.getNome();
         preco = produto.getPreco();
-        statusProduto = produto.getStatusProduto().getStatus();
+        statusProduto = produto.getDisponibilidade().getStatus();
     }
 
 }

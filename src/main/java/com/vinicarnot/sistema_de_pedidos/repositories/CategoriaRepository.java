@@ -17,8 +17,11 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
     Optional<Categoria> findByNomeIgnoreCase(String nome);
 
+    /*
     @EntityGraph(attributePaths = {"produtos"})
     @Query("SELECT cat FROM Categoria cat")
     Page<Categoria> findAll(Pageable pageable);
+    */
 
+    Page<Categoria> findAll(Pageable pageable);
 }

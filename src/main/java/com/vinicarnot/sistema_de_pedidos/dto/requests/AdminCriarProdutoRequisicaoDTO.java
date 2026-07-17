@@ -1,19 +1,21 @@
 package com.vinicarnot.sistema_de_pedidos.dto.requests;
 
-import com.vinicarnot.sistema_de_pedidos.domain.enums.StatusProduto;
+import com.vinicarnot.sistema_de_pedidos.domain.enums.Disponibilidade;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
 
-@Getter
 @NoArgsConstructor
-public class CriarProdutoRequisicaoDTO {
+@AllArgsConstructor
+@Setter
+@Getter
+public class AdminCriarProdutoRequisicaoDTO {
 
     @NotBlank(message = "O campo 'nome' é obrigatório.")
     private String nome;
@@ -23,7 +25,10 @@ public class CriarProdutoRequisicaoDTO {
             "positivo ou igual a zero.")
     private BigDecimal preco;
 
-    @NotNull(message = "O campo 'statusProduto' é obrigatório.")
-    private StatusProduto statusProduto;
+    @NotNull(message = "O campo 'disponibilidade' é obrigatório.")
+    private Disponibilidade disponibilidade;
+
+    @NotNull(message = "O campo 'visibilidade' é obrigatório.")
+    private Boolean visibilidade;
 
 }

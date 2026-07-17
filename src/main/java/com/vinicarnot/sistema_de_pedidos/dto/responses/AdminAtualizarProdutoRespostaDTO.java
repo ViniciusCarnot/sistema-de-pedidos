@@ -8,11 +8,11 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LerProdutoRespostaDTO {
+@Getter
+@Setter
+public class AdminAtualizarProdutoRespostaDTO {
 
     private Long id;
     private String nome;
@@ -20,7 +20,7 @@ public class LerProdutoRespostaDTO {
     private String disponibilidade;
     private Boolean visibilidade;
 
-    public LerProdutoRespostaDTO(Produto produto) {
+    public AdminAtualizarProdutoRespostaDTO(Produto produto) {
         id = produto.getId();
         nome = produto.getNome();
         preco = produto.getPreco();

@@ -19,13 +19,13 @@ public class UpdateCategoriaResponseDTO {
     @Setter
     private String nome;
 
-    private Set<AtualizarProdutoRespostaDTO> produtos = new HashSet<>();
+    private Set<AdminAtualizarProdutoRespostaDTO> produtos = new HashSet<>();
 
     public UpdateCategoriaResponseDTO(Categoria categoria) {
         id = categoria.getId();
         nome = categoria.getNome();
         for(Produto produto : categoria.getProdutos()) {
-            produtos.add(new AtualizarProdutoRespostaDTO(produto));
+            produtos.add(new AdminAtualizarProdutoRespostaDTO(produto));
         }
     }
 

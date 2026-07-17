@@ -8,22 +8,28 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AtualizarProdutoRespostaDTO {
+@Getter
+@Setter
+public class AdminLerProdutoRespostaDTO {
 
     private Long id;
-    private String nome;
-    private BigDecimal preco;
-    private String statusProduto;
 
-    public AtualizarProdutoRespostaDTO(Produto produto) {
+    private String nome;
+
+    private BigDecimal preco;
+
+    private String disponibilidade;
+
+    private Boolean visibilidade;
+
+    public AdminLerProdutoRespostaDTO(Produto produto) {
         id = produto.getId();
         nome = produto.getNome();
         preco = produto.getPreco();
-        statusProduto = produto.getStatusProduto().getStatus();
+        disponibilidade = produto.getDisponibilidade().getStatus();
+        visibilidade = produto.getVisibilidade();
     }
 
 }

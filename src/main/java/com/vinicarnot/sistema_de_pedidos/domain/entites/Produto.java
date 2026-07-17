@@ -1,6 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.domain.entites;
 
-import com.vinicarnot.sistema_de_pedidos.domain.enums.StatusProduto;
+import com.vinicarnot.sistema_de_pedidos.domain.enums.Disponibilidade;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "tb_produto")
@@ -35,10 +34,10 @@ public class Produto {
 
     @Enumerated(EnumType.STRING)
     @Setter
-    private StatusProduto statusProduto;
+    private Disponibilidade disponibilidade;
 
     @Setter
-    private Boolean ativo;
+    private Boolean visibilidade;
 
     @ManyToMany(mappedBy = "produtos")
     private Set<Categoria> categorias = new HashSet<>();
@@ -46,12 +45,12 @@ public class Produto {
     @OneToMany(mappedBy = "id.produto")
     private Set<ItemPedido> itemsPedidos = new HashSet<>();
 
-    public Produto(Long id, String nome, BigDecimal preco, StatusProduto statusProduto, Boolean ativo) {
+    public Produto(Long id, String nome, BigDecimal preco, Disponibilidade disponibilidade, Boolean visibilidade) {
         this.id = id;
         this.nome = nome;
         this.preco = preco;
-        this.statusProduto = statusProduto;
-        this.ativo = ativo;
+        this.disponibilidade = disponibilidade;
+        this.visibilidade = visibilidade;
     }
 
     public List<Pedido> getPedidos() {

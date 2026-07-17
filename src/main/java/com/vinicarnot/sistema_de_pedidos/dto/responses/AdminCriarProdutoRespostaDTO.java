@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CriarProdutoRespostaDTO {
+public class AdminCriarProdutoRespostaDTO {
 
     private Long id;
 
@@ -20,13 +20,16 @@ public class CriarProdutoRespostaDTO {
 
     private BigDecimal preco;
 
-    private String statusProduto;
+    private String disponibilidade;
 
-    public CriarProdutoRespostaDTO(Produto produto) {
+    private Boolean visibilidade;
+
+    public AdminCriarProdutoRespostaDTO(Produto produto) {
         id = produto.getId();
         nome = produto.getNome();
         preco = produto.getPreco();
-        statusProduto = produto.getStatusProduto().getStatus();
+        disponibilidade = produto.getDisponibilidade().getStatus();
+        visibilidade = produto.getVisibilidade();
     }
 
 }

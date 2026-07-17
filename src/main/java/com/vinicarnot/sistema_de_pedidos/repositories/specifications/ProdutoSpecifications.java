@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ProdutoSpecifications {
 
-    public static Specification<Produto> filtrar(String nome, BigDecimal precoMaximo, List<Long> categoriasIds) {
+    public static Specification<Produto> filtrar(String nome, BigDecimal precoMaximo, List<Long> categoriasIds, Boolean visibilidadeProduto) {
 
         return (root, criteriaQuery, criteriaBuilder) -> {
             Specification<Produto> spec = (r, cq, cb) -> criteriaBuilder.conjunction();
@@ -28,6 +28,11 @@ public class ProdutoSpecifications {
             // Filtragem por categorias (verifica se pertence a alguma da lista de IDs)
             if (categoriasIds != null && !categoriasIds.isEmpty()) {
                 spec = spec.and(filtrarPorCategorias(categoriasIds));
+            }
+
+            // Filtragem por status do produto (apenas admin podem ver produtos inativos)
+            if(visibilidadeProduto != null) {
+                spec = spec.and(filtrarPorVisibilidade(visibilidadeProduto));
             }
 
             return spec.toPredicate(root, criteriaQuery, criteriaBuilder);
@@ -56,6 +61,11 @@ public class ProdutoSpecifications {
             // Cria a regra SQL: WHERE category.id IN (1, 2, 3...)
             return produtoCategoriaJoin.get("id").in(categoriasIds);
         };
+    }
+
+    private static Specification<Produto> filtrarPorVisibilidade(Boolean visibilidadeProduto) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("visibilidade"), visibilidadeProduto);
     }
 
 }
