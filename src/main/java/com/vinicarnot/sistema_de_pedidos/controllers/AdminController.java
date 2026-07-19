@@ -2,10 +2,7 @@ package com.vinicarnot.sistema_de_pedidos.controllers;
 
 import com.vinicarnot.sistema_de_pedidos.dto.requests.*;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
-import com.vinicarnot.sistema_de_pedidos.services.CategoriaService;
-import com.vinicarnot.sistema_de_pedidos.services.ClienteService;
-import com.vinicarnot.sistema_de_pedidos.services.PedidoService;
-import com.vinicarnot.sistema_de_pedidos.services.ProdutoService;
+import com.vinicarnot.sistema_de_pedidos.services.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,12 +25,16 @@ public class AdminController {
     private final CategoriaService categoriaService;
     private final PedidoService pedidoService;
     private final ClienteService clienteService;
+    private final EnderecoService enderecoService;
+    private final TelefoneService telefoneService;
 
-    public AdminController(ProdutoService produtoService, CategoriaService categoriaService, PedidoService pedidoService, ClienteService clienteService) {
+    public AdminController(ProdutoService produtoService, CategoriaService categoriaService, PedidoService pedidoService, ClienteService clienteService, EnderecoService enderecoService, TelefoneService telefoneService) {
         this.produtoService = produtoService;
         this.categoriaService = categoriaService;
         this.pedidoService = pedidoService;
         this.clienteService = clienteService;
+        this.enderecoService = enderecoService;
+        this.telefoneService = telefoneService;
     }
 
     @GetMapping("/produtos/{idProduto}")
@@ -102,6 +103,16 @@ public class AdminController {
     @GetMapping("/clientes/{emailCliente}")
     public ResponseEntity<AdminLerClienteRespostaDTO> adminLerCliente(@PathVariable String emailCliente) {
         return ResponseEntity.ok(clienteService.adminLerCliente(emailCliente));
+    }
+
+    @GetMapping("/clientes/{emailCliente}/enderecos")
+    public ResponseEntity<List<AdminLerEnderecoRespostaDTO>> adminLerEnderecosDoCliente(@PathVariable String emailCliente) {
+        return ResponseEntity.ok(enderecoService.adminLerEnderecosDoCliente(emailCliente));
+    }
+
+    @GetMapping("/clientes/{emailCliente}/telefones")
+    public ResponseEntity<List<AdminLerTelefoneRespostaDTO>> adminLerTelefonesDoCliente(@PathVariable String emailCliente) {
+        return ResponseEntity.ok(telefoneService.adminLerTelefonesDoCliente(emailCliente));
     }
 
     /*

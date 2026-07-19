@@ -5,10 +5,7 @@ import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarClienteRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateClienteRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateEnderecoRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateTelefoneRequestDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.AdminLerClienteRespostaDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarClienteRespostaDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.ReadClienteResponseDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.UpdateClienteResponseDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Endereco;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Telefone;
@@ -138,6 +135,7 @@ public class ClienteService implements UserDetailsService {
         return clientePage.map(cliente -> new AdminLerClienteRespostaDTO(cliente));
     }
 
+    @Transactional(readOnly = true)
     public AdminLerClienteRespostaDTO adminLerCliente(String emailCliente) {
         Cliente cliente = clienteRepository.procurarClienteERolesPorEmail(emailCliente)
                 .orElseThrow(() -> new UsernameNotFoundException("Não foi possível encontrar uma conta cadastrada com o email: " + emailCliente + "."));

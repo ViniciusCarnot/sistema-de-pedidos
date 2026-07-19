@@ -30,7 +30,7 @@ public class ReadPedidoResponseAdminDTO {
     private Set<ReadItemPedidoResponseAdminDTO> items = new HashSet<>();
 
     @Setter
-    private ReadEnderecoResponseAdminDTO enderecoDeEntrega;
+    private AdminLerEnderecoRespostaDTO enderecoDeEntrega;
 
     @Setter
     private ReadPagamentoResponseAdminDTO pagamento;
@@ -45,7 +45,7 @@ public class ReadPedidoResponseAdminDTO {
         for(ItemPedido itemPedido : pedido.getItemsPedidos()) {
             items.add(new ReadItemPedidoResponseAdminDTO(itemPedido));
         }
-        enderecoDeEntrega = new ReadEnderecoResponseAdminDTO(pedido.getEnderecoDeEntrega());
+        enderecoDeEntrega = new AdminLerEnderecoRespostaDTO(pedido.getEnderecoDeEntrega());
         if(pedido.getPagamento() instanceof Boleto boleto) {
             pagamento = new ReadBoletoResponseAdminDTO(boleto);
         } else if (pedido.getPagamento() instanceof CartaoDeCredito cartaoDeCredito) {

@@ -10,22 +10,22 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadEnderecoResponseAdminDTO {
+public class AdminLerEnderecoRespostaDTO {
 
     private Long id;
     private String logradouro;
     private String numero;
     private String bairro;
-    private ReadCidadeResponseAdminDTO cidade;
-    private ReadEstadoResponseAdminDTO estado;
+    private AdminLerCidadeRespostaDTO cidade;
+    private AdminLerEstadoRespostaDTO estado;
 
-    public ReadEnderecoResponseAdminDTO(Endereco endereco) {
+    public AdminLerEnderecoRespostaDTO(Endereco endereco) {
         id = endereco.getId();
         logradouro = endereco.getLogradouro();
         numero = endereco.getNumero();
         bairro = endereco.getBairro();
-        cidade = new ReadCidadeResponseAdminDTO(endereco.getCidade());
-        estado = new ReadEstadoResponseAdminDTO(endereco.getCidade().getEstado());
+        cidade = new AdminLerCidadeRespostaDTO(endereco.getCidade());
+        estado = new AdminLerEstadoRespostaDTO(endereco.getCidade().getEstado());
     }
 
 }
