@@ -1,31 +1,35 @@
 package com.vinicarnot.sistema_de_pedidos.dto.responses;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Endereco;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadEnderecoResponseDTO {
+@Getter
+@Setter
+public class AtualizarMeuEnderecoRespostaDTO {
 
-    private Long id;
     private String logradouro;
-    private String numero;
-    private String bairro;
-    private ReadCidadeResponseDTO cidade;
-    private ReadEstadoResponseDTO estado;
 
-    public ReadEnderecoResponseDTO(Endereco endereco) {
-        id = endereco.getId();
+    private String numero;
+
+    private String bairro;
+
+    private LerCidadeRespostaDTO cidade;
+
+    private LerEstadoRespostaDTO estado;
+
+    public AtualizarMeuEnderecoRespostaDTO(Endereco endereco) {
         logradouro = endereco.getLogradouro();
         numero = endereco.getNumero();
         bairro = endereco.getBairro();
-        cidade = new ReadCidadeResponseDTO(endereco.getCidade());
-        estado = new ReadEstadoResponseDTO(endereco.getCidade().getEstado());
+        cidade = new LerCidadeRespostaDTO(endereco.getCidade());
+        estado = new LerEstadoRespostaDTO(endereco.getCidade().getEstado());
     }
 
 }

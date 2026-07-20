@@ -57,9 +57,7 @@ public class Cliente implements UserDetails {
     @OneToMany(mappedBy = "cliente")
     private Set<Pedido> pedidos = new HashSet<>();
 
-
-    @Size(max = 2, message = "É possível adicionar no máximo 2 endereços por pessoa.")
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "tb_cliente_endereco",
             joinColumns = @JoinColumn(name = "cliente_id"),
@@ -67,9 +65,9 @@ public class Cliente implements UserDetails {
     )
     private Set<Endereco> enderecos = new HashSet<>();
 
-    @Size(max = 2, message = "É possível adicionar no máximo 2 telefones por pessoa.")
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Telefone> telefones = new HashSet<>();
+    @Setter
+    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Telefone telefone;
 
     public Cliente(Long id, String nome, String email, String senha, String cpfOuCnpj,
                    TipoCliente tipo, boolean ativo) {

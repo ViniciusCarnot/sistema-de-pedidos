@@ -18,8 +18,13 @@ public class Telefone {
 
     private String numero;
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    public Telefone(String numero, Cliente cliente) {
+        this.numero = numero;
+        this.cliente = cliente;
+    }
 
 }

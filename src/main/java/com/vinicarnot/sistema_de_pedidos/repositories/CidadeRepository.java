@@ -10,5 +10,4 @@ import java.util.Optional;
 public interface CidadeRepository extends JpaRepository<Cidade, Long> {
 
     Optional<Cidade> findById(Long id);
-
 }

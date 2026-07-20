@@ -1,7 +1,7 @@
 package com.vinicarnot.sistema_de_pedidos.controllers;
 
-import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarClienteRequisicaoDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarClienteRespostaDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarCadastroClienteRequisicaoDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarCadastroClienteRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.services.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +24,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/cadastro")
-    public ResponseEntity<CriarClienteRespostaDTO> cadastrarCliente(@RequestBody @Valid CriarClienteRequisicaoDTO dtoRequisicao) {
-        CriarClienteRespostaDTO dtoResposta = clienteService.cadastrarCliente(dtoRequisicao);
+    public ResponseEntity<CriarCadastroClienteRespostaDTO> cadastrarCliente(@RequestBody @Valid CriarCadastroClienteRequisicaoDTO dtoRequisicao) {
+        CriarCadastroClienteRespostaDTO dtoResposta = clienteService.cadastrarCliente(dtoRequisicao);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")
                 .buildAndExpand(dtoResposta.getId()).toUri();
         return ResponseEntity.created(uri).body(dtoResposta);

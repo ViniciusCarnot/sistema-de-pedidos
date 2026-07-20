@@ -6,16 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadEstadoResponseDTO {
+@Getter
+@Setter
+public class LerEstadoRespostaDTO {
 
     private Long id;
+
     private String nome;
 
-    public ReadEstadoResponseDTO(Estado estado) {
+    public LerEstadoRespostaDTO(Estado estado) {
         id = estado.getId();
         nome = estado.getNome();
     }

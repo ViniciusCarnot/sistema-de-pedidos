@@ -30,7 +30,7 @@ public class ReadPedidoResponseDTO {
     private Set<ReadItemPedidoResponseDTO> items = new HashSet<>();
 
     @Setter
-    private ReadEnderecoResponseDTO enderecoDeEntrega;
+    private LerEnderecoRespostaDTO enderecoDeEntrega;
 
     @Setter
     private ReadPagamentoResponseDTO pagamento;
@@ -42,7 +42,7 @@ public class ReadPedidoResponseDTO {
         for(ItemPedido itemPedido : pedido.getItemsPedidos()) {
             items.add(new ReadItemPedidoResponseDTO(itemPedido));
         }
-        enderecoDeEntrega = new ReadEnderecoResponseDTO(pedido.getEnderecoDeEntrega());
+        enderecoDeEntrega = new LerEnderecoRespostaDTO(pedido.getEnderecoDeEntrega());
         if(pedido.getPagamento() instanceof Boleto boleto) {
             pagamento = new ReadBoletoResponseDTO(boleto);
         } else if (pedido.getPagamento() instanceof CartaoDeCredito cartaoDeCredito) {

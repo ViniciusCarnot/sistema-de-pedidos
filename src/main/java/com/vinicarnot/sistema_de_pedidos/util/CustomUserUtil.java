@@ -13,7 +13,8 @@ public class CustomUserUtil {
     public Optional<String> getClienteLogado() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
-        return jwtPrincipal.getClaim("username");
+        System.out.println("Claims disponíveis no token: " + jwtPrincipal.getClaims());
+        return Optional.ofNullable(jwtPrincipal.getClaimAsString("username"));
     }
 
 }

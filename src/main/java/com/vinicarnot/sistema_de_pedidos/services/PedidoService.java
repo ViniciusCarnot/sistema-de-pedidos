@@ -45,40 +45,6 @@ public class PedidoService {
         this.pagamentoRepository = pagamentoRepository;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public CreatePedidoResponseDTO realizarPedido(CreatePedidoRequestDTO dtoRequest) {
-        Cliente clienteLogado = (Cliente) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Cliente cliente = clienteRepository.findById(clienteLogado.getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível achar uma conta cadastrada com esse email e senha. Verifique ambos."));
-
-        if(cliente.getCpfOuCnpj() == null ||
-                cliente.getTelefones() == null ||
-                cliente.getTipo() == null ||
-                cliente.getEnderecos() ==  null
-        ) {
-            throw new ClienteComDadosIncompletosException("Os dados da sua conta estão incompletos para prosseguir com o pedido. " +
-                    "Termine de preenche-los e tente novamente.");
-        }
-
-        Pedido pedido = new Pedido();
-        pedido.setInstanteDaCompra(Instant.now());
-        pedido.setCliente(cliente);
-        pedido.setStatusPedido(StatusPedido.AGUARDANDO_PAGAMENTO);
-
-
-        Endereco endereco = enderecoService.criarEndereco(cliente, dtoRequest.getEnderecoDeEntrega());
-        if(cliente.getEnderecos().size() < 2) {
-            cliente.getEnderecos().add(endereco);
-        }
-        pedido.setEnderecoDeEntrega(endereco);
-
-        itemPedidoService.adicionarItemPedido(pedido, dtoRequest);
-
-        Pagamento pagamento = pagamentoService.criarFormaDePagamento(pedido, dtoRequest.getPagamento());
-        pedido.setPagamento(pagamento);
-
-        return new CreatePedidoResponseDTO(pedidoRepository.save(pedido));
-    }
 
     @Transactional(rollbackFor = Exception.class)
     public void cancelarProprioPedido(Long idPedido) {

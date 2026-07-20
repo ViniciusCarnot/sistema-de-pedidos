@@ -48,4 +48,12 @@ public class Endereco {
         this.bairro = bairro;
         this.cidade = cidade;
     }
+
+    public Endereco(String logradouro, String numero, String bairro, Cidade cidade) {
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.bairro = bairro;
+        this.cidade = cidade;
+    }
+
 }

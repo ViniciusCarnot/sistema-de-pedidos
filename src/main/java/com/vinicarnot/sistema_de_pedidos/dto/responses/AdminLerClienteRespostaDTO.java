@@ -12,22 +12,30 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Getter
-@Setter
 public class AdminLerClienteRespostaDTO {
 
+    @Setter
     private Long id;
 
+    @Setter
     private String nome;
 
+    @Setter
     private String email;
 
+    @Setter
     private String cpfOuCnpj;
 
+    @Setter
     private TipoCliente tipo;
 
+    @Setter
     private boolean ativo;
 
     private Set<LerRoleRespostaDTO> roles = new HashSet<>();
+
+    @Setter
+    private AdminLerClienteTelefoneRespostaDTO telefone;
 
     public AdminLerClienteRespostaDTO(Cliente cliente) {
         id = cliente.getId();
@@ -39,6 +47,7 @@ public class AdminLerClienteRespostaDTO {
         for(Role role : cliente.getRoles()) {
             roles.add(new LerRoleRespostaDTO(role));
         }
+        telefone = new AdminLerClienteTelefoneRespostaDTO(cliente.getTelefone());
     }
 
 }

@@ -110,11 +110,6 @@ public class AdminController {
         return ResponseEntity.ok(enderecoService.adminLerEnderecosDoCliente(emailCliente));
     }
 
-    @GetMapping("/clientes/{emailCliente}/telefones")
-    public ResponseEntity<List<AdminLerTelefoneRespostaDTO>> adminLerTelefonesDoCliente(@PathVariable String emailCliente) {
-        return ResponseEntity.ok(telefoneService.adminLerTelefonesDoCliente(emailCliente));
-    }
-
     /*
 
     @DeleteMapping("/pedidos/{id}")

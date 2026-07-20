@@ -1,13 +1,12 @@
 package com.vinicarnot.sistema_de_pedidos.repositories;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
-import com.vinicarnot.sistema_de_pedidos.projections.UserDetailsProjection;
+import com.vinicarnot.sistema_de_pedidos.projections.UserDetailsProjecao;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -32,13 +31,13 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 		"INNER JOIN tb_role ON tb_role.id = tb_cliente_role.role_id " +
 		"WHERE tb_cliente.email = :email "
 	)
-    List<UserDetailsProjection> procurarUserDetailsProjectionPorEmail(String email);
+    List<UserDetailsProjecao> procurarUserDetailsProjectionPorEmail(String email);
 
-	@EntityGraph(attributePaths = {"roles"})
+	@EntityGraph(attributePaths = {"roles", "telefone"})
 	@Query(value = "SELECT c FROM Cliente c")
 	Page<Cliente> procurarTodosOsClientesERoles(Pageable pageable);
 
-	@EntityGraph(attributePaths = {"roles"})
+	@EntityGraph(attributePaths = {"roles", "telefone"})
 	@Query(value = "SELECT c FROM Cliente c WHERE c.email = :email")
 	Optional<Cliente> procurarClienteERolesPorEmail(String email);
 

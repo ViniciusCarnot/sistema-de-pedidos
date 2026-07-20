@@ -30,15 +30,6 @@ public class PedidoController {
     }
 
     @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
-    @PostMapping
-    public ResponseEntity<CreatePedidoResponseDTO> realizarPedido(@RequestBody @Valid CreatePedidoRequestDTO dtoRequest) {
-        CreatePedidoResponseDTO createPedidoResponseDTO = pedidoService.realizarPedido(dtoRequest);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(createPedidoResponseDTO.getId()).toUri();
-        return ResponseEntity.created(uri).body(createPedidoResponseDTO);
-    }
-
-    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> cancelarProprioPedido(@PathVariable Long id) {
         pedidoService.cancelarProprioPedido(id);
