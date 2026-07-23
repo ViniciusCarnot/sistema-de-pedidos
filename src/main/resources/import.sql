@@ -123,14 +123,14 @@ INSERT INTO tb_cliente_endereco (cliente_id, endereco_id) VALUES (3, 4);
 INSERT INTO tb_cliente_endereco (cliente_id, endereco_id) VALUES (4, 5);
 INSERT INTO tb_cliente_endereco (cliente_id, endereco_id) VALUES (4, 6);
 
-INSERT INTO tb_pedido (instante_da_compra, cliente_id, endereco_de_entrega_id, status_pedido) VALUES (TIMESTAMP WITH TIME ZONE '2026-02-03T15:33:39Z', 1, 2, 'CANCELADO');
-INSERT INTO tb_pedido (instante_da_compra, cliente_id, endereco_de_entrega_id, status_pedido) VALUES (TIMESTAMP WITH TIME ZONE '2026-02-03T15:43:39Z', 2, 2, 'ENTREGUE');
-INSERT INTO tb_pedido (instante_da_compra, cliente_id, endereco_de_entrega_id, status_pedido) VALUES (TIMESTAMP WITH TIME ZONE '2026-02-12T23:39:21Z', 3, 3, 'AGUARDANDO_PAGAMENTO');
+INSERT INTO tb_pedido (instante_da_compra, status_pedido, cliente_id, endereco_de_entrega_id) VALUES (TIMESTAMP WITH TIME ZONE '2026-02-03T15:33:39Z', 'AGUARDANDO_PAGAMENTO', 1, 2);
+INSERT INTO tb_pedido (instante_da_compra, status_pedido, cliente_id, endereco_de_entrega_id) VALUES (TIMESTAMP WITH TIME ZONE '2026-02-03T15:43:39Z', 'ENTREGUE', 2, 2);
+INSERT INTO tb_pedido (instante_da_compra, status_pedido, cliente_id, endereco_de_entrega_id) VALUES (TIMESTAMP WITH TIME ZONE '2026-02-12T23:39:21Z', 'AGUARDANDO_PAGAMENTO',3, 3);
 
-INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, desconto_unitario, preco_unitario) VALUES (2, 1, 'GTA San Andreas', 1, 0.00, 65.00);
-INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, desconto_unitario, preco_unitario) VALUES (3, 1, 'GTA Vice City', 1, 10.00, 25.00);
-INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, desconto_unitario, preco_unitario) VALUES (1, 2, 'PC Gamer Entrada', 1, 300.00, 3300.00);
-INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, desconto_unitario, preco_unitario) VALUES (4, 3, 'Monitor 27pol QHD 165Hz',1, 50.00, 850.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (2, 1, 'GTA San Andreas', 1, 65.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (3, 1, 'GTA Vice City', 1, 25.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (1, 2, 'PC Gamer Entrada', 1, 3300.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (4, 3, 'Monitor 27pol QHD 165Hz',1, 850.00);
 
 INSERT INTO tb_pagamento (pedido_id, tipo_pagamento, estado_pagamento) VALUES (1, 'BOLETO', 'PENDENTE');
 INSERT INTO tb_pagamento (pedido_id, tipo_pagamento, estado_pagamento) VALUES (2, 'CARTAO_DE_CREDITO', 'PENDENTE');

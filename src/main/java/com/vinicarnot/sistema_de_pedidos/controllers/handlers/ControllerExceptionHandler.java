@@ -81,7 +81,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ErroCustomizado> forbiddenException(ForbiddenException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.FORBIDDEN;
-        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), "Cliente sem permissão para acessar este recurso.", request.getRequestURI());
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
 
@@ -90,6 +90,20 @@ public class ControllerExceptionHandler {
         HttpStatus status = HttpStatus.FORBIDDEN;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), "Acesso negado. Você não possui a permissão necessária para acessar este recurso.",
                 request.getRequestURI());
+        return ResponseEntity.status(status).body(erro);
+    }
+
+    @ExceptionHandler(ProdutoEsgotadoException.class)
+    public ResponseEntity<ErroCustomizado> produtoEsgotadoException(ProdutoEsgotadoException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(erro);
+    }
+
+    @ExceptionHandler(ProdutoCancelamentoExcecao.class)
+    public ResponseEntity<ErroCustomizado> produtoCancelamentoExcecao(ProdutoCancelamentoExcecao e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
 

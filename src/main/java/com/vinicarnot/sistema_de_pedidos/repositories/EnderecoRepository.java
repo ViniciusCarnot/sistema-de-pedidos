@@ -5,6 +5,7 @@ import com.vinicarnot.sistema_de_pedidos.domain.entites.Endereco;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Estado;
 import com.vinicarnot.sistema_de_pedidos.projections.AdminLerEnderecoRespostaProjecao;
 import com.vinicarnot.sistema_de_pedidos.projections.LerEnderecoRespostaProjecao;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -36,7 +37,8 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
     )
     List<AdminLerEnderecoRespostaProjecao> adminProcurarEnderecosPorCliente(String emailCliente);
 
-    @Query(nativeQuery = true, value = "SELECT e.logradouro AS logradouro, " +
+    @Query(nativeQuery = true, value = "SELECT e.id AS enderecoId, " +
+            "e.logradouro AS logradouro, " +
             "e.numero AS numero, " +
             "e.bairro AS bairro, " +
             "c.nome AS cidadeNome, " +

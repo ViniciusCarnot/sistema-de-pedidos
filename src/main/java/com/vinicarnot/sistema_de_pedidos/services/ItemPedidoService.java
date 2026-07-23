@@ -1,7 +1,7 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
-import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateItemPedidoRequestDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.CreatePedidoRequestDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarPedidoItemPedidoRequisicaoDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarPedidoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.ItemPedido;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Pedido;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
@@ -22,9 +22,10 @@ public class ItemPedidoService {
         this.produtoRepository = produtoRepository;
     }
 
+    /*
     @Transactional(rollbackFor = Exception.class)
-    public void adicionarItemPedido(Pedido pedido, CreatePedidoRequestDTO dtoRequest) {
-        for(CreateItemPedidoRequestDTO createItemPedidoRequestDTO : dtoRequest.getItems()) {
+    public void adicionarItemPedido(Pedido pedido, CriarPedidoRequisicaoDTO dtoRequest) {
+        for(CriarPedidoItemPedidoRequisicaoDTO createItemPedidoRequestDTO : dtoRequest.getItems()) {
             Produto produto = produtoRepository.getReferenceById(createItemPedidoRequestDTO.getIdProduto());
             if(produto.getDisponibilidade().equals(Disponibilidade.INDISPONIVEL)) {
                 throw new RecursoNaoEncontradoException("Produto com o id: " + createItemPedidoRequestDTO.getIdProduto() +
@@ -42,5 +43,7 @@ public class ItemPedidoService {
     public BigDecimal calculoDescontoItemPedido(BigDecimal precoNormalProduto, BigDecimal precoPago) {
         return precoNormalProduto.subtract(precoPago);
     }
+
+     */
 
 }

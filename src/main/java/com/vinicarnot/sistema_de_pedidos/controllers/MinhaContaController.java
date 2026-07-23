@@ -51,4 +51,11 @@ public class MinhaContaController {
         return ResponseEntity.ok(enderecoService.atualizarMeusEnderecos(dtoRequisicao));
     }
 
+    @DeleteMapping
+    @PreAuthorize("hasAnyRole('ROLE_NORMAL', 'ROLE_ADMIN')")
+    public ResponseEntity<Void> desativarMinhaConta() {
+        clienteService.desativarMinhaConta();
+        return ResponseEntity.noContent().build();
+    }
+
 }

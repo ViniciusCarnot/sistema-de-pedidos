@@ -6,7 +6,6 @@ import com.vinicarnot.sistema_de_pedidos.domain.entites.Pagamento;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Pedido;
 import com.vinicarnot.sistema_de_pedidos.domain.enums.EstadoPagamento;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.*;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,8 @@ import java.time.LocalDate;
 @Service
 public class PagamentoService {
 
-    public Pagamento criarFormaDePagamento(Pedido pedido, CreatePagamentoRequestDTO dtoRequest) {
+    /*
+    public Pagamento criarFormaDePagamento(Pedido pedido, CriarPagamentoRequisicaoDTO dtoRequest) {
         if(dtoRequest instanceof CreateBoletoRequestDTO createBoletoRequestDTO) {
             Boleto boleto = new Boleto();
             boleto.setTipoPagamento(createBoletoRequestDTO.getTipoPagamento());
@@ -24,7 +24,7 @@ public class PagamentoService {
             boleto.setDataPagamento(null);
             boleto.setPedido(pedido);
             return boleto;
-        } else if(dtoRequest instanceof CreateCartaoDeCreditoRequestDTO createCartaoDeCreditoRequestDTO) {
+        } else if(dtoRequest instanceof CriarCartaoDeCreditoRequisicaoDTO createCartaoDeCreditoRequestDTO) {
             CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
             cartaoDeCredito.setTipoPagamento(createCartaoDeCreditoRequestDTO.getTipoPagamento());
             cartaoDeCredito.setEstadoPagamento(EstadoPagamento.PENDENTE);
@@ -56,5 +56,7 @@ public class PagamentoService {
             throw new HttpMessageNotReadableException("Forma de pagamento inválida");
         }
     }
+
+     */
 
 }

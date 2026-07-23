@@ -159,4 +159,10 @@ public class ClienteService implements UserDetailsService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void desativarMinhaConta() {
+        Cliente cliente = autenticado();
+        cliente.setAtivo(false);
+    }
+
 }

@@ -5,12 +5,7 @@ import lombok.Getter;
 @Getter
 public enum TipoPagamento {
 
-    BOLETO("Boleto"),
-    CARTAO_DE_CREDITO("Cartão de Crédito");
+    BOLETO,
+    CARTAO_DE_CREDITO;
 
-    private String tipo;
-
-    TipoPagamento(String tipo) {
-        this.tipo = tipo;
-    }
 }

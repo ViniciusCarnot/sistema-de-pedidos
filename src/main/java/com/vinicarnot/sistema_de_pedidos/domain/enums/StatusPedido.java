@@ -5,21 +5,15 @@ import lombok.Getter;
 @Getter
 public enum StatusPedido {
 
-    AGUARDANDO_PAGAMENTO("Aguardando Pagamento"),
-    PAGAMENTO_APROVADO("Pagamento Aprovado"),
-    EM_SEPARACAO("Pedido em separação"),
-    PRONTO_PARA_ENVIO("Pedido pronto para envio"),
-    DESPACHADO("Pedido despachado"),
-    EM_ROTA_DE_ENTREGA("Pedido em rota de entrega"),
-    ENTREGUE("Pedido entregue"),
-    DEVOLVIDO("Pedido devolvido"),
-    REEMBOLSADO("Pedido reembolsado"),
-    CANCELADO("Pedido cancelado");
-
-    private String status;
-
-    StatusPedido(String status) {
-        this.status = status;
-    }
+    AGUARDANDO_PAGAMENTO,
+    PAGAMENTO_APROVADO,
+    EM_SEPARACAO,
+    PRONTO_PARA_ENVIO,
+    DESPACHADO,
+    EM_ROTA_DE_ENTREGA,
+    ENTREGUE,
+    DEVOLVIDO,
+    REEMBOLSADO,
+    CANCELADO;
 
 }

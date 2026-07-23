@@ -7,10 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "tb_pedido")
@@ -26,7 +25,7 @@ public class Pedido {
 
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     @Setter
-    private Instant instanteDaCompra;
+    private Instant instanteDaCompra = Instant.now();
 
     @Enumerated(EnumType.STRING)
     @Setter
@@ -37,12 +36,12 @@ public class Pedido {
     private Pagamento pagamento;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id", nullable = false)
     @Setter
     private Cliente cliente;
 
     @ManyToOne
-    @JoinColumn(name = "enderecoDeEntrega_id")
+    @JoinColumn(name = "enderecoDeEntrega_id", nullable = false)
     @Setter
     private Endereco enderecoDeEntrega;
 

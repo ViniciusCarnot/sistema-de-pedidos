@@ -57,7 +57,7 @@ public class Cliente implements UserDetails {
     @OneToMany(mappedBy = "cliente")
     private Set<Pedido> pedidos = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(
             name = "tb_cliente_endereco",
             joinColumns = @JoinColumn(name = "cliente_id"),

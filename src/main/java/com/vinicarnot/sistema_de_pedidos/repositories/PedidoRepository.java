@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,16 +14,13 @@ import java.util.Optional;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
-    @Query("SELECT obj FROM Pedido obj " +
-            "JOIN FETCH obj.pagamento " +
-            "JOIN FETCH obj.enderecoDeEntrega " +
-            "JOIN FETCH obj.cliente " +
-            "JOIN FETCH obj.itemsPedidos " +
-            "WHERE obj.id = :idPedido")
     Optional<Pedido> findById(Long idPedido);
 
-    @EntityGraph(attributePaths = {"pagamento", "enderecoDeEntrega"})
-    @Query("SELECT obj FROM Pedido obj WHERE obj.cliente.id = :clienteId")
+    @EntityGraph(attributePaths = {"pagamento", "cliente", "enderecoDeEntrega.cidade.estado", "itemsPedidos"})
+    @Query("SELECT p FROM Pedido p WHERE p.id = :pedidoId")
+    Optional<Pedido> procurarPedidoEPagamentoEClienteEEnderecoECidadeEEstadoEItemsPedidoPorId(@Param("pedidoId") Long pedidoId);
+
+    @EntityGraph(attributePaths = {"pagamento", "cliente", "enderecoDeEntrega.cidade.estado", "itemsPedidos"})
     Page<Pedido> findByClienteId(Long clienteId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"pagamento", "cliente", "enderecoDeEntrega"})

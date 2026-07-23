@@ -14,34 +14,29 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "tb_item_pedido")
 @Getter
+@Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 public class ItemPedido {
 
     @EmbeddedId
-    @Setter
     private ItemPedidoPK id = new ItemPedidoPK();
 
-    @Setter
+    @Column(nullable = false)
     private String nomeProduto;
 
-    @Setter
+    @Column(nullable = false)
     private Integer quantidade;
 
-    @Column(precision = 12, scale = 2)
-    @Setter
+    @Column(precision = 12, scale = 2, nullable = false)
     private BigDecimal precoUnitario;
 
-    @Setter
-    private BigDecimal descontoUnitario;
-
-    public ItemPedido(Produto produto, Pedido pedido, Integer quantidade, BigDecimal descontoUnitario) {
+    public ItemPedido(Produto produto, Pedido pedido, Integer quantidade) {
         id.setProduto(produto);
         id.setPedido(pedido);
         nomeProduto = produto.getNome();
         this.quantidade = quantidade;
         precoUnitario = produto.getPreco();
-        this.descontoUnitario = descontoUnitario;
     }
 
     public Produto getProduto() {

@@ -1,8 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarMeuEnderecoRequisicaoDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.CreateEnderecoRequestDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.UpdateEnderecoRequestDTO;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Cidade;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Endereco;
@@ -41,8 +39,9 @@ public class EnderecoService {
         this.clienteService = clienteService;
     }
 
+    /*
     @Transactional(rollbackFor = Exception.class)
-    public Endereco criarEndereco(Cliente cliente, CreateEnderecoRequestDTO dtoRequest) {
+    public Endereco criarEndereco(Cliente cliente, CriarPedidoEnderecoRequisicaoDTO dtoRequest) {
         Cidade cidade = cidadeRepository.findById(dtoRequest.getCidade().getId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar uma cidade com o id: " + dtoRequest.getCidade().getId() + "."));
 
@@ -88,6 +87,8 @@ public class EnderecoService {
                     return enderecoRepository.save(novoEndereco);
                 });
     }
+
+     */
 
     @Transactional(readOnly = true)
     public List<AdminLerEnderecoRespostaDTO> adminLerEnderecosDoCliente(String emailCliente) {
