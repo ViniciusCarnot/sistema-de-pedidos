@@ -14,17 +14,21 @@ import java.util.Optional;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
+    @EntityGraph(attributePaths = {"pagamento", "cliente.telefone", "enderecoDeEntrega.cidade.estado", "itemsPedidos"})
     Optional<Pedido> findById(Long idPedido);
 
-    @EntityGraph(attributePaths = {"pagamento", "cliente", "enderecoDeEntrega.cidade.estado", "itemsPedidos"})
     @Query("SELECT p FROM Pedido p WHERE p.id = :pedidoId")
+    @EntityGraph(attributePaths = {"pagamento", "cliente", "enderecoDeEntrega.cidade.estado", "itemsPedidos"})
     Optional<Pedido> procurarPedidoEPagamentoEClienteEEnderecoECidadeEEstadoEItemsPedidoPorId(@Param("pedidoId") Long pedidoId);
+
+    @Query("SELECT p FROM Pedido p WHERE p.cliente.email = :clienteEmail")
+    @EntityGraph(attributePaths = {"pagamento", "cliente.telefone"})
+    Page<Pedido> procurarPedidoEPagamentoEClientePorClienteEmail(@Param("clienteEmail") String clienteEmail, Pageable pageable);
 
     @EntityGraph(attributePaths = {"pagamento", "cliente", "enderecoDeEntrega.cidade.estado", "itemsPedidos"})
     Page<Pedido> findByClienteId(Long clienteId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"pagamento", "cliente", "enderecoDeEntrega"})
-    @Query("SELECT obj FROM Pedido obj")
-    Page<Pedido> adminFindAll(Pageable pageable);
+    @EntityGraph(attributePaths = {"pagamento", "cliente.telefone", "enderecoDeEntrega.cidade.estado", "itemsPedidos"})
+    Page<Pedido> findByClienteEmail(String clienteEmail, Pageable pageable);
 
 }

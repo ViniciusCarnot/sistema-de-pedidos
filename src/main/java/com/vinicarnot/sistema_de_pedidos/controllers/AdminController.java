@@ -1,5 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.controllers;
 
+import com.vinicarnot.sistema_de_pedidos.domain.entites.Pedido;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.*;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
 import com.vinicarnot.sistema_de_pedidos.services.*;
@@ -110,28 +111,15 @@ public class AdminController {
         return ResponseEntity.ok(enderecoService.adminLerEnderecosDoCliente(emailCliente));
     }
 
-    /*
-
-    @DeleteMapping("/pedidos/{id}")
-    public ResponseEntity<String> adminCancelarPedido(@PathVariable Long id) {
-        pedidoService.adminCancelarPedido(id);
-        return ResponseEntity.ok("Pedido cancelado com sucesso.");
+    @GetMapping("/clientes/{clienteEmail}/pedidos/{pedidoId}")
+    public ResponseEntity<PedidoRespostaDTO> adminLerPedidoDoCliente(@PathVariable String clienteEmail, @PathVariable Long pedidoId) {
+        return ResponseEntity.ok(pedidoService.adminLerPedidoDoCliente(clienteEmail, pedidoId));
     }
 
-    @PutMapping("/pedidos/{id}")
-    public ResponseEntity<UpdatePedidoResponseAdminDTO> adminAtualizarPedido(@PathVariable Long id, @Valid @RequestBody UpdatePedidoRequestDTO dtoRequest) {
-        return ResponseEntity.ok(pedidoService.adminAtualizarPedido(id, dtoRequest));
+    @GetMapping("/clientes/{clienteEmail}/pedidos")
+    public ResponseEntity<Page<AdminLerPedidoMinRespostaDTO>> adminLerPedidosDoCliente(@PathVariable String clienteEmail,
+        @PageableDefault(page = 0, size = 12, sort = "instanteDaCompra") Pageable pageable) {
+        return ResponseEntity.ok(pedidoService.adminLerPedidosDoCliente(clienteEmail, pageable));
     }
-
-    @GetMapping("/pedidos/{id}")
-    public ResponseEntity<ReadPedidoResponseAdminDTO> adminLerPedido(@PathVariable Long id) {
-        return ResponseEntity.ok(pedidoService.adminLerPedido(id));
-    }
-
-    @GetMapping("/pedidos")
-    public ResponseEntity<Page<ReadPedidoResponseAdminDTO>> adminLerPedidos(Pageable pageable) {
-        return ResponseEntity.ok(pedidoService.adminLerPedidos(pageable));
-    }
-    */
 
 }

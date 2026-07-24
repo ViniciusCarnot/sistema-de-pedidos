@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -22,16 +23,19 @@ import java.time.LocalDate;
 @DiscriminatorValue("BOLETO")
 public class Boleto extends Pagamento {
 
-    public Boleto(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, LocalDate dataVencimento, LocalDate dataPagamento) {
+    public Boleto(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, LocalDate dataVencimento, Instant dataPagamento) {
         super(id, estadoPagamento, tipoPagamento, pedido);
         this.dataVencimento = dataVencimento;
         this.dataPagamento = dataPagamento;
     }
 
+    @Column(nullable = false)
+    private String codigoDeBarras;
+
     @Column(columnDefinition = "DATE")
     private LocalDate dataVencimento;
 
     @Column(columnDefinition = "DATE")
-    private LocalDate dataPagamento;
+    private Instant dataPagamento;
 
 }

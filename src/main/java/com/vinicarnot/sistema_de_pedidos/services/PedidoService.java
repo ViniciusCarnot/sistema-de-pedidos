@@ -168,118 +168,36 @@ public class PedidoService {
 
     }
 
-    /*
-    @Transactional(rollbackFor = Exception.class)
-    public UpdatePedidoResponseDTO atualizarProprioPedido(Long idPedido, UpdatePedidoRequestDTO dtoRequest) {
+    @Transactional(readOnly = true)
+    public PedidoRespostaDTO adminLerPedidoDoCliente(String clienteEmail, Long pedidoId) {
 
-        Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar o pedido com o id: " + idPedido + "."));
-
-        Cliente clienteLogado = (Cliente) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-        Cliente cliente = clienteRepository.findById(clienteLogado.getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar uma conta cadastrada com esse email e senha. Verifique ambos."));
-
-        if(!(pedido.getCliente().equals(cliente))) {
-            throw new RecursoNegadoException("Você não tem permissão para alterar os dados desse pedido.");
+        if(!(clienteRepository.existsByEmail(clienteEmail))) {
+            throw new RecursoNaoEncontradoException("Cliente com o email: " + clienteEmail + ", não foi encontrado.");
         }
 
-        StatusPedido statusPedido = pedido.getStatusPedido();
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido com o id: " + pedidoId + ", não foi encontrado."));
 
-        if(statusPedido.equals(StatusPedido.AGUARDANDO_PAGAMENTO)) {
-
-            Pagamento pagamentoAntigo = pedido.getPagamento();
-
-            if(pagamentoAntigo != null) {
-                //Necessário pois estamos utilizando @MapsId
-                pedido.setPagamento(null);
-                pagamentoRepository.flush();
-            }
-            Pagamento novoPagamento = pagamentoService.atualizarFormaDePagamento(pedido, dtoRequest.getPagamento());
-            pedido.setPagamento(novoPagamento);
-
+        if(!(pedido.getCliente().getEmail().equals(clienteEmail))) {
+            throw new RecursoNaoEncontradoException("Cliente com o email: " + clienteEmail + ", não é dono do pedido com o id: " + pedidoId + ".");
         }
 
-        if(statusPedido.equals(StatusPedido.AGUARDANDO_PAGAMENTO) ||
-        statusPedido.equals(StatusPedido.PAGAMENTO_APROVADO) ||
-        statusPedido.equals(StatusPedido.EM_SEPARACAO) ||
-        statusPedido.equals(StatusPedido.PRONTO_PARA_ENVIO)) {
-            Endereco endereco = enderecoService.atualizarEndereco(cliente, dtoRequest.getEnderecoDeEntrega());
-            if(cliente.getEnderecos().size() < 2) {
-                cliente.getEnderecos().add(endereco);
-            }
-            pedido.setEnderecoDeEntrega(endereco);
-        }
+        return new PedidoRespostaDTO(pedido);
 
-        return new UpdatePedidoResponseDTO(pedidoRepository.save(pedido));
-    }
-
-
-
-    @Transactional(rollbackFor = Exception.class)
-    public UpdatePedidoResponseAdminDTO adminAtualizarPedido(Long idPedido, UpdatePedidoRequestDTO dtoRequest) {
-
-        Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar o pedido com o id: " + idPedido + "."));
-
-        StatusPedido statusPedido = pedido.getStatusPedido();
-
-        if(statusPedido.equals(StatusPedido.AGUARDANDO_PAGAMENTO)) {
-
-            Pagamento pagamentoAntigo = pedido.getPagamento();
-
-            if(pagamentoAntigo != null) {
-                //Necessário pois estamos utilizando @MapsId
-                pedido.setPagamento(null);
-                pagamentoRepository.flush();
-            }
-            Pagamento novoPagamento = pagamentoService.atualizarFormaDePagamento(pedido, dtoRequest.getPagamento());
-            pedido.setPagamento(novoPagamento);
-
-        }
-
-        if(statusPedido.equals(StatusPedido.AGUARDANDO_PAGAMENTO) ||
-                statusPedido.equals(StatusPedido.PAGAMENTO_APROVADO) ||
-                statusPedido.equals(StatusPedido.EM_SEPARACAO) ||
-                statusPedido.equals(StatusPedido.PRONTO_PARA_ENVIO)) {
-            Cliente cliente = pedido.getCliente();
-            Endereco endereco = enderecoService.atualizarEndereco(cliente, dtoRequest.getEnderecoDeEntrega());
-            if(cliente.getEnderecos().size() < 2) {
-                cliente.getEnderecos().add(endereco);
-            }
-            pedido.setEnderecoDeEntrega(endereco);
-        }
-
-        return new UpdatePedidoResponseAdminDTO(pedidoRepository.save(pedido));
     }
 
     @Transactional(readOnly = true)
-    public ReadPedidoResponseDTO lerProprioPedido(Long idPedido) {
-        Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar o pedido com o id: " + idPedido + "."));
-        Cliente clienteLogado = (Cliente) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Cliente cliente = clienteRepository.findById(clienteLogado.getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível achar uma conta cadastrada com esse email e senha. Verifique ambos."));
-        if(!(cliente.equals(pedido.getCliente()))) {
-            throw new RecursoNegadoException("Você não tem permissão para acessar os dados desse pedido.");
+    public Page<AdminLerPedidoMinRespostaDTO> adminLerPedidosDoCliente(String clienteEmail, Pageable pageable) {
+
+        if(!(clienteRepository.existsByEmail(clienteEmail))) {
+            throw new RecursoNaoEncontradoException("Cliente com o email: " + clienteEmail + ", não foi encontrado.");
         }
-        return new ReadPedidoResponseDTO(pedido);
-    }
 
-    @Transactional(readOnly = true)
-    public ReadPedidoResponseAdminDTO adminLerPedido(Long idPedido) {
-        Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar o pedido com o id: " + idPedido + "."));
-        return new ReadPedidoResponseAdminDTO(pedido);
-    }
+        Page<Pedido> pedidoPage = pedidoRepository.procurarPedidoEPagamentoEClientePorClienteEmail(clienteEmail, pageable);
 
-    @Transactional(readOnly = true)
-    public Page<ReadPedidoResponseAdminDTO> adminLerPedidos(Pageable pageable) {
-        Page<Pedido> pagePedido = pedidoRepository.adminFindAll(pageable);
-        return pagePedido.map(pedido -> new ReadPedidoResponseAdminDTO(pedido));
+        return pedidoPage.map(pedido -> new AdminLerPedidoMinRespostaDTO(pedido));
+
     }
-     */
 
     public void validarProduto(Produto produto) {
         if(produto.getVisibilidade() == false) {
