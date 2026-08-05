@@ -6,6 +6,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,9 +32,18 @@ public class Boleto extends Pagamento {
     }
 
     @Column(nullable = false)
+    private String pagadorCpfOuCnpj;
+
+    @Column(nullable = false)
+    private String pagadorNome;
+
+    @Column(nullable = false)
+    private String pagadorEmail;
+
+    @Column(nullable = false)
     private String codigoDeBarras;
 
-    @Column(columnDefinition = "DATE")
+    @Column(columnDefinition = "DATE", nullable = false)
     private LocalDate dataVencimento;
 
     @Column(columnDefinition = "DATE")

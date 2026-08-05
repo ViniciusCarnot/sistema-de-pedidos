@@ -136,8 +136,8 @@ INSERT INTO tb_pagamento (pedido_id, tipo_pagamento, estado_pagamento) VALUES (1
 INSERT INTO tb_pagamento (pedido_id, tipo_pagamento, estado_pagamento) VALUES (2, 'CARTAO_DE_CREDITO', 'PENDENTE');
 INSERT INTO tb_pagamento (pedido_id, tipo_pagamento, estado_pagamento) VALUES (3, 'BOLETO', 'PENDENTE');
 
-INSERT INTO tb_boleto (pedido_id, data_vencimento) VALUES (1, TIMESTAMP WITH TIME ZONE '2026-05-12T13:00:00Z');
-INSERT INTO tb_boleto (pedido_id, data_vencimento) VALUES (3, TIMESTAMP WITH TIME ZONE '2026-05-03T13:00:00Z');
+INSERT INTO tb_boleto (pedido_id, data_vencimento, pagador_cpf_ou_cnpj, pagador_nome, pagador_email, codigo_de_barras) VALUES (1, '2026-05-12','842.107.660-31', 'Alberto Rodrigues', 'alberto@email.com', '...');
+INSERT INTO tb_boleto (pedido_id, data_vencimento, pagador_cpf_ou_cnpj, pagador_nome, pagador_email, codigo_de_barras) VALUES (3, '2026-05-03','418.502.610-33', 'Carlos Alves', 'carlos@email.com', '...');
 
-INSERT INTO tb_cartao_de_credito (pedido_id, quantidade_parcelas) VALUES (2, 10);
+INSERT INTO tb_cartao_de_credito (pedido_id, quantidade_parcelas, salvar_cartao_para_proximas_compras, data_vencimento) VALUES (2, 10,false, '2026-05-03');
 

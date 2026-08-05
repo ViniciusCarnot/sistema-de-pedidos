@@ -1,5 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.dto.requests;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -13,10 +14,14 @@ import java.time.LocalDate;
 @Setter
 public class CriarBoletoRequisicaoDTO extends CriarPagamentoRequisicaoDTO {
 
-    @NotBlank(message = "O campo 'codigoDeBarras' é obrigatório.")
-    private String codigoDeBarras;
+    @NotBlank(message = "O campo 'pagadorCpfOuCnpj' é obrigatório")
+    private String pagadorCpfOuCnpj;
 
-    @NotNull(message = "O campo 'dataDeValidade' é obrigatório.")
-    private LocalDate dataDeValidade;
+    @NotBlank(message = "O campo 'pagadorNome' é obrigatório.")
+    private String pagadorNome;
+
+    @NotBlank(message = "O campo 'pagadorEmail' é obrigatório.")
+    @Email(message = "Email inválido.")
+    private String pagadorEmail;
 
 }

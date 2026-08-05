@@ -9,10 +9,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CriarCartaoDeCreditoRequisicaoDTO extends CriarPagamentoRequisicaoDTO{
+public class CriarCartaoDeCreditoRequisicaoDTO extends CriarPagamentoRequisicaoDTO {
 
     @NotNull(message = "O campo 'quantidadeDeParcelas' é obrigatório.")
     @Min(value = 1, message = "O mínimo de parcelas deve ser 1.")
     private Integer quantidadeDeParacelas;
+
+    @NotNull(message = "O campo 'salvarCartaoParaProximasCompras' é obrigatório.")
+    private boolean salvarCartaoParaProximasCompras;
 
 }

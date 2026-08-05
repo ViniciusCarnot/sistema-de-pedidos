@@ -15,13 +15,14 @@ import lombok.Setter;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "tipoPagamento" // Campo discriminador do JSON
+        property = "tipoPagamento", // Campo discriminador do JSON
+        visible = true // Mantém a propriedade visível para popular o atributo Java, e assim realizar a validação do campo
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = CriarBoletoRequisicaoDTO.class, name = "BOLETO"),
         @JsonSubTypes.Type(value = CriarCartaoDeCreditoRequisicaoDTO.class, name = "CARTAO_DE_CREDITO")
 })
-public class CriarPagamentoRequisicaoDTO {
+public abstract class CriarPagamentoRequisicaoDTO {
 
     @NotNull(message = "O campo 'tipoPagamento' é obrigatório.")
     private TipoPagamento tipoPagamento;

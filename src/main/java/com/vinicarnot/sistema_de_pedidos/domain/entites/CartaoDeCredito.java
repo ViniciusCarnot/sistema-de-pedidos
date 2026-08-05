@@ -2,6 +2,7 @@ package com.vinicarnot.sistema_de_pedidos.domain.entites;
 
 import com.vinicarnot.sistema_de_pedidos.domain.enums.EstadoPagamento;
 import com.vinicarnot.sistema_de_pedidos.domain.enums.TipoPagamento;
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -9,6 +10,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "tb_cartao_de_credito")
@@ -24,6 +27,12 @@ public class CartaoDeCredito extends Pagamento {
         this.quantidadeParcelas = quantidadeParcelas;
     }
 
+    @Column(nullable = false)
     private Integer quantidadeParcelas;
+
+    private boolean salvarCartaoParaProximasCompras;
+
+    @Column(columnDefinition = "DATE", nullable = false)
+    private LocalDate dataVencimento;
 
 }

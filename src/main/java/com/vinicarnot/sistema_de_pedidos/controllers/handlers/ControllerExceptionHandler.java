@@ -107,4 +107,13 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(status).body(erro);
     }
 
+    @ExceptionHandler(ProcessamentoPagamentoExcessao.class)
+    public ResponseEntity<ErroCustomizado> processamentoPagamentoExcessao(ProcessamentoPagamentoExcessao e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(erro);
+    }
+
+
+
 }
