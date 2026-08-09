@@ -1,8 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.services;
 
-import com.vinicarnot.sistema_de_pedidos.dto.requests.AdminAtualizarCategoriaProdutoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AdminAtualizarCategoriaRequisicaoDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.AdminCriarCategoriaProdutoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AdminCriarCategoriaRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Categoria;
@@ -83,9 +81,9 @@ public class CategoriaService {
         }
 
         Categoria novaCategoria = new Categoria();
-        for(AdminCriarCategoriaProdutoRequisicaoDTO produtoDTORequisicao : dtoRequisicao.getProdutos()) {
-            Produto produto = produtoRepository.findById(produtoDTORequisicao.getId())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + produtoDTORequisicao.getId() + ", não encontrado."));
+        for(Long produtoId : dtoRequisicao.getProdutos()) {
+            Produto produto = produtoRepository.findById(produtoId)
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + produtoId + ", não encontrado."));
             novaCategoria.getProdutos().add(produto);
         }
         novaCategoria.setNome(dtoRequisicao.getNome());
@@ -103,9 +101,9 @@ public class CategoriaService {
             }
         }
         categoria.getProdutos().clear();
-        for(AdminAtualizarCategoriaProdutoRequisicaoDTO produtoDTORequisicao : dtoRequisicao.getProdutos()) {
-            Produto produto = produtoRepository.findById(produtoDTORequisicao.getId())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + produtoDTORequisicao.getId() + ", não encontrado."));
+        for(Long produtoId : dtoRequisicao.getProdutos()) {
+            Produto produto = produtoRepository.findById(produtoId)
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + produtoId + ", não encontrado."));
             categoria.getProdutos().add(produto);
         }
         categoria.setNome(dtoRequisicao.getNome());

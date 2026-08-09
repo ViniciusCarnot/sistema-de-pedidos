@@ -27,15 +27,14 @@ public class AdminController {
     private final PedidoService pedidoService;
     private final ClienteService clienteService;
     private final EnderecoService enderecoService;
-    private final TelefoneService telefoneService;
 
-    public AdminController(ProdutoService produtoService, CategoriaService categoriaService, PedidoService pedidoService, ClienteService clienteService, EnderecoService enderecoService, TelefoneService telefoneService) {
+
+    public AdminController(ProdutoService produtoService, CategoriaService categoriaService, PedidoService pedidoService, ClienteService clienteService, EnderecoService enderecoService) {
         this.produtoService = produtoService;
         this.categoriaService = categoriaService;
         this.pedidoService = pedidoService;
         this.clienteService = clienteService;
         this.enderecoService = enderecoService;
-        this.telefoneService = telefoneService;
     }
 
     @GetMapping("/produtos/{idProduto}")

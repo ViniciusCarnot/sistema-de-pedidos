@@ -35,15 +35,13 @@ public class PedidoService {
 
     private final PagamentoService pagamentoService;
 
-    private final ItemPedidoService itemPedidoService;
-
     private final PagamentoRepository pagamentoRepository;
 
     private final CidadeRepository cidadeRepository;
 
     private final EstadoRepository estadoRepository;
 
-    public PedidoService(ClienteRepository clienteRepository, PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, ClienteService clienteService, ProdutoRepository produtoRepository1, EnderecoService enderecoService, EnderecoRepository enderecoRepository1, PagamentoService pagamentoService, ItemPedidoService itemPedidoService, PagamentoRepository pagamentoRepository, CidadeRepository cidadeRepository1, EstadoRepository estadoRepository) {
+    public PedidoService(ClienteRepository clienteRepository, PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, ClienteService clienteService, ProdutoRepository produtoRepository1, EnderecoService enderecoService, EnderecoRepository enderecoRepository1, PagamentoService pagamentoService, PagamentoRepository pagamentoRepository, CidadeRepository cidadeRepository1, EstadoRepository estadoRepository) {
         this.clienteRepository = clienteRepository;
         this.pedidoRepository = pedidoRepository;
         this.clienteService = clienteService;
@@ -51,7 +49,6 @@ public class PedidoService {
         this.enderecoService = enderecoService;
         this.enderecoRepository = enderecoRepository1;
         this.pagamentoService = pagamentoService;
-        this.itemPedidoService = itemPedidoService;
         this.pagamentoRepository = pagamentoRepository;
         this.cidadeRepository = cidadeRepository1;
         this.estadoRepository = estadoRepository;

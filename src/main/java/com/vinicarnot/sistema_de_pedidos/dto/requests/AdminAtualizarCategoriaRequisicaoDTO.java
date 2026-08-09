@@ -16,6 +16,6 @@ public class AdminAtualizarCategoriaRequisicaoDTO {
     @NotBlank(message = "O campo 'nome' é obrigatório.")
     private String nome;
 
-    private Set<AdminAtualizarCategoriaProdutoRequisicaoDTO> produtos = new HashSet<>();
+    private Set<Long> produtos = new HashSet<>();
 
 }
