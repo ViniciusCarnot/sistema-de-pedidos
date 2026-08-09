@@ -2,11 +2,9 @@ package com.vinicarnot.sistema_de_pedidos.controllers;
 
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarMeuEnderecoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarMinhaContaRequisicaoDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarTelefoneRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
 import com.vinicarnot.sistema_de_pedidos.services.ClienteService;
 import com.vinicarnot.sistema_de_pedidos.services.EnderecoService;
-import com.vinicarnot.sistema_de_pedidos.services.TelefoneService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -2,14 +2,18 @@ package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
 import com.vinicarnot.sistema_de_pedidos.domain.enums.Disponibilidade;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.AdminAtualizarProdutoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AdminCriarProdutoRequisicaoDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.AdminAtualizarProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.AdminCriarProdutoRespostaDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.AdminLerProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.LerProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.factory.ProdutoFactory;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.ForbiddenException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,6 +78,9 @@ public class ProdutoServiceTesteUnitario {
 
         Mockito.when(produtoRepository.save(ArgumentMatchers.any())).thenReturn(produto2);
 
+        Mockito.when(produtoRepository.getReferenceById(produtoIdExistente)).thenReturn(produto);
+        Mockito.when(produtoRepository.getReferenceById(produtoIdNaoExistente)).thenThrow(EntityNotFoundException.class);
+
     }
 
     @Test
@@ -122,7 +129,44 @@ public class ProdutoServiceTesteUnitario {
     }
 
     @Test
-    public void adminAdicionarProdutoDeveriaRetornarAdminCriarProdutoRespostaDTOQuandoProdutoNomeEstaDisponivel() {
+    public void adminLerProdutoDeveriaRetornarAdminLerProdutoRespostaDTOQuandoProdutoIdExiste() {
+
+        AdminLerProdutoRespostaDTO dtoResposta = produtoService.adminLerProduto(produtoIdExistente);
+
+        Assertions.assertNotNull(dtoResposta);
+        Assertions.assertEquals(produto.getId(), dtoResposta.getId());
+        Assertions.assertEquals(produto.getPreco(), dtoResposta.getPreco());
+        Assertions.assertEquals(produto.getDisponibilidade().getStatus(), dtoResposta.getDisponibilidade());
+        Assertions.assertEquals(produto.getVisibilidade(), dtoResposta.getVisibilidade());
+
+    }
+
+    @Test
+    public void adminLerProdutoDeveriaLancarRecursoNaoEncontradoExcecaoQuandoProdutoIdNaoExiste() {
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+            produtoService.adminLerProduto(produtoIdNaoExistente);
+
+        });
+
+    }
+
+    @Test
+    public void adminLerProdutosDeveriaRetornarAdminLerProdutoRespostaDTOPage() {
+
+        Pageable pageable = PageRequest.of(0, 12);
+
+        Page<AdminLerProdutoRespostaDTO> adminLerProdutoRespostaDTOPage = produtoService.adminLerProdutos(null, null, null, pageable);
+
+        Assertions.assertNotNull(adminLerProdutoRespostaDTOPage);
+        Assertions.assertEquals(2, adminLerProdutoRespostaDTOPage.getSize());
+        Assertions.assertEquals(adminLerProdutoRespostaDTOPage.iterator().next().getNome(), produto.getNome());
+
+    }
+
+    @Test
+    public void adminAdicionarProdutoDeveriaRetornarAdminCriarProdutoRespostaDTOQuandoProdutoNomeDisponivel() {
 
         AdminCriarProdutoRequisicaoDTO dtoRequisicao = new AdminCriarProdutoRequisicaoDTO();
 
@@ -143,7 +187,7 @@ public class ProdutoServiceTesteUnitario {
     }
 
     @Test
-    public void adminAdicionarProdutoDeveriaLancarRecursoJaExistenteExcecaoQuandoProdutoNomeNaoEstaDisponivel() {
+    public void adminAdicionarProdutoDeveriaLancarRecursoJaExistenteExcecaoQuandoProdutoNomeIndisponivel() {
 
         AdminCriarProdutoRequisicaoDTO dtoRequisicao = new AdminCriarProdutoRequisicaoDTO();
 
@@ -158,5 +202,75 @@ public class ProdutoServiceTesteUnitario {
 
     }
 
+    @Test
+    public void adminAtualizarProdutoDeveriaRetornarAdminAtualizarProdutoRespostaDTOQuandoProdutoIdExisteEProdutoDadosSaoValidos() {
+
+        AdminAtualizarProdutoRequisicaoDTO dtoRequisicao = new AdminAtualizarProdutoRequisicaoDTO();
+
+        dtoRequisicao.setNome("Alexa Echo Dot");
+        dtoRequisicao.setPreco(BigDecimal.valueOf(233.40));
+        dtoRequisicao.setDisponibilidade(Disponibilidade.INDISPONIVEL);
+        dtoRequisicao.setVisibilidade(false);
+
+        AdminAtualizarProdutoRespostaDTO dtoResposta = produtoService.adminAtualizarProduto(produto.getId(), dtoRequisicao);
+
+        Assertions.assertNotNull(dtoResposta);
+        Assertions.assertEquals(produto.getId(), dtoResposta.getId());
+        Assertions.assertEquals(dtoRequisicao.getNome(), dtoResposta.getNome());
+        Assertions.assertEquals(dtoRequisicao.getPreco(), dtoResposta.getPreco());
+        Assertions.assertEquals(dtoRequisicao.getDisponibilidade().getStatus(), dtoResposta.getDisponibilidade());
+        Assertions.assertEquals(dtoRequisicao.getVisibilidade(), dtoResposta.getVisibilidade());
+
+    }
+
+    @Test
+    public void adminAtualizarProdutoDeveriaLancarRecursoNaoEncontradoExcecaoQuandoProdutoIdNaoExiste() {
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+            produtoService.adminAtualizarProduto(produtoIdNaoExistente, new AdminAtualizarProdutoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void adminAtualizarProdutoDeveriaLancarRecursoJaExistenteExcecaoQuandoProdutoIdExisteEProdutoNomeIndisponivel() {
+
+        AdminAtualizarProdutoRequisicaoDTO dtoRequisicao = new AdminAtualizarProdutoRequisicaoDTO();
+
+        Mockito.when(produtoRepository.findByNomeIgnoreCase(ArgumentMatchers.any())).thenReturn(Optional.of(produto2));
+
+        dtoRequisicao.setNome(produto2.getNome());
+
+        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+
+            produtoService.adminAtualizarProduto(produtoIdExistente, dtoRequisicao);
+
+        });
+
+    }
+
+    @Test
+    public void adminRemoverProdutoDeveriaRetornarVoidQuandoProdutoIdExiste() {
+
+        Assertions.assertDoesNotThrow(() -> {
+
+            produtoService.adminRemoverProduto(produtoIdExistente);
+
+        });
+
+    }
+
+    @Test
+    public void adminRemoverProdutoDeveriaLancarEntityNotFoundExceptionQuandoProdutoIdNaoExiste() {
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> {
+
+            produtoService.adminRemoverProduto(produtoIdNaoExistente);
+
+        });
+
+    }
 
 }

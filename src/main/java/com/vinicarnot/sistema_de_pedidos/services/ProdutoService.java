@@ -99,8 +99,8 @@ public class ProdutoService {
 
     @Transactional(rollbackFor = Exception.class)
     public AdminAtualizarProdutoRespostaDTO adminAtualizarProduto(Long idProduto, AdminAtualizarProdutoRequisicaoDTO dtoRequisicao) {
-        Produto produto = produtoRepository.findById(idProduto).
-                orElseThrow(() -> new RecursoNaoEncontradoException("Produto com o id: " + idProduto + " não encontrado."));
+        Produto produto = produtoRepository.findById(idProduto)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com o id: " + idProduto + " não encontrado."));
         Optional<Produto> produtoOptional = produtoRepository.findByNomeIgnoreCase(dtoRequisicao.getNome());
         if(produtoOptional.isPresent()) {
             if(!dtoRequisicao.getNome().equalsIgnoreCase(produto.getNome())) {
@@ -111,7 +111,7 @@ public class ProdutoService {
         produto.setPreco(dtoRequisicao.getPreco());
         produto.setDisponibilidade(dtoRequisicao.getDisponibilidade());
         produto.setVisibilidade(dtoRequisicao.getVisibilidade());
-        return new AdminAtualizarProdutoRespostaDTO(produtoRepository.save(produto));
+        return new AdminAtualizarProdutoRespostaDTO(produto);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -122,7 +122,6 @@ public class ProdutoService {
         }
         produto.setDisponibilidade(Disponibilidade.INDISPONIVEL);
         produto.setVisibilidade(Boolean.FALSE);
-        produtoRepository.save(produto);
     }
 
 }
