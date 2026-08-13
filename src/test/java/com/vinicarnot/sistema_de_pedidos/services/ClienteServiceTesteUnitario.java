@@ -408,7 +408,7 @@ public class ClienteServiceTesteUnitario {
     }
 
     @Test
-    public void atualizarMinhaContaDeveriaRetornarAtualizarMinhaContaRespostaDTOQuandoClienteNaoAutenticado() {
+    public void atualizarMinhaContaDeveriaLancarUsernameNotFoundExceptionQuandoClienteNaoAutenticado() {
 
         ClienteService spyClienteService = Mockito.spy(clienteService);
 
@@ -423,7 +423,83 @@ public class ClienteServiceTesteUnitario {
     }
 
     @Test
-    public void atualizarMinhaContaDeveriaRetornarAtualizarMinhaContaRespostaDTOQuandoClienteNaoAutenticado() {
+    public void atualizarMinhaContaDeveriaLancarRecursoJaExistenteExcecaoQuandoClienteAutenticadoEClienteEmailIndisponivel() {
+
+        ClienteService spyClienteService = Mockito.spy(clienteService);
+
+        String novoEmail = "novoemail@email.com";
+
+        Mockito.doReturn(clienteNormal).when(spyClienteService).autenticado();
+        Mockito.when(clienteRepository.existsByEmail(novoEmail)).thenReturn(true);
+
+        AtualizarMinhaContaRequisicaoDTO dtoRequisicao = new AtualizarMinhaContaRequisicaoDTO(
+                clienteNormal.getNome(),
+                novoEmail,
+                clienteNormal.getSenha(),
+                clienteNormal.getCpfOuCnpj(),
+                clienteNormal.getTipo(),
+                new AtualizarTelefoneRequisicaoDTO(clienteNormal.getTelefone().getNumero())
+        );
+
+        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+
+            spyClienteService.atualizarMinhaConta(dtoRequisicao);
+
+        });
+
+        Mockito.verify(clienteRepository, Mockito.times(1)).existsByEmail(novoEmail);
+
+    }
+
+    @Test
+    public void atualizarMinhaContaDeveriaLancarRecursoJaExistenteExcecaoQuandoClienteAutenticadoEClienteEmailDisponivelEClienteTelefoneIndisponivel() {
+
+        ClienteService spyClienteService = Mockito.spy(clienteService);
+
+        String novoEmail = "novoemail@email.com";
+        String novoTelefone = "(00) 00000-0000";
+
+        Mockito.doReturn(clienteNormal).when(spyClienteService).autenticado();
+        Mockito.when(clienteRepository.existsByEmail(novoEmail)).thenReturn(false);
+        Mockito.when(telefoneRepository.existsTelefoneByNumero(novoTelefone)).thenReturn(true);
+
+        AtualizarMinhaContaRequisicaoDTO dtoRequisicao = new AtualizarMinhaContaRequisicaoDTO(
+                clienteNormal.getNome(),
+                novoEmail,
+                clienteNormal.getSenha(),
+                clienteNormal.getCpfOuCnpj(),
+                clienteNormal.getTipo(),
+                new AtualizarTelefoneRequisicaoDTO(novoTelefone)
+        );
+
+        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+
+            spyClienteService.atualizarMinhaConta(dtoRequisicao);
+
+        });
+
+        Mockito.verify(clienteRepository, Mockito.times(1)).existsByEmail(novoEmail);
+        Mockito.verify(telefoneRepository, Mockito.times(1)).existsTelefoneByNumero(novoTelefone);
+
+    }
+
+    @Test
+    public void desativarMinhaContaDeveriaRetornarVoidQuandoClienteAutenticado() {
+
+        ClienteService spyClienteService = Mockito.spy(clienteService);
+
+        Mockito.doReturn(clienteNormal).when(spyClienteService).autenticado();
+
+        Assertions.assertDoesNotThrow(() -> {
+
+            spyClienteService.desativarMinhaConta();
+
+        });
+
+    }
+
+    @Test
+    public void desativarMinhaContaDeveriaLancarQuandoClienteAutenticado() {
 
         ClienteService spyClienteService = Mockito.spy(clienteService);
 
@@ -431,7 +507,7 @@ public class ClienteServiceTesteUnitario {
 
         Assertions.assertThrows(UsernameNotFoundException.class, () -> {
 
-            spyClienteService.atualizarMinhaConta(ArgumentMatchers.any());
+            spyClienteService.desativarMinhaConta();
 
         });
 
