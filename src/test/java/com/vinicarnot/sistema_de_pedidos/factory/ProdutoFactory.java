@@ -20,6 +20,16 @@ public class ProdutoFactory {
         return produto;
     }
 
+    public static Produto instanciarProduto2() {
+        Produto produto = new Produto();
+        produto.setId(2L);
+        produto.setNome("Ryzen 7 5700X");
+        produto.setPreco(BigDecimal.valueOf(1100.00));
+        produto.setDisponibilidade(Disponibilidade.DISPONIVEL);
+        produto.setVisibilidade(true);
+        return produto;
+    }
+
     public static LerProdutoRespostaDTO instanciarLerProdutoRespostaDTO() {
         return new LerProdutoRespostaDTO(instanciarProduto());
     }

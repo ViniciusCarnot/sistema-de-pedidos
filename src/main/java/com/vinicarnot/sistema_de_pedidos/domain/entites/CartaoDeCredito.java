@@ -22,9 +22,11 @@ import java.time.LocalDate;
 @DiscriminatorValue("CARTAO_DE_CREDITO")
 public class CartaoDeCredito extends Pagamento {
 
-    public CartaoDeCredito(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, Integer quantidadeParcelas) {
+    public CartaoDeCredito(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, Integer quantidadeParcelas, boolean salvarCartaoParaProximasCompras, LocalDate dataVencimento) {
         super(id, estadoPagamento, tipoPagamento, pedido);
         this.quantidadeParcelas = quantidadeParcelas;
+        this.salvarCartaoParaProximasCompras = salvarCartaoParaProximasCompras;
+        this.dataVencimento = dataVencimento;
     }
 
     @Column(nullable = false)

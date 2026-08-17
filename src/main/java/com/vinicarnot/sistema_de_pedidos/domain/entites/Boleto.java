@@ -25,10 +25,13 @@ import java.time.LocalDate;
 @DiscriminatorValue("BOLETO")
 public class Boleto extends Pagamento {
 
-    public Boleto(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, LocalDate dataVencimento, Instant dataPagamento) {
+    public Boleto(Long id, EstadoPagamento estadoPagamento, TipoPagamento tipoPagamento, Pedido pedido, String pagadorCpfOuCnpj, String pagadorNome, String pagadorEmail, String codigoDeBarras, LocalDate dataVencimento) {
         super(id, estadoPagamento, tipoPagamento, pedido);
+        this.pagadorCpfOuCnpj = pagadorCpfOuCnpj;
+        this.pagadorNome = pagadorNome;
+        this.pagadorEmail = pagadorEmail;
+        this.codigoDeBarras = codigoDeBarras;
         this.dataVencimento = dataVencimento;
-        this.dataPagamento = dataPagamento;
     }
 
     @Column(nullable = false)
