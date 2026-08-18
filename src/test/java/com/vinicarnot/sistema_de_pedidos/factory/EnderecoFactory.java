@@ -18,4 +18,16 @@ public class EnderecoFactory {
         );
     }
 
+    public static Endereco instanciarEndereco2() {
+        return new Endereco
+                (
+                        2L,
+                        "Rua Brasil",
+                        "2B",
+                        "Independência",
+                        new Cidade(2L, "Piracicaba", new Estado(1L, "São Paulo")
+                        )
+                );
+    }
+
 }

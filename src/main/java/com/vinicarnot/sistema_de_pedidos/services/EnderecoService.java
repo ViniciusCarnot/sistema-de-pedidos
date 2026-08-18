@@ -39,57 +39,6 @@ public class EnderecoService {
         this.clienteService = clienteService;
     }
 
-    /*
-    @Transactional(rollbackFor = Exception.class)
-    public Endereco criarEndereco(Cliente cliente, CriarPedidoEnderecoRequisicaoDTO dtoRequest) {
-        Cidade cidade = cidadeRepository.findById(dtoRequest.getCidade().getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar uma cidade com o id: " + dtoRequest.getCidade().getId() + "."));
-
-        Estado estado = estadoRepository.findById(dtoRequest.getEstado().getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar um estado com o id: " + dtoRequest.getEstado().getId() + "."));
-
-        String logradouro = dtoRequest.getLogradouro();
-        String numero = dtoRequest.getNumero();
-        String bairro = dtoRequest.getBairro();
-
-        return enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidadeAndCidadeEstado(logradouro, numero, bairro, cidade, estado)
-                .orElseGet(() -> {
-                    Endereco novoEndereco = new Endereco();
-                    novoEndereco.setLogradouro(logradouro);
-                    novoEndereco.setNumero(numero);
-                    novoEndereco.setBairro(bairro);
-                    novoEndereco.setCidade(cidade);
-                    novoEndereco.getClientes().add(cliente);
-                    return enderecoRepository.save(novoEndereco);
-                });
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Endereco atualizarEndereco(Cliente cliente, UpdateEnderecoRequestDTO dtoRequest) {
-        Cidade cidade = cidadeRepository.findById(dtoRequest.getCidade().getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar uma cidade com o id: " + dtoRequest.getCidade().getId() + "."));
-
-        Estado estado = estadoRepository.findById(dtoRequest.getEstado().getId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível encontrar um estado com o id: " + dtoRequest.getEstado().getId() + "."));
-
-        String logradouro = dtoRequest.getLogradouro();
-        String numero = dtoRequest.getNumero();
-        String bairro = dtoRequest.getBairro();
-
-        return enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidadeAndCidadeEstado(logradouro, numero, bairro, cidade, estado)
-                        .orElseGet(() -> {
-                    Endereco novoEndereco = new Endereco();
-                    novoEndereco.setLogradouro(logradouro);
-                    novoEndereco.setNumero(numero);
-                    novoEndereco.setBairro(bairro);
-                    novoEndereco.setCidade(cidade);
-                    novoEndereco.getClientes().add(cliente);
-                    return enderecoRepository.save(novoEndereco);
-                });
-    }
-
-     */
-
     @Transactional(readOnly = true)
     public List<AdminLerEnderecoRespostaDTO> adminLerEnderecosDoCliente(String emailCliente) {
 
