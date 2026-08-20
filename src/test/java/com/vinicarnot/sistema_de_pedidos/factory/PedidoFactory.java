@@ -22,4 +22,15 @@ public class PedidoFactory {
         return pedido;
     }
 
+    public static Pedido instanciarPedido2() {
+        Pedido pedido = new Pedido();
+        pedido.setId(2L);
+        pedido.setStatusPedido(StatusPedido.AGUARDANDO_PAGAMENTO);
+        pedido.setCliente(ClienteFactory.instanciarClienteAdmin());
+        pedido.setEnderecoDeEntrega(EnderecoFactory.instanciarEndereco2());
+        pedido.getItemsPedidos().add(new ItemPedido(ProdutoFactory.instanciarProduto(), pedido, 1));
+        pedido.getItemsPedidos().add(new ItemPedido(ProdutoFactory.instanciarProduto2(), pedido, 1));
+        return pedido;
+    }
+
 }

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ public class CriarPedidoRequisicaoDTO {
     private List<CriarPedidoItemPedidoRequisicaoDTO> items = new ArrayList<>();
 
     @NotNull(message = "O campo 'enderecoDeEntregaId' é obrigatório.")
+    @Setter
     private Long enderecoDeEntregaId;
 
 }

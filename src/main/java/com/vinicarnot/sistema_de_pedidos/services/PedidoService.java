@@ -29,29 +29,14 @@ public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
 
-    private final EnderecoService enderecoService;
-
     private final EnderecoRepository enderecoRepository;
 
-    private final PagamentoService pagamentoService;
-
-    private final PagamentoRepository pagamentoRepository;
-
-    private final CidadeRepository cidadeRepository;
-
-    private final EstadoRepository estadoRepository;
-
-    public PedidoService(ClienteRepository clienteRepository, PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, ClienteService clienteService, ProdutoRepository produtoRepository1, EnderecoService enderecoService, EnderecoRepository enderecoRepository1, PagamentoService pagamentoService, PagamentoRepository pagamentoRepository, CidadeRepository cidadeRepository1, EstadoRepository estadoRepository) {
+    public PedidoService(ClienteRepository clienteRepository, PedidoRepository pedidoRepository, ProdutoRepository produtoRepository, EnderecoRepository enderecoRepository, ClienteService clienteService) {
         this.clienteRepository = clienteRepository;
         this.pedidoRepository = pedidoRepository;
         this.clienteService = clienteService;
-        this.produtoRepository = produtoRepository1;
-        this.enderecoService = enderecoService;
-        this.enderecoRepository = enderecoRepository1;
-        this.pagamentoService = pagamentoService;
-        this.pagamentoRepository = pagamentoRepository;
-        this.cidadeRepository = cidadeRepository1;
-        this.estadoRepository = estadoRepository;
+        this.produtoRepository = produtoRepository;
+        this.enderecoRepository = enderecoRepository;
     }
 
     @Transactional(readOnly = true)
