@@ -3,8 +3,11 @@ package com.vinicarnot.sistema_de_pedidos.services;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Pedido;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
 import com.vinicarnot.sistema_de_pedidos.domain.enums.Disponibilidade;
+import com.vinicarnot.sistema_de_pedidos.domain.enums.StatusPedido;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarPedidoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarPedidoItemPedidoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarPedidoRequisicaoDTO;
+import com.vinicarnot.sistema_de_pedidos.dto.responses.AdminLerPedidoMinRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.PedidoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.factory.PedidoFactory;
 import com.vinicarnot.sistema_de_pedidos.projections.LerEnderecoRespostaProjecao;
@@ -13,6 +16,7 @@ import com.vinicarnot.sistema_de_pedidos.repositories.EnderecoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.PedidoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.ForbiddenException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.ProdutoCancelamentoExcecao;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.ProdutoEsgotadoException;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
 import jakarta.persistence.EntityNotFoundException;
@@ -57,7 +61,7 @@ public class PedidoServiceTesteUnitario {
     private EnderecoRepository enderecoRepository;
 
     private Pedido pedido1, pedido2;
-    private Long pedidoIdInexistente;
+    private Long pedidoIdInexistente, enderecoIdInexistente;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -66,6 +70,9 @@ public class PedidoServiceTesteUnitario {
         pedido2 = PedidoFactory.instanciarPedido2();
 
         pedidoIdInexistente = 1000L;
+        enderecoIdInexistente = 1000L;
+
+        Mockito.when(enderecoRepository.findById(enderecoIdInexistente)).thenReturn(Optional.empty());
 
     }
 
@@ -347,5 +354,510 @@ public class PedidoServiceTesteUnitario {
 
     }
 
+    @Test
+    public void atualizarMeuPedidoDeveriaRetornarPedidoRespostaDTOQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusValidoEEnderecoIdExisteEEnderecoCadastrado() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+        Mockito.when(enderecoRepository.findById(pedido1.getEnderecoDeEntrega().getId())).thenReturn(Optional.of(pedido1.getEnderecoDeEntrega()));
+
+        LerEnderecoRespostaProjecao projecaoMock = Mockito.mock(LerEnderecoRespostaProjecao.class);
+        Mockito.when(projecaoMock.getEnderecoId()).thenReturn(pedido1.getEnderecoDeEntrega().getId());
+        Mockito.when(projecaoMock.getLogradouro()).thenReturn(pedido1.getEnderecoDeEntrega().getLogradouro());
+        Mockito.when(projecaoMock.getNumero()).thenReturn(pedido1.getEnderecoDeEntrega().getNumero());
+        Mockito.when(projecaoMock.getBairro()).thenReturn(pedido1.getEnderecoDeEntrega().getBairro());
+        Mockito.when(projecaoMock.getCidadeNome()).thenReturn(pedido1.getEnderecoDeEntrega().getCidade().getNome());
+        Mockito.when(projecaoMock.getEstadoNome()).thenReturn(pedido1.getEnderecoDeEntrega().getCidade().getEstado().getNome());
+
+        Mockito.when(enderecoRepository.procurarEnderecosPorCliente(ArgumentMatchers.any())).thenReturn(List.of(projecaoMock));
+
+        PedidoService spyPedidoService = Mockito.spy(pedidoService);
+        Mockito.doNothing().when(spyPedidoService).validarEndereco(pedido1.getEnderecoDeEntrega(), pedido1.getCliente().getEmail());
+
+        PedidoRespostaDTO dtoResposta = pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO(1L));
+
+        Assertions.assertNotNull(dtoResposta);
+        Assertions.assertEquals(pedido1.getId(), dtoResposta.getPedidoId());
+        Assertions.assertEquals(pedido1.getCliente().getNome(), dtoResposta.getCompradorNome());
+        Assertions.assertEquals(pedido1.getInstanteDaCompra(), dtoResposta.getDataDeEmissao());
+        Assertions.assertEquals(pedido1.getStatusPedido(), dtoResposta.getPedidoStatus());
+        Assertions.assertEquals(2, dtoResposta.getItems().size());
+        Assertions.assertEquals(pedido1.getEnderecoDeEntrega().getLogradouro(), dtoResposta.getEnderecoDeEntrega().getLogradouro());
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarRecursoNaoEncontradoExcecapQuandoPedidoIdNaoExiste() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenThrow(RecursoNaoEncontradoException.class);
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarUsernameNotFoundExceptionQuandoPedidoIdExisteEClienteNaoAutenticado() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenThrow(UsernameNotFoundException.class);
+
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarForbiddenExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteNaoDono() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido2.getCliente());
+
+        Assertions.assertThrows(ForbiddenException.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusProntoParaEnvio() {
+
+        pedido1.setStatusPedido(StatusPedido.PRONTO_PARA_ENVIO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusDespachado() {
+
+        pedido1.setStatusPedido(StatusPedido.DESPACHADO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusEmRotaDeEntrega() {
+
+        pedido1.setStatusPedido(StatusPedido.EM_ROTA_DE_ENTREGA);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusEntregue() {
+
+        pedido1.setStatusPedido(StatusPedido.ENTREGUE);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusDevolvido() {
+
+        pedido1.setStatusPedido(StatusPedido.DEVOLVIDO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusReembolsado() {
+
+        pedido1.setStatusPedido(StatusPedido.REEMBOLSADO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusCancelado() {
+
+        pedido1.setStatusPedido(StatusPedido.CANCELADO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO());
+
+        });
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarRecursoNaoEncontradoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusValidoEEnderecoIdNaoExiste() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO(enderecoIdInexistente));
+
+        });
+
+        Mockito.verify(enderecoRepository, Mockito.times(1)).findById(enderecoIdInexistente);
+
+    }
+
+    @Test
+    public void atualizarMeuPedidoDeveriaLancarRecursoNaoEncontradoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusValidoEEnderecoIdExisteEEnderecoNaoCadastrado() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+        Mockito.when(enderecoRepository.findById(pedido2.getEnderecoDeEntrega().getId())).thenReturn(Optional.of(pedido2.getEnderecoDeEntrega()));
+
+        LerEnderecoRespostaProjecao projecaoMock = Mockito.mock(LerEnderecoRespostaProjecao.class);
+        Mockito.when(projecaoMock.getEnderecoId()).thenReturn(pedido1.getEnderecoDeEntrega().getId());
+        Mockito.when(projecaoMock.getLogradouro()).thenReturn(pedido1.getEnderecoDeEntrega().getLogradouro());
+        Mockito.when(projecaoMock.getNumero()).thenReturn(pedido1.getEnderecoDeEntrega().getNumero());
+        Mockito.when(projecaoMock.getBairro()).thenReturn(pedido1.getEnderecoDeEntrega().getBairro());
+        Mockito.when(projecaoMock.getCidadeNome()).thenReturn(pedido1.getEnderecoDeEntrega().getCidade().getNome());
+        Mockito.when(projecaoMock.getEstadoNome()).thenReturn(pedido1.getEnderecoDeEntrega().getCidade().getEstado().getNome());
+
+        Mockito.when(enderecoRepository.procurarEnderecosPorCliente(ArgumentMatchers.any())).thenReturn(List.of(projecaoMock));
+
+        PedidoService spyPedidoService = Mockito.spy(pedidoService);
+        Mockito.doThrow(RecursoNaoEncontradoException.class).when(spyPedidoService).validarEndereco(pedido1.getEnderecoDeEntrega(), pedido1.getCliente().getEmail());
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+            pedidoService.atualizarMeuPedido(pedido1.getId(), new AtualizarPedidoRequisicaoDTO(pedido2.getEnderecoDeEntrega().getId()));
+
+        });
+
+        Mockito.verify(enderecoRepository, Mockito.times(1)).findById(pedido2.getEnderecoDeEntrega().getId());
+        Mockito.verify(enderecoRepository, Mockito.times(1)).procurarEnderecosPorCliente(ArgumentMatchers.any());
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaRetornarPedidoRespostaDTOQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusValido() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        PedidoRespostaDTO dtoResposta = pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        Assertions.assertNotNull(dtoResposta);
+        Assertions.assertEquals(pedido1.getId(), dtoResposta.getPedidoId());
+        Assertions.assertEquals(pedido1.getCliente().getNome(), dtoResposta.getCompradorNome());
+        Assertions.assertEquals(pedido1.getInstanteDaCompra(), dtoResposta.getDataDeEmissao());
+        Assertions.assertEquals(StatusPedido.CANCELADO, dtoResposta.getPedidoStatus());
+        Assertions.assertEquals(2, dtoResposta.getItems().size());
+        Assertions.assertEquals(pedido1.getEnderecoDeEntrega().getLogradouro(), dtoResposta.getEnderecoDeEntrega().getLogradouro());
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarRecursoNaoEncontradoExcecaoQuandoPedidoIdNaoExiste() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarUsernameNotFoundExceptionQuandoPedidoIdExisteEClienteNaoAutenticado() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenThrow(UsernameNotFoundException.class);
+
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarForbiddenExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteNaoDono() {
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido2.getCliente());
+
+        Assertions.assertThrows(ForbiddenException.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusProntoParaEnvio() {
+
+        pedido1.setStatusPedido(StatusPedido.PRONTO_PARA_ENVIO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusDespachado() {
+
+        pedido1.setStatusPedido(StatusPedido.DESPACHADO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusEmRotaDeEntrega() {
+
+        pedido1.setStatusPedido(StatusPedido.EM_ROTA_DE_ENTREGA);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusEntregue() {
+
+        pedido1.setStatusPedido(StatusPedido.ENTREGUE);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusDevolvido() {
+
+        pedido1.setStatusPedido(StatusPedido.DEVOLVIDO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusReembolsado() {
+
+        pedido1.setStatusPedido(StatusPedido.REEMBOLSADO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void cancelarMeuPedidoDeveriaLancarProdutoCancelamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoEPedidoStatusCancelado() {
+
+        pedido1.setStatusPedido(StatusPedido.CANCELADO);
+
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido1.getCliente());
+
+        Assertions.assertThrows(ProdutoCancelamentoExcecao.class, () -> {
+
+            pedidoService.cancelarMeuPedido(pedido1.getId());
+
+        });
+
+    }
+
+    @Test
+    public void adminLerPedidoDoClienteDeveriaRetornarPedidoRespostaDTOQuandoClienteEmailExisteEPedidoIdExisteEClienteDono() {
+
+        Mockito.when(clienteRepository.existsByEmail(pedido1.getCliente().getEmail())).thenReturn(true);
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
+
+        PedidoRespostaDTO dtoResposta = pedidoService.adminLerPedidoDoCliente(pedido1.getCliente().getEmail(), pedido1.getId());
+
+        Assertions.assertNotNull(dtoResposta);
+        Assertions.assertEquals(pedido1.getId(), dtoResposta.getPedidoId());
+        Assertions.assertEquals(pedido1.getCliente().getNome(), dtoResposta.getCompradorNome());
+        Assertions.assertEquals(pedido1.getInstanteDaCompra(), dtoResposta.getDataDeEmissao());
+        Assertions.assertEquals(pedido1.getStatusPedido(), dtoResposta.getPedidoStatus());
+        Assertions.assertEquals(2, dtoResposta.getItems().size());
+        Assertions.assertEquals(pedido1.getEnderecoDeEntrega().getLogradouro(), dtoResposta.getEnderecoDeEntrega().getLogradouro());
+
+    }
+
+    @Test
+    public void adminLerPedidoDoClienteDeveriaLancarRecursoNaoEncontradoExcecaoQuandoClienteEmailNaoExiste() {
+
+        Mockito.when(clienteRepository.existsByEmail(pedido1.getCliente().getEmail())).thenReturn(false);
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+           pedidoService.adminLerPedidoDoCliente(pedido1.getCliente().getEmail(), pedido1.getId());
+
+        });
+
+        Mockito.verify(clienteRepository, Mockito.times(1)).existsByEmail(pedido1.getCliente().getEmail());
+
+    }
+
+    @Test
+    public void adminLerPedidoDoClienteDeveriaLancarRecursoNaoEncontradoExcecaoQuandoClienteEmailExisteEPedidoIdNaoExiste() {
+
+        Mockito.when(clienteRepository.existsByEmail(pedido1.getCliente().getEmail())).thenReturn(true);
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+            pedidoService.adminLerPedidoDoCliente(pedido1.getCliente().getEmail(), pedido1.getId());
+
+        });
+
+        Mockito.verify(clienteRepository, Mockito.times(1)).existsByEmail(pedido1.getCliente().getEmail());
+        Mockito.verify(pedidoRepository, Mockito.times(1)).findById(pedido1.getId());
+
+    }
+
+    @Test
+    public void adminLerPedidoDoClienteDeveriaLancarRecursoNaoEncontradoExcecaoQuandoClienteEmailExisteEPedidoIdExisteEClienteNaoDono() {
+
+        Mockito.when(clienteRepository.existsByEmail(pedido2.getCliente().getEmail())).thenReturn(true);
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+            pedidoService.adminLerPedidoDoCliente(pedido2.getCliente().getEmail(), pedido1.getId());
+
+        });
+
+        Mockito.verify(clienteRepository, Mockito.times(1)).existsByEmail(pedido2.getCliente().getEmail());
+        Mockito.verify(pedidoRepository, Mockito.times(1)).findById(pedido1.getId());
+
+    }
+
+    @Test
+    public void adminLerPedidosDoClienteDeveriaRetornarAdminLerPedidoMinRespostaDTOPageQuandoClienteEmailExiste() {
+
+        pedido2.setCliente(pedido1.getCliente());
+
+        PageImpl<Pedido> pedidoPage = new PageImpl<>(List.of(pedido1, pedido2));
+
+        Mockito.when(clienteRepository.existsByEmail(pedido1.getCliente().getEmail())).thenReturn(true);
+        Mockito.when(pedidoRepository.procurarPedidoEPagamentoEClientePorClienteEmail(ArgumentMatchers.any(), (Pageable) ArgumentMatchers.any())).thenReturn(pedidoPage);
+
+        PageRequest pageRequest = PageRequest.of(0, 12);
+
+        Page<AdminLerPedidoMinRespostaDTO> dtoResposta = pedidoService.adminLerPedidosDoCliente(pedido1.getCliente().getEmail(), pageRequest);
+
+        Assertions.assertNotNull(dtoResposta);
+        Assertions.assertTrue(dtoResposta.stream().anyMatch(pedido -> pedido.getPedidoId().equals(pedido1.getId())));
+        Assertions.assertTrue(dtoResposta.stream().anyMatch(pedido -> pedido.getPedidoId().equals(pedido2.getId())));
+        Assertions.assertEquals(2, dtoResposta.getSize());
+
+    }
+
+    @Test
+    public void adminLerPedidosDoClienteDeveriaLancarRecursoNaoEncontradoExcecaoQuandoClienteEmailNaoExiste() {
+
+        Mockito.when(clienteRepository.existsByEmail(pedido1.getCliente().getEmail())).thenReturn(false);
+
+        PageRequest pageRequest = PageRequest.of(0, 12);
+
+        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+
+           pedidoService.adminLerPedidosDoCliente(pedido1.getCliente().getEmail(), pageRequest);
+
+        });
+
+    }
 
 }
