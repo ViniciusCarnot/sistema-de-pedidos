@@ -2,7 +2,6 @@ package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Role;
-import com.vinicarnot.sistema_de_pedidos.domain.entites.Telefone;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarMinhaContaRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarTelefoneRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarCadastroClienteRequisicaoDTO;
@@ -29,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
-public class ClienteServiceTesteUnitario {
+public class ClienteServiceTest {
 
     @InjectMocks
     private ClienteService clienteService;
@@ -301,8 +301,7 @@ public class ClienteServiceTesteUnitario {
 
         Mockito.when(clienteRepository.procurarTodosOsClientesERoles((Pageable) ArgumentMatchers.any())).thenReturn(clientePage);
 
-        Page<AdminLerClienteRespostaDTO> adminLerClienteRespostaDTOPage =
-                new PageImpl<>(List.of(new AdminLerClienteRespostaDTO(clienteNormal), new AdminLerClienteRespostaDTO(clienteAdmin)));
+        Page<AdminLerClienteRespostaDTO> adminLerClienteRespostaDTOPage = clienteService.adminLerClientes(PageRequest.of(0, 12));
 
         Assertions.assertNotNull(adminLerClienteRespostaDTOPage);
         Assertions.assertEquals(2, adminLerClienteRespostaDTOPage.getSize());
@@ -318,7 +317,7 @@ public class ClienteServiceTesteUnitario {
 
         Mockito.when(clienteRepository.procurarClienteERolesPorEmail(ArgumentMatchers.any())).thenReturn(Optional.of(clienteNormal));
 
-        AdminLerClienteRespostaDTO dtoResposta = new AdminLerClienteRespostaDTO(clienteNormal);
+        AdminLerClienteRespostaDTO dtoResposta = clienteService.adminLerCliente(clienteNormal.getEmail());
 
         Assertions.assertNotNull(dtoResposta);
         Assertions.assertEquals(clienteNormal.getId(), dtoResposta.getId());

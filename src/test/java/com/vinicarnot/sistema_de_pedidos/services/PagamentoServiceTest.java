@@ -7,12 +7,10 @@ import com.vinicarnot.sistema_de_pedidos.domain.entites.Pedido;
 import com.vinicarnot.sistema_de_pedidos.domain.enums.TipoPagamento;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarBoletoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarCartaoDeCreditoRequisicaoDTO;
-import com.vinicarnot.sistema_de_pedidos.dto.requests.CriarPagamentoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarBoletoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarCartaoDeCreditoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.factory.ClienteFactory;
 import com.vinicarnot.sistema_de_pedidos.factory.PagamentoFactory;
-import com.vinicarnot.sistema_de_pedidos.factory.PedidoFactory;
 import com.vinicarnot.sistema_de_pedidos.repositories.PagamentoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.PedidoRepository;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.ForbiddenException;
@@ -29,10 +27,8 @@ import org.mockito.Mockito;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
-
 @ExtendWith(SpringExtension.class)
-public class PagamentoServiceTesteUnitario {
+public class PagamentoServiceTest {
 
     @InjectMocks
     private PagamentoService pagamentoService;

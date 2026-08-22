@@ -28,7 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.*;
 
 @ExtendWith(SpringExtension.class)
-public class EnderecoServiceTesteUnitario {
+public class EnderecoServiceTest {
 
     @InjectMocks
     private EnderecoService enderecoService;
@@ -66,6 +66,8 @@ public class EnderecoServiceTesteUnitario {
     @Test
     public void adminLerEnderecosDoClienteDeveriaRetornarAdminLerEnderecoRespostaDTOListQuandoClienteEmailExiste() {
 
+        Mockito.when(clienteRepository.existsByEmail(clienteNormal.getEmail())).thenReturn(true);
+
         AdminLerEnderecoRespostaProjecao projecaoMock = Mockito.mock(AdminLerEnderecoRespostaProjecao.class);
         Mockito.when(projecaoMock.getEnderecoId()).thenReturn(endereco1.getId());
         Mockito.when(projecaoMock.getLogradouro()).thenReturn(endereco1.getLogradouro());
@@ -78,12 +80,9 @@ public class EnderecoServiceTesteUnitario {
 
         List<AdminLerEnderecoRespostaProjecao> enderecoRespostaProjecaoLista = new ArrayList<>(List.of(projecaoMock));
 
-        AdminLerEnderecoRespostaDTO endereco1DTOResposta = new AdminLerEnderecoRespostaDTO(endereco1);
-
-        List<AdminLerEnderecoRespostaDTO> enderecoRespostaDTOLista = new ArrayList<>(List.of(endereco1DTOResposta));
-
-        Mockito.when(clienteRepository.existsByEmail(clienteNormal.getEmail())).thenReturn(true);
         Mockito.when(enderecoRepository.adminProcurarEnderecosPorCliente(clienteNormal.getEmail())).thenReturn(enderecoRespostaProjecaoLista);
+
+        List<AdminLerEnderecoRespostaDTO> enderecoRespostaDTOLista = enderecoService.adminLerEnderecosDoCliente(clienteNormal.getEmail());
 
         Assertions.assertNotNull(enderecoRespostaDTOLista);
         Assertions.assertEquals(1, enderecoRespostaDTOLista.size());
@@ -126,7 +125,7 @@ public class EnderecoServiceTesteUnitario {
 
         Mockito.when(enderecoRepository.procurarEnderecosPorCliente(clienteNormal.getEmail())).thenReturn(enderecoRespostaProjecaoLista);
 
-        List<LerEnderecoRespostaDTO> enderecoRespostaDTOLista = new ArrayList<>(List.of(new LerEnderecoRespostaDTO(endereco1)));
+        List<LerEnderecoRespostaDTO> enderecoRespostaDTOLista = enderecoService.verMeusEnderecos();
 
         Assertions.assertNotNull(enderecoRespostaDTOLista);
         Assertions.assertEquals(1, enderecoRespostaDTOLista.size());

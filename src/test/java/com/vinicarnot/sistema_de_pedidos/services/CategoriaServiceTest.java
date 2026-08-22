@@ -2,7 +2,6 @@ package com.vinicarnot.sistema_de_pedidos.services;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Categoria;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
-import com.vinicarnot.sistema_de_pedidos.domain.enums.Disponibilidade;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AdminAtualizarCategoriaRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AdminCriarCategoriaRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
-public class CategoriaServiceTesteUnitario {
+public class CategoriaServiceTest {
 
     @InjectMocks
     private CategoriaService categoriaService;

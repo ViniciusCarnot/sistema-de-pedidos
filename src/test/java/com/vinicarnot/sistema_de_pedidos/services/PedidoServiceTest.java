@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
-public class PedidoServiceTesteUnitario {
+public class PedidoServiceTest {
 
     @InjectMocks
     private PedidoService pedidoService;
@@ -811,7 +811,7 @@ public class PedidoServiceTesteUnitario {
     public void adminLerPedidoDoClienteDeveriaLancarRecursoNaoEncontradoExcecaoQuandoClienteEmailExisteEPedidoIdExisteEClienteNaoDono() {
 
         Mockito.when(clienteRepository.existsByEmail(pedido2.getCliente().getEmail())).thenReturn(true);
-        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.empty());
+        Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));
 
         Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
 
