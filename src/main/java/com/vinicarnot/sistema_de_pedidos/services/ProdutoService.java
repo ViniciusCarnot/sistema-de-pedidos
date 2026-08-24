@@ -30,14 +30,8 @@ public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
 
-    private final CategoriaRepository categoriaRepository;
-
-    private final ClienteService clienteService;
-
-    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository, ClienteService clienteService) {
+    public ProdutoService(ProdutoRepository produtoRepository) {
         this.produtoRepository = produtoRepository;
-        this.categoriaRepository = categoriaRepository;
-        this.clienteService = clienteService;
     }
 
     @Transactional(readOnly = true)
