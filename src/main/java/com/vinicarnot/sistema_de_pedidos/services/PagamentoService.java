@@ -38,6 +38,10 @@ public class PagamentoService {
 
         Cliente cliente = clienteService.autenticado();
 
+        if(pagamentoRepository.existsById(pedidoId)) {
+            throw new ProcessamentoPagamentoExcecao("A cobrança do pagamento já foi emitida para esse pedido.");
+        }
+
         if(!(pedido.getCliente().getId().equals(cliente.getId()))) {
             throw new RecursoNegadoExcecao("Cliente com o id: " + cliente.getId() + ", não é dono do pedido com o id: " + pedidoId);
         }

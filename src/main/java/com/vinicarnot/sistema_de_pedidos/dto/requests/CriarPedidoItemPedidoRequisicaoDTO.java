@@ -19,7 +19,7 @@ public class CriarPedidoItemPedidoRequisicaoDTO {
     private Long produtoId;
 
     @NotNull(message = "O campo 'quantidade' do Produto, da lista 'items' é obrigatório.")
-    @Positive(message = "O valor do campo 'quantidade' do Produto ,da lista 'items' deve ser positivo.")
+    @Positive(message = "O valor do campo 'quantidade' do Produto, da lista 'items' deve ser positivo.")
     private Integer quantidade;
 
 }

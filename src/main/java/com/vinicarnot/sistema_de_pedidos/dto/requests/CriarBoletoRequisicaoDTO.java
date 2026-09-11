@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Setter
 public class CriarBoletoRequisicaoDTO extends CriarPagamentoRequisicaoDTO {
 
-    @NotBlank(message = "O campo 'pagadorCpfOuCnpj' é obrigatório")
+    @NotBlank(message = "O campo 'pagadorCpfOuCnpj' é obrigatório.")
     private String pagadorCpfOuCnpj;
 
     @NotBlank(message = "O campo 'pagadorNome' é obrigatório.")

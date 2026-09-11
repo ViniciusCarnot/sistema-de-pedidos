@@ -67,9 +67,10 @@ public class PagamentoServiceTest {
     }
 
     @Test
-    public void realizarPagamentoDoPedidoDeveriaRetornarCriarCartaoDeCreditoRespostaDTOQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoDoPedidoEPagamentoValido() {
+    public void realizarPagamentoDoPedidoDeveriaRetornarCriarCartaoDeCreditoRespostaDTOQuandoPedidoIdExisteEClienteAutenticadoEPagamentoIdNaoExisteEClienteDonoDoPedidoEPagamentoValido() {
 
         Mockito.when(clienteService.autenticado()).thenReturn(pedido.getCliente());
+        Mockito.when(pagamentoRepository.existsById(ArgumentMatchers.any())).thenReturn(false);
         Mockito.when(pagamentoRepository.save(ArgumentMatchers.any())).thenReturn(cartaoDeCredito);
 
         CriarCartaoDeCreditoRequisicaoDTO dtoRequisicao = new CriarCartaoDeCreditoRequisicaoDTO();
@@ -90,9 +91,10 @@ public class PagamentoServiceTest {
     }
 
     @Test
-    public void realizarPagamentoDoPedidoDeveriaRetornarCriarBoletoRespostaDTOQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoDoPedidoEPagamentoValido() {
+    public void realizarPagamentoDoPedidoDeveriaRetornarCriarBoletoRespostaDTOQuandoPedidoIdExisteEClienteAutenticadoEPagamentoIdNaoExisteEClienteDonoDoPedidoEPagamentoValido() {
 
         Mockito.when(clienteService.autenticado()).thenReturn(pedido.getCliente());
+        Mockito.when(pagamentoRepository.existsById(ArgumentMatchers.any())).thenReturn(false);
         Mockito.when(pagamentoRepository.save(ArgumentMatchers.any())).thenReturn(boleto);
 
         CriarBoletoRequisicaoDTO dtoRequisicao = new CriarBoletoRequisicaoDTO();
@@ -146,9 +148,27 @@ public class PagamentoServiceTest {
     }
 
     @Test
-    public void realizarPagamentoDoPedidoDeveriaLancarForbiddenExceptionQuandoPedidoIdExisteEClienteAutenticadoEClienteNaoDonoDoPedido() {
+    public void realizarPagamentoDoPedidoDeveriaLancarProcessamentoPagamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEPagamentoIdExiste() {
+
+        Mockito.when(clienteService.autenticado()).thenReturn(pedido.getCliente());
+        Mockito.when(pagamentoRepository.existsById(ArgumentMatchers.any())).thenReturn(true);
+
+        Assertions.assertThrows(ProcessamentoPagamentoExcecao.class, () -> {
+
+            pagamentoService.realizarPagamentoDoPedido(pedidoIdExistente, new CriarBoletoRequisicaoDTO());
+
+        });
+
+        Mockito.verify(pedidoRepository, Mockito.times(1)).getReferenceById(pedidoIdExistente);
+        Mockito.verify(clienteService, Mockito.times(1)).autenticado();
+
+    }
+
+    @Test
+    public void realizarPagamentoDoPedidoDeveriaLancarRecursoNegadoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEPagamentoIdNaoExisteEClienteNaoDonoDoPedido() {
 
         Mockito.when(clienteService.autenticado()).thenReturn(clienteAdmin);
+        Mockito.when(pagamentoRepository.existsById(ArgumentMatchers.any())).thenReturn(false);
 
         Assertions.assertThrows(RecursoNegadoExcecao.class, () -> {
 
@@ -162,9 +182,10 @@ public class PagamentoServiceTest {
     }
 
     @Test
-    public void realizarPagamentoDoPedidoDeveriaLancarProcessamentoPagamentoExcessaoQuandoPedidoIdExisteEClienteAutenticadoEClienteDonoDoPedidoEPagamentoInvalido() {
+    public void realizarPagamentoDoPedidoDeveriaLancarProcessamentoPagamentoExcecaoQuandoPedidoIdExisteEClienteAutenticadoEPagamentoIdNaoExisteEClienteDonoDoPedidoEPagamentoInvalido() {
 
         Mockito.when(clienteService.autenticado()).thenReturn(pedido.getCliente());
+        Mockito.when(pagamentoRepository.existsById(ArgumentMatchers.any())).thenReturn(false);
 
         Assertions.assertThrows(ProcessamentoPagamentoExcecao.class, () -> {
 
