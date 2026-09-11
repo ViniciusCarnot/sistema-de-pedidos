@@ -8,8 +8,8 @@ import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
 import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.specifications.ProdutoSpecifications;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,14 +39,14 @@ public class CategoriaService {
     @Transactional(readOnly = true)
     public LerCategoriaRespostaDTO lerCategoria(Long idCategoria) {
         Categoria categoria = categoriaRepository.findById(idCategoria)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria com o id: " + idCategoria + ", não encontrada."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Categoria com o id: " + idCategoria + ", não encontrada."));
         return new LerCategoriaRespostaDTO(categoria);
     }
 
     @Transactional(readOnly = true)
     public Page<LerProdutoRespostaDTO> lerProdutosDeUmaCategoria(Long idCategoria, Pageable pageable) {
         if(!categoriaRepository.existsById(idCategoria)) {
-            throw new RecursoNaoEncontradoException("Categoria com o id: " + idCategoria + ", não encontrada.");
+            throw new RecursoNaoEncontradoExcecao("Categoria com o id: " + idCategoria + ", não encontrada.");
         }
         Specification<Produto> spec = ProdutoSpecifications.filtrar(
                 null,
@@ -61,7 +61,7 @@ public class CategoriaService {
     @Transactional(readOnly = true)
     public Page<AdminLerProdutoRespostaDTO> adminLerProdutosDeUmaCategoria(Long idCategoria, Pageable pageable) {
         if(!categoriaRepository.existsById(idCategoria)) {
-            throw new RecursoNaoEncontradoException("Categoria com o id: " + idCategoria + ", não encontrada.");
+            throw new RecursoNaoEncontradoExcecao("Categoria com o id: " + idCategoria + ", não encontrada.");
         }
         Specification<Produto> spec = ProdutoSpecifications.filtrar(
                 null,
@@ -77,13 +77,13 @@ public class CategoriaService {
     public AdminCriarCategoriaRespostaDTO adminAdicionarCategoria(AdminCriarCategoriaRequisicaoDTO dtoRequisicao) {
         Optional<Categoria> categoria = categoriaRepository.findByNomeIgnoreCase(dtoRequisicao.getNome());
         if(categoria.isPresent()) {
-            throw new RecursoJaExistenteException("Já existe uma categoria cadastrada com o nome: " + dtoRequisicao.getNome() + ".");
+            throw new RecursoJaExistenteExcecao("Já existe uma categoria cadastrada com o nome: " + dtoRequisicao.getNome() + ".");
         }
 
         Categoria novaCategoria = new Categoria();
         for(Long produtoId : dtoRequisicao.getProdutos()) {
             Produto produto = produtoRepository.findById(produtoId)
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + produtoId + ", não encontrado."));
+                    .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Produto com id: " + produtoId + ", não encontrado."));
             novaCategoria.getProdutos().add(produto);
         }
         novaCategoria.setNome(dtoRequisicao.getNome());
@@ -93,17 +93,17 @@ public class CategoriaService {
     @Transactional(rollbackFor = Exception.class)
     public AdminAtualizarCategoriaRespostaDTO adminAtualizarCategoria(Long idCategoria, AdminAtualizarCategoriaRequisicaoDTO dtoRequisicao) {
         Categoria categoria = categoriaRepository.findById(idCategoria)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Categoria com id: " + idCategoria + ", não encontrada."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Categoria com id: " + idCategoria + ", não encontrada."));
         Optional<Categoria> categoriaOptional = categoriaRepository.findByNomeIgnoreCase(dtoRequisicao.getNome());
         if(categoriaOptional.isPresent()) {
             if(!dtoRequisicao.getNome().equalsIgnoreCase(categoria.getNome())) {
-                throw new RecursoJaExistenteException("Já existe uma categoria cadastrada com o nome: " + dtoRequisicao.getNome() + ".");
+                throw new RecursoJaExistenteExcecao("Já existe uma categoria cadastrada com o nome: " + dtoRequisicao.getNome() + ".");
             }
         }
         categoria.getProdutos().clear();
         for(Long produtoId : dtoRequisicao.getProdutos()) {
             Produto produto = produtoRepository.findById(produtoId)
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com id: " + produtoId + ", não encontrado."));
+                    .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Produto com id: " + produtoId + ", não encontrado."));
             categoria.getProdutos().add(produto);
         }
         categoria.setNome(dtoRequisicao.getNome());
@@ -113,7 +113,7 @@ public class CategoriaService {
     @Transactional(rollbackFor = Exception.class)
     public void adminRemoverCategoria(Long idCategoria) {
         if(!categoriaRepository.existsById(idCategoria)) {
-            throw new RecursoNaoEncontradoException("Categoria com id: " + idCategoria + ", não encontrada.");
+            throw new RecursoNaoEncontradoExcecao("Categoria com id: " + idCategoria + ", não encontrada.");
         }
         categoriaRepository.deleteById(idCategoria);
     }

@@ -9,12 +9,11 @@ import com.vinicarnot.sistema_de_pedidos.dto.responses.LerProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.responses.AdminAtualizarProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Categoria;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Produto;
-import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.specifications.ProdutoSpecifications;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.ForbiddenException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNegadoExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,9 +36,9 @@ public class ProdutoService {
     @Transactional(readOnly = true)
     public LerProdutoRespostaDTO lerProduto(Long id) {
         Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com o id: " + id + " não foi encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Produto com o id: " + id + " não foi encontrado."));
         if(produto.getVisibilidade().booleanValue() == false) {
-            throw new ForbiddenException("Produto com o id: " + id + " não está visível para acesso.");
+            throw new RecursoNegadoExcecao("Produto com o id: " + id + " não está visível para acesso.");
         }
         return new LerProdutoRespostaDTO(produto);
     }
@@ -60,7 +59,7 @@ public class ProdutoService {
     @Transactional(readOnly = true)
     public AdminLerProdutoRespostaDTO adminLerProduto(Long id) {
         Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com o id: " + id + " não foi encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Produto com o id: " + id + " não foi encontrado."));
         return new AdminLerProdutoRespostaDTO(produto);
     }
 
@@ -81,7 +80,7 @@ public class ProdutoService {
     public AdminCriarProdutoRespostaDTO adminAdicionarProduto(AdminCriarProdutoRequisicaoDTO dtoRequisicao) {
         Optional<Produto> produto = produtoRepository.findByNomeIgnoreCase(dtoRequisicao.getNome());
         if(produto.isPresent()) {
-            throw new RecursoJaExistenteException("Já existe um produto cadastrado com o nome: " + dtoRequisicao.getNome() + ".");
+            throw new RecursoJaExistenteExcecao("Já existe um produto cadastrado com o nome: " + dtoRequisicao.getNome() + ".");
         }
         Produto novoProduto = new Produto();
         novoProduto.setNome(dtoRequisicao.getNome());
@@ -94,11 +93,11 @@ public class ProdutoService {
     @Transactional(rollbackFor = Exception.class)
     public AdminAtualizarProdutoRespostaDTO adminAtualizarProduto(Long idProduto, AdminAtualizarProdutoRequisicaoDTO dtoRequisicao) {
         Produto produto = produtoRepository.findById(idProduto)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto com o id: " + idProduto + " não encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Produto com o id: " + idProduto + " não encontrado."));
         Optional<Produto> produtoOptional = produtoRepository.findByNomeIgnoreCase(dtoRequisicao.getNome());
         if(produtoOptional.isPresent()) {
             if(!dtoRequisicao.getNome().equalsIgnoreCase(produto.getNome())) {
-                throw new RecursoJaExistenteException("Já existe um produto cadastrado com o nome: " + dtoRequisicao.getNome() + ".");
+                throw new RecursoJaExistenteExcecao("Já existe um produto cadastrado com o nome: " + dtoRequisicao.getNome() + ".");
             }
         }
         produto.setNome(dtoRequisicao.getNome());

@@ -10,9 +10,9 @@ import com.vinicarnot.sistema_de_pedidos.dto.responses.AdminLerProdutoRespostaDT
 import com.vinicarnot.sistema_de_pedidos.dto.responses.LerProdutoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.factory.ProdutoFactory;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.ForbiddenException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNegadoExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -99,7 +99,7 @@ public class ProdutoServiceTest {
     @Test
     public void lerProdutoDeveriaLancarRecursoNaoEncontradoExcecaoQuandoProdutoIdNaoExiste() {
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class,() -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class,() -> {
             produtoService.lerProduto(produtoIdNaoExistente);
         });
 
@@ -110,7 +110,7 @@ public class ProdutoServiceTest {
 
         produto.setVisibilidade(false);
 
-        Assertions.assertThrows(ForbiddenException.class,() -> {
+        Assertions.assertThrows(RecursoNegadoExcecao.class,() -> {
             produtoService.lerProduto(produtoIdExistente);
         });
 
@@ -144,7 +144,7 @@ public class ProdutoServiceTest {
     @Test
     public void adminLerProdutoDeveriaLancarRecursoNaoEncontradoExcecaoQuandoProdutoIdNaoExiste() {
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             produtoService.adminLerProduto(produtoIdNaoExistente);
 
@@ -196,7 +196,7 @@ public class ProdutoServiceTest {
         dtoRequisicao.setDisponibilidade(produto2.getDisponibilidade());
         dtoRequisicao.setVisibilidade(produto2.getVisibilidade());
 
-        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+        Assertions.assertThrows(RecursoJaExistenteExcecao.class, () -> {
            produtoService.adminAdicionarProduto(dtoRequisicao);
         });
 
@@ -226,7 +226,7 @@ public class ProdutoServiceTest {
     @Test
     public void adminAtualizarProdutoDeveriaLancarRecursoNaoEncontradoExcecaoQuandoProdutoIdNaoExiste() {
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             produtoService.adminAtualizarProduto(produtoIdNaoExistente, new AdminAtualizarProdutoRequisicaoDTO());
 
@@ -243,7 +243,7 @@ public class ProdutoServiceTest {
 
         dtoRequisicao.setNome(produto2.getNome());
 
-        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+        Assertions.assertThrows(RecursoJaExistenteExcecao.class, () -> {
 
             produtoService.adminAtualizarProduto(produtoIdExistente, dtoRequisicao);
 

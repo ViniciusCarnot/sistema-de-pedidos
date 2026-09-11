@@ -15,8 +15,8 @@ import com.vinicarnot.sistema_de_pedidos.projections.UserDetailsProjecao;
 import com.vinicarnot.sistema_de_pedidos.repositories.ClienteRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.RoleRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.TelefoneRepository;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import com.vinicarnot.sistema_de_pedidos.util.CustomUserUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -232,7 +232,7 @@ public class ClienteServiceTest {
         dtoRequisicao.setTipo(clienteNormal.getTipo());
         dtoRequisicao.setTelefone(new CriarCadastroClienteTelefoneRequisicaoDTO(clienteNormal.getTelefone().getNumero()));
 
-        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+        Assertions.assertThrows(RecursoJaExistenteExcecao.class, () -> {
 
             clienteService.cadastrarCliente(dtoRequisicao);
 
@@ -256,7 +256,7 @@ public class ClienteServiceTest {
         dtoRequisicao.setTipo(clienteNormal.getTipo());
         dtoRequisicao.setTelefone(new CriarCadastroClienteTelefoneRequisicaoDTO(clienteNormal.getTelefone().getNumero()));
 
-        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+        Assertions.assertThrows(RecursoJaExistenteExcecao.class, () -> {
 
             clienteService.cadastrarCliente(dtoRequisicao);
 
@@ -282,7 +282,7 @@ public class ClienteServiceTest {
         dtoRequisicao.setTipo(clienteNormal.getTipo());
         dtoRequisicao.setTelefone(new CriarCadastroClienteTelefoneRequisicaoDTO(clienteNormal.getTelefone().getNumero()));
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             clienteService.cadastrarCliente(dtoRequisicao);
 
@@ -440,7 +440,7 @@ public class ClienteServiceTest {
                 new AtualizarTelefoneRequisicaoDTO(clienteNormal.getTelefone().getNumero())
         );
 
-        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+        Assertions.assertThrows(RecursoJaExistenteExcecao.class, () -> {
 
             spyClienteService.atualizarMinhaConta(dtoRequisicao);
 
@@ -471,7 +471,7 @@ public class ClienteServiceTest {
                 new AtualizarTelefoneRequisicaoDTO(novoTelefone)
         );
 
-        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+        Assertions.assertThrows(RecursoJaExistenteExcecao.class, () -> {
 
             spyClienteService.atualizarMinhaConta(dtoRequisicao);
 

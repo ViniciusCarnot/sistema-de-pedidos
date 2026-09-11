@@ -9,10 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -21,40 +20,51 @@ import java.time.Instant;
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(RecursoJaExistenteException.class)
-    public ResponseEntity<ErroCustomizado> recurosJaExistenteException(RecursoJaExistenteException e, HttpServletRequest request) {
+    // --- Minhas Excecoes Customizadas ---
+
+    @ExceptionHandler(RecursoJaExistenteExcecao.class)
+    public ResponseEntity<ErroCustomizado> recurosJaExistenteExcecao(RecursoJaExistenteExcecao e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
 
-    @ExceptionHandler(RecursoNaoEncontradoException.class)
-    public ResponseEntity<ErroCustomizado> recursoNaoEncontradoException(RecursoNaoEncontradoException e, HttpServletRequest request) {
+    @ExceptionHandler(RecursoNaoEncontradoExcecao.class)
+    public ResponseEntity<ErroCustomizado> recursoNaoEncontradoExcecao(RecursoNaoEncontradoExcecao e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
 
-    @ExceptionHandler(ClienteComDadosIncompletosException.class)
-    public ResponseEntity<ErroCustomizado> clienteComDadosIncompletosException(ClienteComDadosIncompletosException e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+    @ExceptionHandler(RecursoNegadoExcecao.class)
+    public ResponseEntity<ErroCustomizado> recursoNegadoExcecao(RecursoNegadoExcecao e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
 
-    @ExceptionHandler(RecursoNegadoException.class)
-    public ResponseEntity<ErroCustomizado> recursoNegadoException(RecursoNegadoException e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(status).body(erro);
-    }
-
-    @ExceptionHandler(RecursoNaoModificavelException.class)
-    public ResponseEntity<ErroCustomizado> recursoNaoModificavelException(RecursoNaoModificavelException e, HttpServletRequest request) {
+    @ExceptionHandler(ProdutoEsgotadoExcecao.class)
+    public ResponseEntity<ErroCustomizado> produtoEsgotadoExcecao(ProdutoEsgotadoExcecao e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
+
+    @ExceptionHandler(PedidoCancelamentoExcecao.class)
+    public ResponseEntity<ErroCustomizado> produtoCancelamentoExcecao(PedidoCancelamentoExcecao e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(erro);
+    }
+
+    @ExceptionHandler(ProcessamentoPagamentoExcecao.class)
+    public ResponseEntity<ErroCustomizado> processamentoPagamentoExcecao(ProcessamentoPagamentoExcecao e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(erro);
+    }
+
+    // --- Excecoes do Spring ---
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErroCustomizadoValidacao> methodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
@@ -74,14 +84,9 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> httpMessageNotReadableException(HttpMessageNotReadableException e) {
-        return ResponseEntity.badRequest().body("Erro na leitura do JSON: Valor de campo inválido ou fora do padrão.");
-    }
-
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ErroCustomizado> forbiddenException(ForbiddenException e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.FORBIDDEN;
-        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+    public ResponseEntity<ErroCustomizado> httpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), "Erro na leitura do JSON: Valor de campo inválido ou fora do padrão.", request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
 
@@ -93,27 +98,11 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(status).body(erro);
     }
 
-    @ExceptionHandler(ProdutoEsgotadoException.class)
-    public ResponseEntity<ErroCustomizado> produtoEsgotadoException(ProdutoEsgotadoException e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErroCustomizado> usernameNotFoundException(UsernameNotFoundException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
     }
-
-    @ExceptionHandler(ProdutoCancelamentoExcecao.class)
-    public ResponseEntity<ErroCustomizado> produtoCancelamentoExcecao(ProdutoCancelamentoExcecao e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(status).body(erro);
-    }
-
-    @ExceptionHandler(ProcessamentoPagamentoExcessao.class)
-    public ResponseEntity<ErroCustomizado> processamentoPagamentoExcessao(ProcessamentoPagamentoExcessao e, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(status).body(erro);
-    }
-
-
 
 }

@@ -1,5 +1,6 @@
 package com.vinicarnot.sistema_de_pedidos.dto.requests;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.Set;
 public class CriarPedidoRequisicaoDTO {
 
     @NotEmpty(message = "O pedido deve ter pelo menos um item.")
+    @Valid
     private List<CriarPedidoItemPedidoRequisicaoDTO> items = new ArrayList<>();
 
     @NotNull(message = "O campo 'enderecoDeEntregaId' é obrigatório.")

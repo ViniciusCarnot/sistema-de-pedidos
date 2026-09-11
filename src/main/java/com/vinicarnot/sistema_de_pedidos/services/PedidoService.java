@@ -12,7 +12,6 @@ import com.vinicarnot.sistema_de_pedidos.repositories.*;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,10 +44,10 @@ public class PedidoService {
         Cliente clienteLogado = clienteService.autenticado();
 
         Pedido pedido = pedidoRepository.procurarPedidoEPagamentoEClienteEEnderecoECidadeEEstadoEItemsPedidoPorId(pedidoId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido com o id: " + pedidoId + ", não foi encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Pedido com o id: " + pedidoId + ", não foi encontrado."));
 
         if(!(pedido.getCliente().getId().equals(clienteLogado.getId()))) {
-            throw new ForbiddenException("Você não tem permissão para acessar esse pedido.");
+            throw new RecursoNegadoExcecao("Você não tem permissão para acessar esse pedido.");
         }
 
         return new PedidoRespostaDTO(pedido);
@@ -81,7 +80,7 @@ public class PedidoService {
         }
 
         Endereco endereco = enderecoRepository.findById(dtoRequisicao.getEnderecoDeEntregaId())
-                        .orElseThrow(() -> new RecursoNaoEncontradoException("Endereço de entrega com o id: " + dtoRequisicao.getEnderecoDeEntregaId() + ", não foi encontrado."));
+                        .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Endereço de entrega com o id: " + dtoRequisicao.getEnderecoDeEntregaId() + ", não foi encontrado."));
 
         validarEndereco(endereco, cliente.getEmail());
 
@@ -99,23 +98,23 @@ public class PedidoService {
     public PedidoRespostaDTO atualizarMeuPedido(Long pedidoId, AtualizarPedidoRequisicaoDTO dtoRequisicao) {
 
         Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido com o id: " + pedidoId + ", não foi encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Pedido com o id: " + pedidoId + ", não foi encontrado."));
 
         Cliente clienteLogado = clienteService.autenticado();
 
         if(!(clienteLogado.getId().equals(pedido.getCliente().getId()))) {
-            throw new ForbiddenException("Você não tem permissão para acessar esse pedido.");
+            throw new RecursoNegadoExcecao("Você não tem permissão para acessar esse pedido.");
         }
 
         StatusPedido statusAtual = pedido.getStatusPedido();
 
         switch (statusAtual) {
             case PRONTO_PARA_ENVIO, DESPACHADO, EM_ROTA_DE_ENTREGA, ENTREGUE, DEVOLVIDO, REEMBOLSADO, CANCELADO
-                    -> throw new ProdutoCancelamentoExcecao("Pedido não pode ser atualizado.");
+                    -> throw new PedidoCancelamentoExcecao("Pedido não pode ser atualizado.");
         }
 
         Endereco endereco = enderecoRepository.findById(dtoRequisicao.getEnderecoDeEntregaId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Endereço de entrega com o id: " + dtoRequisicao.getEnderecoDeEntregaId() + ", não foi encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Endereço de entrega com o id: " + dtoRequisicao.getEnderecoDeEntregaId() + ", não foi encontrado."));
 
         validarEndereco(endereco, clienteLogado.getEmail());
 
@@ -128,19 +127,19 @@ public class PedidoService {
     public PedidoRespostaDTO cancelarMeuPedido(Long pedidoId) {
 
         Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido com o id: " + pedidoId + ", não foi encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Pedido com o id: " + pedidoId + ", não foi encontrado."));
 
         Cliente clienteLogado = clienteService.autenticado();
 
         if(!(clienteLogado.getId().equals(pedido.getCliente().getId()))) {
-            throw new ForbiddenException("Você não tem permissão para acessar esse pedido.");
+            throw new RecursoNegadoExcecao("Você não tem permissão para acessar esse pedido.");
         }
 
         StatusPedido statusAtual = pedido.getStatusPedido();
 
         switch (statusAtual) {
             case PRONTO_PARA_ENVIO, DESPACHADO, EM_ROTA_DE_ENTREGA, ENTREGUE, DEVOLVIDO, REEMBOLSADO, CANCELADO
-                    ->  throw new ProdutoCancelamentoExcecao("Pedido não pode ser cancelado. " +
+                    ->  throw new PedidoCancelamentoExcecao("Pedido não pode ser cancelado. " +
                     "Caso deseje, recuse a entrega ou solicite a devolução.");
         }
 
@@ -154,14 +153,14 @@ public class PedidoService {
     public PedidoRespostaDTO adminLerPedidoDoCliente(String clienteEmail, Long pedidoId) {
 
         if(!(clienteRepository.existsByEmail(clienteEmail))) {
-            throw new RecursoNaoEncontradoException("Cliente com o email: " + clienteEmail + ", não foi encontrado.");
+            throw new RecursoNaoEncontradoExcecao("Cliente com o email: " + clienteEmail + ", não foi encontrado.");
         }
 
         Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido com o id: " + pedidoId + ", não foi encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Pedido com o id: " + pedidoId + ", não foi encontrado."));
 
         if(!(pedido.getCliente().getEmail().equals(clienteEmail))) {
-            throw new RecursoNaoEncontradoException("Cliente com o email: " + clienteEmail + ", não é dono do pedido com o id: " + pedidoId + ".");
+            throw new RecursoNaoEncontradoExcecao("Cliente com o email: " + clienteEmail + ", não é dono do pedido com o id: " + pedidoId + ".");
         }
 
         return new PedidoRespostaDTO(pedido);
@@ -172,7 +171,7 @@ public class PedidoService {
     public Page<AdminLerPedidoMinRespostaDTO> adminLerPedidosDoCliente(String clienteEmail, Pageable pageable) {
 
         if(!(clienteRepository.existsByEmail(clienteEmail))) {
-            throw new RecursoNaoEncontradoException("Cliente com o email: " + clienteEmail + ", não foi encontrado.");
+            throw new RecursoNaoEncontradoExcecao("Cliente com o email: " + clienteEmail + ", não foi encontrado.");
         }
 
         Page<Pedido> pedidoPage = pedidoRepository.procurarPedidoEPagamentoEClientePorClienteEmail(clienteEmail, pageable);
@@ -183,10 +182,10 @@ public class PedidoService {
 
     public void validarProduto(Produto produto) {
         if(produto.getVisibilidade() == false) {
-            throw new RecursoNaoEncontradoException("Produto com o id: " + produto.getId() + ", não foi encontrado.");
+            throw new RecursoNaoEncontradoExcecao("Produto com o id: " + produto.getId() + ", não foi encontrado.");
         }
         if(produto.getDisponibilidade().equals(Disponibilidade.INDISPONIVEL)) {
-            throw new ProdutoEsgotadoException("Produto com id: " + produto.getId() + ", está esgotado.");
+            throw new ProdutoEsgotadoExcecao("Produto com id: " + produto.getId() + ", está esgotado.");
         }
     }
 
@@ -203,7 +202,7 @@ public class PedidoService {
         }
 
         if(enderecoCompativel == false) {
-            throw new RecursoNaoEncontradoException("O endereço de entrega informado não foi previamente cadastrado.");
+            throw new RecursoNaoEncontradoExcecao("O endereço de entrega informado não foi previamente cadastrado.");
         }
 
     }

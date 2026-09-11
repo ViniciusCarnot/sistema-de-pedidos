@@ -9,8 +9,8 @@ import com.vinicarnot.sistema_de_pedidos.factory.CategoriaFactory;
 import com.vinicarnot.sistema_de_pedidos.factory.ProdutoFactory;
 import com.vinicarnot.sistema_de_pedidos.repositories.CategoriaRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ProdutoRepository;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,7 +113,7 @@ public class CategoriaServiceTest {
     @Test
     public void lerCategoriaDeveriaLancarRecursoNaoEncontradoExcecaoQuandoCategoriaIdNaoExiste() {
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             categoriaService.lerCategoria(categoriaIdInexistente);
 
@@ -138,7 +138,7 @@ public class CategoriaServiceTest {
 
         PageRequest pageRequest = PageRequest.of(0, 12);
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             categoriaService.lerProdutosDeUmaCategoria(categoriaIdInexistente, pageRequest);
 
@@ -163,7 +163,7 @@ public class CategoriaServiceTest {
 
         PageRequest pageRequest = PageRequest.of(0, 12);
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             categoriaService.adminLerProdutosDeUmaCategoria(categoriaIdInexistente, pageRequest);
 
@@ -200,7 +200,7 @@ public class CategoriaServiceTest {
 
         dtoRequisicao.setNome(categoria.getNome());
 
-        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+        Assertions.assertThrows(RecursoJaExistenteExcecao.class, () -> {
 
             categoriaService.adminAdicionarCategoria(dtoRequisicao);
 
@@ -216,7 +216,7 @@ public class CategoriaServiceTest {
         dtoRequisicao.setNome(categoriaNomeInexistente);
         dtoRequisicao.getProdutos().add(produtoIdInexistente);
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             categoriaService.adminAdicionarCategoria(dtoRequisicao);
 
@@ -275,7 +275,7 @@ public class CategoriaServiceTest {
     @Test
     public void adminAtualizarCategoriaDeveriaLancarRecursoNaoEncontradoExcecaoQuandoCategoriaIdNaoExiste() {
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             categoriaService.adminAtualizarCategoria(categoriaIdInexistente, new AdminAtualizarCategoriaRequisicaoDTO());
 
@@ -291,7 +291,7 @@ public class CategoriaServiceTest {
         AdminAtualizarCategoriaRequisicaoDTO dtoRequisicao = new AdminAtualizarCategoriaRequisicaoDTO();
         dtoRequisicao.setNome(categoria.getNome());
 
-        Assertions.assertThrows(RecursoJaExistenteException.class, () -> {
+        Assertions.assertThrows(RecursoJaExistenteExcecao.class, () -> {
 
             categoriaService.adminAtualizarCategoria(categoria2.getId(), dtoRequisicao);
 
@@ -306,7 +306,7 @@ public class CategoriaServiceTest {
         dtoRequisicao.setNome(categoria.getNome());
         dtoRequisicao.getProdutos().add(produtoIdInexistente);
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             categoriaService.adminAtualizarCategoria(categoria.getId(), dtoRequisicao);
 
@@ -330,7 +330,7 @@ public class CategoriaServiceTest {
     @Test
     public void adminRemoverCategoriaDeveriaLancarRecursoNaoEncontradoExcecaoQuandoCategoriaIdNaoExiste() {
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             categoriaService.adminRemoverCategoria(categoriaIdInexistente);
 

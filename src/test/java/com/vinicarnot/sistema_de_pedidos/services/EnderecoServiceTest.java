@@ -14,7 +14,7 @@ import com.vinicarnot.sistema_de_pedidos.repositories.CidadeRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ClienteRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.EnderecoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.EstadoRepository;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -98,7 +98,7 @@ public class EnderecoServiceTest {
 
         Mockito.when(clienteRepository.existsByEmail(clienteNormal.getEmail())).thenReturn(false);
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             enderecoService.adminLerEnderecosDoCliente(clienteNormal.getEmail());
 
@@ -243,7 +243,7 @@ public class EnderecoServiceTest {
                 endereco1.getCidade().getEstado().getId()
         )));
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             enderecoService.atualizarMeusEnderecos(dtoRequisicao);
 
@@ -268,7 +268,7 @@ public class EnderecoServiceTest {
                 endereco1.getCidade().getEstado().getId()
         )));
 
-        Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> {
+        Assertions.assertThrows(RecursoNaoEncontradoExcecao.class, () -> {
 
             enderecoService.atualizarMeusEnderecos(dtoRequisicao);
 

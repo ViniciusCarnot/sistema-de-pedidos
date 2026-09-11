@@ -9,10 +9,8 @@ import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarCartaoDeCreditoRespo
 import com.vinicarnot.sistema_de_pedidos.dto.responses.CriarPagamentoRespostaDTO;
 import com.vinicarnot.sistema_de_pedidos.repositories.PagamentoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.PedidoRepository;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.ForbiddenException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.ProcessamentoPagamentoExcessao;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNegadoExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.ProcessamentoPagamentoExcecao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +39,7 @@ public class PagamentoService {
         Cliente cliente = clienteService.autenticado();
 
         if(!(pedido.getCliente().getId().equals(cliente.getId()))) {
-            throw new ForbiddenException("Cliente com o id: " + cliente.getId() + ", não é dono do pedido com o id: " + pedidoId);
+            throw new RecursoNegadoExcecao("Cliente com o id: " + cliente.getId() + ", não é dono do pedido com o id: " + pedidoId);
         }
 
         if(dtoRequisicao instanceof CriarBoletoRequisicaoDTO boletoRequisicaoDTO) {
@@ -71,7 +69,7 @@ public class PagamentoService {
             pedido.setPagamento(cartaoDeCredito);
             return new CriarCartaoDeCreditoRespostaDTO(pagamentoRepository.save(cartaoDeCredito));
         } else {
-            throw new ProcessamentoPagamentoExcessao("Erro ao processar o pagamento.");
+            throw new ProcessamentoPagamentoExcecao("Erro ao processar o pagamento.");
         }
 
     }

@@ -13,8 +13,8 @@ import com.vinicarnot.sistema_de_pedidos.factory.ClienteFactory;
 import com.vinicarnot.sistema_de_pedidos.factory.PagamentoFactory;
 import com.vinicarnot.sistema_de_pedidos.repositories.PagamentoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.PedidoRepository;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.ForbiddenException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.ProcessamentoPagamentoExcessao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNegadoExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.ProcessamentoPagamentoExcecao;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,7 +150,7 @@ public class PagamentoServiceTest {
 
         Mockito.when(clienteService.autenticado()).thenReturn(clienteAdmin);
 
-        Assertions.assertThrows(ForbiddenException.class, () -> {
+        Assertions.assertThrows(RecursoNegadoExcecao.class, () -> {
 
             pagamentoService.realizarPagamentoDoPedido(pedidoIdExistente, new CriarBoletoRequisicaoDTO());
 
@@ -166,7 +166,7 @@ public class PagamentoServiceTest {
 
         Mockito.when(clienteService.autenticado()).thenReturn(pedido.getCliente());
 
-        Assertions.assertThrows(ProcessamentoPagamentoExcessao.class, () -> {
+        Assertions.assertThrows(ProcessamentoPagamentoExcecao.class, () -> {
 
             pagamentoService.realizarPagamentoDoPedido(pedidoIdExistente, null);
 

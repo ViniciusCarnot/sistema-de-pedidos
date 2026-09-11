@@ -7,8 +7,8 @@ import com.vinicarnot.sistema_de_pedidos.dto.responses.*;
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Cliente;
 import com.vinicarnot.sistema_de_pedidos.projections.UserDetailsProjecao;
 import com.vinicarnot.sistema_de_pedidos.repositories.*;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteException;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoJaExistenteExcecao;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import com.vinicarnot.sistema_de_pedidos.util.CustomUserUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,28 +59,26 @@ public class ClienteService implements UserDetailsService {
     }
 
     public Cliente autenticado() {
-        try {
-            String username = customUserUtil.getClienteLogado().get();
-            return clienteRepository.findByEmail(username).get();
-        }
-        catch (Exception e) {
-            throw new UsernameNotFoundException("Usuário inválido.");
-        }
+        String username = customUserUtil.getClienteLogado()
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não autenticado."));
+
+        return clienteRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
     }
 
     @Transactional(rollbackFor = Exception.class)
     public CriarCadastroClienteRespostaDTO cadastrarCliente(CriarCadastroClienteRequisicaoDTO dtoRequisicao) {
 
         if(clienteRepository.existsByEmail(dtoRequisicao.getEmail())) {
-            throw new RecursoJaExistenteException("Já existe uma conta cadastrada com o email: " + dtoRequisicao.getEmail() + ".");
+            throw new RecursoJaExistenteExcecao("Já existe uma conta cadastrada com o email: " + dtoRequisicao.getEmail() + ".");
         }
 
         if(telefoneRepository.existsTelefoneByNumero(dtoRequisicao.getTelefone().getNumero())) {
-            throw new RecursoJaExistenteException("Já existe uma conta cadastrada com o telefone: " + dtoRequisicao.getTelefone().getNumero() + ".");
+            throw new RecursoJaExistenteExcecao("Já existe uma conta cadastrada com o telefone: " + dtoRequisicao.getTelefone().getNumero() + ".");
         }
 
         Role role = roleRepository.findByNome("ROLE_NORMAL")
-                        .orElseThrow(() -> new RecursoNaoEncontradoException("Não foi possível atribuir a role 'ROLE_NORMAL' ao novo cliente."));
+                        .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Não foi possível atribuir a role 'ROLE_NORMAL' ao novo cliente."));
 
         String senhaCriptografada = new BCryptPasswordEncoder().encode(dtoRequisicao.getSenha());
 
@@ -127,7 +125,7 @@ public class ClienteService implements UserDetailsService {
 
             // Verifica se o email desejado está disponível
             if(clienteRepository.existsByEmail(dtoRequisicao.getEmail())) {
-                throw new RecursoJaExistenteException("Já existe uma conta cadastrada com o email: " + dtoRequisicao.getEmail() + ".");
+                throw new RecursoJaExistenteExcecao("Já existe uma conta cadastrada com o email: " + dtoRequisicao.getEmail() + ".");
             }
 
         }
@@ -137,7 +135,7 @@ public class ClienteService implements UserDetailsService {
 
             // Verifica se o telefone desejado está disponível
             if(telefoneRepository.existsTelefoneByNumero(dtoRequisicao.getTelefone().getNumero())) {
-                throw new RecursoJaExistenteException("Já existe uma conta cadastrada com o telefone: " + dtoRequisicao.getTelefone().getNumero());
+                throw new RecursoJaExistenteExcecao("Já existe uma conta cadastrada com o telefone: " + dtoRequisicao.getTelefone().getNumero());
             }
 
         }

@@ -12,7 +12,7 @@ import com.vinicarnot.sistema_de_pedidos.repositories.CidadeRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ClienteRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.EnderecoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.EstadoRepository;
-import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoException;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +43,7 @@ public class EnderecoService {
     public List<AdminLerEnderecoRespostaDTO> adminLerEnderecosDoCliente(String emailCliente) {
 
         if(!clienteRepository.existsByEmail(emailCliente)) {
-            throw new RecursoNaoEncontradoException("Não foi encontrada uma conta cadastrada com o email: " + emailCliente + ".");
+            throw new RecursoNaoEncontradoExcecao("Não foi encontrada uma conta cadastrada com o email: " + emailCliente + ".");
         }
 
         List<AdminLerEnderecoRespostaProjecao> enderecoRespostaProjecaoLista = enderecoRepository.adminProcurarEnderecosPorCliente(emailCliente);
@@ -117,10 +117,10 @@ public class EnderecoService {
         for(AtualizarMeuEnderecoRequisicaoDTO enderecoRequisicaoDTO : dtoRequisicaoLista) {
 
             Cidade cidade = cidadeRepository.findById(enderecoRequisicaoDTO.getCidadeId())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Cidade com o id: " + enderecoRequisicaoDTO.getCidadeId() + ", não encontrada."));
+                    .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Cidade com o id: " + enderecoRequisicaoDTO.getCidadeId() + ", não encontrada."));
 
             Estado estado = estadoRepository.findById(enderecoRequisicaoDTO.getEstadoId())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Estado com o id: " + enderecoRequisicaoDTO.getEstadoId() + ", não encontrado."));
+                    .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Estado com o id: " + enderecoRequisicaoDTO.getEstadoId() + ", não encontrado."));
 
             Optional<Endereco> enderecoOptional = enderecoRepository.findByLogradouroAndNumeroAndBairroAndCidadeAndCidadeEstado(
                     enderecoRequisicaoDTO.getLogradouro(),
