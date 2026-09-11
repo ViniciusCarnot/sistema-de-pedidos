@@ -22,7 +22,7 @@ public class ProdutoControllerE2E {
     }
 
     @Test
-    public void lerProdutoDeveriaRetornarLerProdutoRespostaDTOQuandoProdutoIdExisteEProdutoVisivel() {
+    public void lerProdutoDeveriaRetornarLerProdutoRespostaDTO() {
 
         Long produtoId = 1L;
 
@@ -58,7 +58,7 @@ public class ProdutoControllerE2E {
     }
 
     @Test
-    public void lerProdutoDeveriaLancar403QuandoProdutoIdExisteEProdutoNaoVisivel() {
+    public void lerProdutoDeveriaLancar403QuandoProdutoNaoVisivel() {
 
         Long produtoId = 3L;
 
