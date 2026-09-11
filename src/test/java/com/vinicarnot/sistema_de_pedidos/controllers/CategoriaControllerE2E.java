@@ -31,7 +31,7 @@ public class CategoriaControllerE2E {
     }
 
     @Test
-    public void lerCategoriaDeveriaRetornarLerCategoriaRespostaDTOQuandoCategoriaIdExiste() {
+    public void lerCategoriaDeveriaRetornarLerCategoriaRespostaDTO() {
 
         String categoriaId = String.valueOf(1);
 
@@ -65,7 +65,7 @@ public class CategoriaControllerE2E {
     }
 
     @Test
-    public void lerProdutosDeUmaCategoriaDeveriaRetornarLerProdutoRespostaDTOPageQuandoCategoriaIdExiste() {
+    public void lerProdutosDeUmaCategoriaDeveriaRetornarLerProdutoRespostaDTOPage() {
 
         String categoriaId = String.valueOf(2);
 
