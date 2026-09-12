@@ -107,7 +107,7 @@ INSERT INTO tb_role (nome) VALUES ('ROLE_NORMAL');
 INSERT INTO tb_role (nome) VALUES ('ROLE_ADMIN');
 
 INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Alberto Rodrigues', 'alberto@email.com', '$2a$10$hVXWCGm/1zQgBiB6RoZRyOj.46zUeMdj5ggvPIS3hxnY45X3LFm6K', '842.107.660-31', 'PESSOA_FISICA', true);
-INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Bernardo Silva', 'bernardo@email.com', '$2a$10$Y19DyKkLcKmr5bpUmWu9c.FKXjNJYMDpMEh9V43/DN/XUvvwEM7ES', '842.107.660-31', 'PESSOA_FISICA', true);
+INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Bernardo Silva', 'bernardo@email.com', '$2a$10$Y19DyKkLcKmr5bpUmWu9c.FKXjNJYMDpMEh9V43/DN/XUvvwEM7ES', '845.107.660-31', 'PESSOA_FISICA', true);
 INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Carlos Alves', 'carlos@email.com', '$2a$10$5nPzWzXF6CZfgxNxTQOpeOe2oz7Zjp0MWxX9KteYhmFzo92kZEkZq', '418.502.610-33', 'PESSOA_FISICA', true);
 INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Daniel Ramos', 'daniel@email.com', '$2a$10$zbiQe3elLSIvk9xJRPgUA.45R1hrnFpzWAydHkUxi78FtTAlg0zc6', '953.740.180-80', 'PESSOA_JURIDICA', false);
 

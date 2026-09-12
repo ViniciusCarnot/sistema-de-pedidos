@@ -2,6 +2,7 @@ package com.vinicarnot.sistema_de_pedidos.dto.requests;
 
 import com.vinicarnot.sistema_de_pedidos.domain.entites.Telefone;
 import com.vinicarnot.sistema_de_pedidos.domain.enums.TipoCliente;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,16 +16,15 @@ import lombok.Setter;
 @Setter
 public class CriarCadastroClienteRequisicaoDTO {
 
-    @NotBlank(message = "O campo 'Nome' é obrigatório.")
+    @NotBlank(message = "O campo 'nome' é obrigatório.")
     @Setter
     private String nome;
 
-    @Email(message = "O campo 'Email' deve ser válido.")
-    @NotBlank(message = "O campo 'Email' é obrigatório.")
+    @NotBlank(message = "O campo 'email' é obrigatório.")
     @Setter
     private String email;
 
-    @NotBlank(message = "O campo 'Senha' é obrigatório.")
+    @NotBlank(message = "O campo 'senha' é obrigatório.")
     private String senha;
 
     @NotBlank(message = "O campo 'cpfOuCnpj' é obrigatório.")
@@ -35,6 +35,7 @@ public class CriarCadastroClienteRequisicaoDTO {
     private TipoCliente tipo;
 
     @NotNull(message = "O campo 'telefone' não pode ser nulo.")
+    @Valid
     private CriarCadastroClienteTelefoneRequisicaoDTO telefone;
 
 
