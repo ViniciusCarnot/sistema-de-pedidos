@@ -302,4 +302,53 @@ public class AuthenticationControllerE2E {
 
     }
 
+    @Test
+    public void cadastrarClienteDeveriaLancar400QuandoClienteEmailExiste() throws JsonProcessingException {
+
+        dtoRequisicao.setEmail("alberto@email.com");
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .post("/auth/cadastro")
+                .then()
+                    .statusCode(400)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(400))
+                    .body("error", equalTo("Já existe uma conta cadastrada com o email: " + dtoRequisicao.getEmail() + "."))
+                    .body("path", equalTo("/auth/cadastro"));
+
+    }
+
+    @Test
+    public void cadastrarClienteDeveriaLancar400QuandoClienteTelefoneExiste() throws JsonProcessingException {
+
+        dtoRequisicao.setEmail("novocliente@email.com");
+        dtoRequisicao.setTelefone(new CriarCadastroClienteTelefoneRequisicaoDTO("(11) 11111-1111"));
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .post("/auth/cadastro")
+                .then()
+                    .statusCode(400)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(400))
+                    .body("error", equalTo("Já existe uma conta cadastrada com o telefone: " + dtoRequisicao.getTelefone().getNumero() + "."))
+                    .body("path", equalTo("/auth/cadastro"));
+
+    }
+
 }
