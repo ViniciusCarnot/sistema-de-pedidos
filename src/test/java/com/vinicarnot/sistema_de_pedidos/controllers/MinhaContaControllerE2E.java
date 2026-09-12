@@ -111,4 +111,50 @@ public class MinhaContaControllerE2E {
 
     }
 
+    @Test
+    public void verMeusEnderecosDeveriaRetornarLerEnderecoRespostaDTOListaQuandoClienteNormalLogado() {
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                .when()
+                    .get("/minha-conta/enderecos")
+                .then()
+                    .statusCode(200)
+                    .body("logradouro", hasItems("Rua das Isis", "Avenida Jaraguá"))
+                    .body("numero", hasItems("77", "36"));
+
+    }
+
+    @Test
+    public void verMeusEnderecosDeveriaRetornarLerEnderecoRespostaDTOListaQuandoClienteAdminLogado() {
+
+        RestAssured
+                .given()
+                .header("Authorization", "Bearer " + clienteAdminToken)
+                .header("Content-Type", "application/json")
+                .when()
+                .get("/minha-conta/enderecos")
+                .then()
+                .statusCode(200)
+                .body("logradouro", hasItems("Avenida Floriano", "Rua Boa Morte"))
+                .body("numero", hasItems("54C", "1459"));
+
+    }
+
+    @Test
+    public void verMeusEnderecosDeveriaLancar401QuandoClienteNaoAutenticado() {
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + tokenInvalido)
+                    .header("Content-Type", "application/json")
+                .when()
+                    .get("/minha-conta/enderecos")
+                .then()
+                    .statusCode(401);
+
+    }
+
 }
