@@ -1,6 +1,7 @@
 package com.vinicarnot.sistema_de_pedidos.dto.requests;
 
 import com.vinicarnot.sistema_de_pedidos.domain.enums.TipoCliente;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class AtualizarMinhaContaRequisicaoDTO {
     @NotNull(message = "O campo 'tipo' é obrigatório.")
     private TipoCliente tipo;
 
-    @NotNull(message = "O campo 'telefone' não pode ser nulo.")
+    @Valid
     private AtualizarTelefoneRequisicaoDTO telefone;
 
 }

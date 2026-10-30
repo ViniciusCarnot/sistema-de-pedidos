@@ -110,17 +110,24 @@ INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('A
 INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Bernardo Silva', 'bernardo@email.com', '$2a$10$Y19DyKkLcKmr5bpUmWu9c.FKXjNJYMDpMEh9V43/DN/XUvvwEM7ES', '845.107.660-31', 'PESSOA_FISICA', true);
 INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Carlos Alves', 'carlos@email.com', '$2a$10$5nPzWzXF6CZfgxNxTQOpeOe2oz7Zjp0MWxX9KteYhmFzo92kZEkZq', '418.502.610-33', 'PESSOA_FISICA', true);
 INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Daniel Ramos', 'daniel@email.com', '$2a$10$zbiQe3elLSIvk9xJRPgUA.45R1hrnFpzWAydHkUxi78FtTAlg0zc6', '953.740.180-80', 'PESSOA_JURIDICA', false);
+INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Enzo Santos', 'enzo@email.com', '$2a$10$aqpaZd3pab8wNP9myWq3ROSklmCtEbZduBZ8EltMONdwD9q2/9KT2', '444.253.769-12', 'PESSOA_JURIDICA', true);
+INSERT INTO tb_cliente (nome, email, senha, cpf_ou_cnpj, tipo, ativo) VALUES ('Sato Company', 'satocompany@email.com', '$2a$10$460XU9M9JiBzXeOyVMYdcu6d2sqeFD9/2oXis3ER9bdYzMD0lfOZS', '12.345.678/0001-95', 'PESSOA_JURIDICA', true);
 
 INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (1, 1);
 INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (1, 2);
 INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (2, 2);
 INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (3, 1);
 INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (4, 1);
+INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (5, 1);
+INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (6, 1);
+INSERT INTO tb_cliente_role (cliente_id, role_id) VALUES (6, 2);
 
 INSERT INTO tb_telefone (numero, cliente_id) VALUES ('(11) 11111-1111', 1);
 INSERT INTO tb_telefone (numero, cliente_id) VALUES ('(22) 22222-2222', 2);
 INSERT INTO tb_telefone (numero, cliente_id) VALUES ('(33) 33333-3333', 3);
 INSERT INTO tb_telefone (numero, cliente_id) VALUES ('(44) 44444-4444', 4);
+INSERT INTO tb_telefone (numero, cliente_id) VALUES ('(55) 55555-5555', 5);
+INSERT INTO tb_telefone (numero, cliente_id) VALUES ('(66) 66666-6666', 6);
 
 INSERT INTO tb_cliente_endereco (cliente_id, endereco_id) VALUES (1, 1);
 INSERT INTO tb_cliente_endereco (cliente_id, endereco_id) VALUES (1, 2);

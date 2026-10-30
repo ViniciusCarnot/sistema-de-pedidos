@@ -740,20 +740,20 @@ public class PedidoControllerE2E {
 
         RestAssured
                 .given()
-                .header("Authorization", "Bearer " + clienteAdminToken)
-                .header("Content-Type", "application/json")
-                .body(jsonDTORequisicao)
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
+                    .header("Authorization", "Bearer " + clienteAdminToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
                 .when()
-                .post("/pedidos/{pedidoId}/pagamento", pedidoId)
+                    .post("/pedidos/{pedidoId}/pagamento", pedidoId)
                 .then()
-                .statusCode(422)
-                .body("status", is(422))
-                .body("error", equalTo("Dados inválidos."))
-                .body("path", equalTo("/pedidos/" + pedidoId + "/pagamento"))
-                .body("campos.nomeCampo", hasItem("tipoPagamento"))
-                .body("campos.mensagem", hasItem("O campo 'tipoPagamento' é obrigatório."));
+                    .statusCode(422)
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/pedidos/" + pedidoId + "/pagamento"))
+                    .body("campos.nomeCampo", hasItem("tipoPagamento"))
+                    .body("campos.mensagem", hasItem("O campo 'tipoPagamento' é obrigatório."));
 
     }
 
@@ -773,20 +773,20 @@ public class PedidoControllerE2E {
 
         RestAssured
                 .given()
-                .header("Authorization", "Bearer " + clienteAdminToken)
-                .header("Content-Type", "application/json")
-                .body(jsonDTORequisicao)
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
+                    .header("Authorization", "Bearer " + clienteAdminToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
                 .when()
-                .post("/pedidos/{pedidoId}/pagamento", pedidoId)
+                    .post("/pedidos/{pedidoId}/pagamento", pedidoId)
                 .then()
-                .statusCode(422)
-                .body("status", is(422))
-                .body("error", equalTo("Dados inválidos."))
-                .body("path", equalTo("/pedidos/" + pedidoId + "/pagamento"))
-                .body("campos.nomeCampo", hasItem("pagadorCpfOuCnpj"))
-                .body("campos.mensagem", hasItem("O campo 'pagadorCpfOuCnpj' é obrigatório."));
+                    .statusCode(422)
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/pedidos/" + pedidoId + "/pagamento"))
+                    .body("campos.nomeCampo", hasItem("pagadorCpfOuCnpj"))
+                    .body("campos.mensagem", hasItem("O campo 'pagadorCpfOuCnpj' é obrigatório."));
 
     }
 
@@ -806,20 +806,20 @@ public class PedidoControllerE2E {
 
         RestAssured
                 .given()
-                .header("Authorization", "Bearer " + clienteAdminToken)
-                .header("Content-Type", "application/json")
-                .body(jsonDTORequisicao)
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
+                    .header("Authorization", "Bearer " + clienteAdminToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
                 .when()
-                .post("/pedidos/{pedidoId}/pagamento", pedidoId)
+                    .post("/pedidos/{pedidoId}/pagamento", pedidoId)
                 .then()
-                .statusCode(422)
-                .body("status", is(422))
-                .body("error", equalTo("Dados inválidos."))
-                .body("path", equalTo("/pedidos/" + pedidoId + "/pagamento"))
-                .body("campos.nomeCampo", hasItem("pagadorNome"))
-                .body("campos.mensagem", hasItem("O campo 'pagadorNome' é obrigatório."));
+                    .statusCode(422)
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/pedidos/" + pedidoId + "/pagamento"))
+                    .body("campos.nomeCampo", hasItem("pagadorNome"))
+                    .body("campos.mensagem", hasItem("O campo 'pagadorNome' é obrigatório."));
 
     }
 
@@ -839,20 +839,20 @@ public class PedidoControllerE2E {
 
         RestAssured
                 .given()
-                .header("Authorization", "Bearer " + clienteAdminToken)
-                .header("Content-Type", "application/json")
-                .body(jsonDTORequisicao)
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
+                    .header("Authorization", "Bearer " + clienteAdminToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
                 .when()
-                .post("/pedidos/{pedidoId}/pagamento", pedidoId)
+                    .post("/pedidos/{pedidoId}/pagamento", pedidoId)
                 .then()
-                .statusCode(422)
-                .body("status", is(422))
-                .body("error", equalTo("Dados inválidos."))
-                .body("path", equalTo("/pedidos/" + pedidoId + "/pagamento"))
-                .body("campos.nomeCampo", hasItem("pagadorEmail"))
-                .body("campos.mensagem", hasItem("O campo 'pagadorEmail' é obrigatório."));
+                    .statusCode(422)
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/pedidos/" + pedidoId + "/pagamento"))
+                    .body("campos.nomeCampo", hasItem("pagadorEmail"))
+                    .body("campos.mensagem", hasItem("O campo 'pagadorEmail' é obrigatório."));
 
     }
 
