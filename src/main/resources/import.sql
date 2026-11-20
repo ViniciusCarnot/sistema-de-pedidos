@@ -164,6 +164,7 @@ INSERT INTO tb_pedido (instante_da_compra, status_pedido, cliente_id, endereco_d
 INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (2, 1, 'GTA San Andreas', 1, 65.00);
 INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (3, 1, 'GTA Vice City', 1, 25.00);
 INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (1, 2, 'PC Gamer Entrada', 1, 3300.00);
+INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (12, 2, 'Teclado Raze', 1, 450.0);
 INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (4, 3, 'Monitor 27pol QHD 165Hz',1, 850.00);
 INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (10, 4, 'Teclado Aula F75',1, 315.0);
 INSERT INTO tb_item_pedido (produto_id, pedido_id, nome_produto, quantidade, preco_unitario) VALUES (11, 5, 'Teclado Mancer',1, 90);
