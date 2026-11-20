@@ -266,8 +266,6 @@ public class MinhaContaControllerE2E {
 
     }
 
-    // Falta realizar os testes de lógica de negócio
-
     @Test
     public void atualizarMinhaContaDeveriaLancar422QuandoNomeEmBranco() throws JsonProcessingException {
 
@@ -553,6 +551,72 @@ public class MinhaContaControllerE2E {
                     .body("path", equalTo("/minha-conta"))
                     .body("campos.nomeCampo", hasItem("telefone.numero"))
                     .body("campos.mensagem", hasItem("O campo 'numero' deve ter 15 caracteres '(XX) XXXXX-XXXX'."));
+
+    }
+
+    @Test
+    public void atualizarMinhaContaDeveriaLancar400QuandoEmailJaExistente() throws JsonProcessingException {
+
+        AtualizarMinhaContaRequisicaoDTO dtoRequisicao = new AtualizarMinhaContaRequisicaoDTO();
+        dtoRequisicao.setNome("exemplo");
+        dtoRequisicao.setEmail(clienteNormalEmail);
+        dtoRequisicao.setSenha("senha exemplo");
+        dtoRequisicao.setCpfOuCnpj("00.000.000/0000-00");
+        dtoRequisicao.setTipo(TipoCliente.PESSOA_JURIDICA);
+        dtoRequisicao.setTelefone(new AtualizarTelefoneRequisicaoDTO("(00) 00000-0000"));
+
+        String token = TokenUtil.obtainAccessToken("henrique@email.com", "HHH");
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + token)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta")
+                .then()
+                    .statusCode(400)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(400))
+                    .body("error", equalTo("Já existe uma conta cadastrada com o email: " + clienteNormalEmail + "."))
+                    .body("path", equalTo("/minha-conta"));
+
+    }
+
+    @Test
+    public void atualizarMinhaContaDeveriaLancar400QuandoTelefoneJaExistente() throws JsonProcessingException {
+
+        AtualizarMinhaContaRequisicaoDTO dtoRequisicao = new AtualizarMinhaContaRequisicaoDTO();
+        dtoRequisicao.setNome("exemplo");
+        dtoRequisicao.setEmail("henrique@email.com");
+        dtoRequisicao.setSenha("senha exemplo");
+        dtoRequisicao.setCpfOuCnpj("00.000.000/0000-00");
+        dtoRequisicao.setTipo(TipoCliente.PESSOA_JURIDICA);
+        dtoRequisicao.setTelefone(new AtualizarTelefoneRequisicaoDTO("(11) 11111-1111"));
+
+        String token = TokenUtil.obtainAccessToken("henrique@email.com", "HHH");
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + token)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta")
+                .then()
+                    .statusCode(400)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(400))
+                    .body("error", equalTo("Já existe uma conta cadastrada com o telefone: " + dtoRequisicao.getTelefone().getNumero()))
+                    .body("path", equalTo("/minha-conta"));
 
     }
 
