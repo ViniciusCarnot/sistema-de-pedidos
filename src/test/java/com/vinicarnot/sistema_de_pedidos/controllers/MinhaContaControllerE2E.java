@@ -960,4 +960,47 @@ public class MinhaContaControllerE2E {
 
     }
 
+    @Test
+    public void desativarMinhaContaDeveriaRetornar204QuandoClienteNormalLogado() {
+
+        String token = TokenUtil.obtainAccessToken("ian@email.com", "III");
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + token)
+                .when()
+                    .delete("/minha-conta")
+                .then()
+                    .statusCode(204);
+
+    }
+
+    @Test
+    public void desativarMinhaContaDeveriaRetornar204QuandoClienteAdminLogado() {
+
+        String token = TokenUtil.obtainAccessToken("joao@email.com", "JJJ");
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + token)
+                .when()
+                    .delete("/minha-conta")
+                .then()
+                    .statusCode(204);
+
+    }
+
+    @Test
+    public void desativarMinhaContaDeveriaLancar401QuandoClienteNaoAutenticado() {
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer ")
+                .when()
+                    .delete("/minha-conta")
+                .then()
+                    .statusCode(401);
+
+    }
+
 }
