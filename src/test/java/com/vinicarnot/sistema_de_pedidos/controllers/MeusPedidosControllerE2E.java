@@ -134,4 +134,77 @@ public class MeusPedidosControllerE2E {
 
     }
 
+    @Test
+    public void verMeusPedidosDeveriaRetornarPedidoRespostaDTOPageQuandoClienteNormalLogado() {
+
+        String token = TokenUtil.obtainAccessToken("carlos@email.com", "CCC");
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + token)
+                .when()
+                    .get("/meus-pedidos")
+                .then()
+                    .statusCode(200)
+                    .body("content.pedidoId", hasItems(3, 6, 7, 8))
+                    .body("content.enderecoDeEntrega.id", hasItems(3))
+                    .body("content.enderecoDeEntrega.logradouro", hasItems("Rua das Isis"))
+                    .body("content.enderecoDeEntrega.cidade.id", hasItems(3))
+                    .body("content.enderecoDeEntrega.estado.id", hasItems(3))
+                    .body("content.valorTotal", hasItems(850.00F, 3300.00F, 55.00F, 35.00F));
+
+    }
+
+    @Test
+    public void verMeusPedidosDeveriaRetornarPedidoRespostaDTOPageQuandoClienteAdminLogado() {
+
+        String token = TokenUtil.obtainAccessToken("bernardo@email.com", "BBB");
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + token)
+                .when()
+                    .get("/meus-pedidos")
+                .then()
+                    .statusCode(200)
+                    .body("content.pedidoId", hasItems(2))
+                    .body("content.enderecoDeEntrega.id", hasItems(2))
+                    .body("content.enderecoDeEntrega.logradouro", hasItems("Rua Boa Morte"))
+                    .body("content.enderecoDeEntrega.cidade.id", hasItems(2))
+                    .body("content.enderecoDeEntrega.estado.id", hasItems(2))
+                    .body("content.valorTotal", hasItems(3750.00F));
+
+    }
+
+    @Test
+    public void verMeusPedidosDeveriaRetornarPedidoRespostaDTOPageQuandoExistirFiltrosDePagina() {
+
+        String token = TokenUtil.obtainAccessToken("carlos@email.com", "CCC");
+
+        RestAssured
+                .given()
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .get("/meus-pedidos?sort=id,desc")
+                .then()
+                .statusCode(200)
+                .body("content.pedidoId[0]", is(8))
+                .body("content.pedidoId[3]", is(3));
+
+    }
+
+    @Test
+    public void verMeusPedidosDeveriaLancar401QuandoClienteNaoAutenticado() {
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer ")
+                .when()
+                    .get("/meus-pedidos")
+                .then()
+                    .statusCode(401);
+
+    }
+
+
 }
