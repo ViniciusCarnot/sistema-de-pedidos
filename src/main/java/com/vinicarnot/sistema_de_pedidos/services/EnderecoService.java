@@ -12,6 +12,7 @@ import com.vinicarnot.sistema_de_pedidos.repositories.CidadeRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.ClienteRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.EnderecoRepository;
 import com.vinicarnot.sistema_de_pedidos.repositories.EstadoRepository;
+import com.vinicarnot.sistema_de_pedidos.services.exceptions.LimiteAtingidoExcecao;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.RecursoNaoEncontradoExcecao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,6 +113,10 @@ public class EnderecoService {
 
         Cliente cliente = clienteService.autenticado();
 
+        if(dtoRequisicaoLista.size() > 2) {
+            throw new LimiteAtingidoExcecao("Não é possível cadastrar mais de 2 endereços por conta.");
+        }
+
         cliente.getEnderecos().clear();
 
         for(AtualizarMeuEnderecoRequisicaoDTO enderecoRequisicaoDTO : dtoRequisicaoLista) {
@@ -137,6 +142,8 @@ public class EnderecoService {
                         enderecoRequisicaoDTO.getNumero(),
                         enderecoRequisicaoDTO.getBairro(),
                         cidade);
+
+                enderecoRepository.saveAndFlush(endereco);
 
                 cliente.getEnderecos().add(endereco);
             }

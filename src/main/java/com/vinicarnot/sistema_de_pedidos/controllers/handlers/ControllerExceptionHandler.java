@@ -5,15 +5,18 @@ import com.vinicarnot.sistema_de_pedidos.dto.responses.ErroCustomizadoValidacao;
 import com.vinicarnot.sistema_de_pedidos.services.exceptions.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.Instant;
 
@@ -64,7 +67,40 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(status).body(erro);
     }
 
+    @ExceptionHandler(LimiteAtingidoExcecao.class)
+    public ResponseEntity<ErroCustomizado> limiteAtingidoExcecao(LimiteAtingidoExcecao e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(erro);
+    }
+
     // --- Excecoes do Spring ---
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErroCustomizadoValidacao> handlerMethodValidationException(
+            HandlerMethodValidationException e,
+            HttpServletRequest request) {
+
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        ErroCustomizadoValidacao erro = new ErroCustomizadoValidacao(
+                Instant.now(),
+                status.value(),
+                "Dados inválidos.",
+                request.getRequestURI()
+        );
+
+        for (ParameterValidationResult result : e.getParameterValidationResults()) {
+            Integer index = result.getContainerIndex(); // útil quando o argumento é uma List
+
+            for (MessageSourceResolvable resolvable : result.getResolvableErrors()) {
+                String campo = resolverNomeCampo(resolvable, index);
+                String mensagem = resolvable.getDefaultMessage();
+                erro.adicionarErro(campo, mensagem);
+            }
+        }
+
+        return ResponseEntity.status(status).body(erro);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErroCustomizadoValidacao> methodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
@@ -103,6 +139,23 @@ public class ControllerExceptionHandler {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
         ErroCustomizado erro = new ErroCustomizado(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erro);
+    }
+
+    private String resolverNomeCampo(MessageSourceResolvable resolvable, Integer index) {
+        String[] codes = resolvable.getCodes();
+        String nomeCampo = "campo";
+
+        if (codes != null && codes.length > 0) {
+            // Ex.: "NotBlank.atualizarMeuEnderecoRequisicaoDTOList.logradouro" -> pega "logradouro"
+            String ultimoCodigo = codes[0];
+            int ultimoPonto = ultimoCodigo.lastIndexOf('.');
+            if (ultimoPonto != -1 && ultimoPonto < ultimoCodigo.length() - 1) {
+                nomeCampo = ultimoCodigo.substring(ultimoPonto + 1);
+            }
+        }
+
+        // Se vier de uma lista, inclui o índice para facilitar o diagnóstico no front-end/Postman
+        return (index != null) ? nomeCampo + "[" + index + "]" : nomeCampo;
     }
 
 }

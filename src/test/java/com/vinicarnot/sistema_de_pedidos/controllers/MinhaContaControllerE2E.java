@@ -3,6 +3,7 @@ package com.vinicarnot.sistema_de_pedidos.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinicarnot.sistema_de_pedidos.domain.enums.TipoCliente;
+import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarMeuEnderecoRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarMinhaContaRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.dto.requests.AtualizarTelefoneRequisicaoDTO;
 import com.vinicarnot.sistema_de_pedidos.util.TokenUtil;
@@ -11,6 +12,9 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 
@@ -261,6 +265,8 @@ public class MinhaContaControllerE2E {
                     .statusCode(401);
 
     }
+
+    // Falta realizar os testes de lógica de negócio
 
     @Test
     public void atualizarMinhaContaDeveriaLancar422QuandoNomeEmBranco() throws JsonProcessingException {
@@ -547,6 +553,346 @@ public class MinhaContaControllerE2E {
                     .body("path", equalTo("/minha-conta"))
                     .body("campos.nomeCampo", hasItem("telefone.numero"))
                     .body("campos.mensagem", hasItem("O campo 'numero' deve ter 15 caracteres '(XX) XXXXX-XXXX'."));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaRetornarAtualizarMeuEnderecoRespostaDTOQuandoClienteNormalLogado() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "Bairro exemplo",
+                1L, 1L);
+        AtualizarMeuEnderecoRequisicaoDTO endereco2 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "2", "Bairro exemplo",
+                1L, 1L);
+
+        dtoRequisicao.add(endereco1);
+        dtoRequisicao.add(endereco2);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        String token = TokenUtil.obtainAccessToken("fabio@email.com", "FFF");
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + token)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(200)
+                    .body("logradouro", hasItems("Rua exemplo 1"))
+                    .body("numero", hasItems("1", "2"));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaRetornarAtualizarMeuEnderecoRespostaDTOQuandoClienteAdminLogado() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "Bairro exemplo",
+                1L, 1L);
+
+        dtoRequisicao.add(endereco1);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        String token = TokenUtil.obtainAccessToken("gustavo@email.com", "GGG");
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + token)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(200)
+                    .body("logradouro", hasItems("Rua exemplo 1"))
+                    .body("numero", hasItems("1"));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar401QuandoClienteNaoAutenticado() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "Bairro exemplo",
+                1L, 1L);
+
+        dtoRequisicao.add(endereco1);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer ")
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(401);
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar422QuandoLogradouroEmBranco() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("", "1", "Bairro exemplo",
+                1L, 1L);
+
+        dtoRequisicao.add(endereco1);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(422)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/minha-conta/enderecos"))
+                    .body("campos.nomeCampo", hasItem("logradouro[0]"))
+                    .body("campos.mensagem", hasItem("O campo 'logradouro' é obrigatório."));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar422QuandoNumeroEmBranco() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "", "Bairro exemplo",
+                1L, 1L);
+
+        dtoRequisicao.add(endereco1);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(422)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/minha-conta/enderecos"))
+                    .body("campos.nomeCampo", hasItem("numero[0]"))
+                    .body("campos.mensagem", hasItem("O campo 'numero' é obrigatório."));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar422QuandoBairroEmBranco() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "",
+                1L, 1L);
+
+        dtoRequisicao.add(endereco1);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(422)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/minha-conta/enderecos"))
+                    .body("campos.nomeCampo", hasItem("bairro[0]"))
+                    .body("campos.mensagem", hasItem("O campo 'bairro' é obrigatório."));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar422QuandoCidadeIdNulo() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "Bairro exemplo",
+                null, 1L);
+
+        dtoRequisicao.add(endereco1);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(422)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/minha-conta/enderecos"))
+                    .body("campos.nomeCampo", hasItem("cidadeId[0]"))
+                    .body("campos.mensagem", hasItem("O campo 'cidadeId' é obrigatório."));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar422QuandoEstadoIdNulo() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "Bairro exemplo",
+                1L, null);
+
+        dtoRequisicao.add(endereco1);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(422)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(422))
+                    .body("error", equalTo("Dados inválidos."))
+                    .body("path", equalTo("/minha-conta/enderecos"))
+                    .body("campos.nomeCampo", hasItem("estadoId[0]"))
+                    .body("campos.mensagem", hasItem("O campo 'estadoId' é obrigatório."));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar400QuandoQuantidadeEnderecosMaiorQueDois() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "Bairro exemplo",
+                1L, 1L);
+        AtualizarMeuEnderecoRequisicaoDTO endereco2 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "2", "Bairro exemplo",
+                1L, 1L);
+        AtualizarMeuEnderecoRequisicaoDTO endereco3 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "3", "Bairro exemplo",
+                1L, 1L);
+
+        dtoRequisicao.add(endereco1);
+        dtoRequisicao.add(endereco2);
+        dtoRequisicao.add(endereco3);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(400)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(400))
+                    .body("error", equalTo("Não é possível cadastrar mais de 2 endereços por conta."))
+                    .body("path", equalTo("/minha-conta/enderecos"));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar404QuandoCidadeIdNaoEncontrado() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "Bairro exemplo",
+                1L, 1L);
+        AtualizarMeuEnderecoRequisicaoDTO endereco2 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "2", "Bairro exemplo",
+                1000L, 1L);
+
+        dtoRequisicao.add(endereco1);
+        dtoRequisicao.add(endereco2);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(404)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(404))
+                    .body("error", equalTo("Cidade com o id: 1000, não encontrada."))
+                    .body("path", equalTo("/minha-conta/enderecos"));
+
+    }
+
+    @Test
+    public void atualizarMeusEnderecosDeveriaLancar404QuandoEstadoIdNaoEncontrado() throws JsonProcessingException {
+
+        Set<AtualizarMeuEnderecoRequisicaoDTO> dtoRequisicao = new HashSet<>();
+        AtualizarMeuEnderecoRequisicaoDTO endereco1 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "1", "Bairro exemplo",
+                1L, 1L);
+        AtualizarMeuEnderecoRequisicaoDTO endereco2 = new AtualizarMeuEnderecoRequisicaoDTO("Rua exemplo 1", "2", "Bairro exemplo",
+                1L, 1000L);
+
+        dtoRequisicao.add(endereco1);
+        dtoRequisicao.add(endereco2);
+
+        String jsonDTORequisicao = objectMapper.writeValueAsString(dtoRequisicao);
+
+        RestAssured
+                .given()
+                    .header("Authorization", "Bearer " + clienteNormalToken)
+                    .header("Content-Type", "application/json")
+                    .body(jsonDTORequisicao)
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .put("/minha-conta/enderecos")
+                .then()
+                    .statusCode(404)
+                    .body("$", hasKey("timestamp"))
+                    .body("status", is(404))
+                    .body("error", equalTo("Estado com o id: 1000, não encontrado."))
+                    .body("path", equalTo("/minha-conta/enderecos"));
 
     }
 
